@@ -1,18 +1,10 @@
-<!--
-Hey, thanks for using the awesome-readme-template template.  
-If you have any enhancements, then fork this project and create a pull request 
-or just open an issue with the label "enhancement".
-
-Don't forget to give this project a star for additional support ;)
-Maybe you can mention me or this repo in the acknowledgements too
--->
 <div align="center">
 
   <img src="assets/logo.png" alt="logo" width="200" height="auto" />
   <h1>Student Information Management System</h1>
   
   <p>
-    This is a compressive student information management system built using microsystem architecture.An awesome README template for your projects! 
+    This is a compressive student information management system built using microservice architecture. An awesome README template for your projects! 
   </p>
   
   
@@ -41,7 +33,7 @@ Maybe you can mention me or this repo in the acknowledgements too
 <h4>
     <a href="https://github.com/Louis3797/awesome-readme-template/">View Demo</a>
   <span> · </span>
-    <a href="https://github.com/Louis3797/awesome-readme-template">Documentation</a>
+    <a href="https://docs.google.com/document/d/1BPgURIRZrcHIw8f4Gi-J8jFXj_9js8Lp_uHCOsvOMyM/edit?usp=sharing">Documentation</a>
   <span> · </span>
     <a href="https://github.com/Louis3797/awesome-readme-template/issues/">Report Bug</a>
   <span> · </span>
@@ -73,7 +65,7 @@ Maybe you can mention me or this repo in the acknowledgements too
 - [FAQ](#grey_question-faq)
 - [License](#warning-license)
 - [Contact](#handshake-contact)
-- [Acknowledgements](#gem-acknowledgements)
+- [Acknowledgments](#gem-acknowledgements)
 
   
 
@@ -107,11 +99,8 @@ Maybe you can mention me or this repo in the acknowledgements too
   <ul>
     <li><a href="https://www.typescriptlang.org/">Typescript</a></li>
     <li><a href="https://expressjs.com/">Express.js</a></li>
-    <li><a href="https://go.dev/">Golang</a></li>
     <li><a href="https://nestjs.com/">Nest.js</a></li>
     <li><a href="https://socket.io/">SocketIO</a></li>
-    <li><a href="https://www.prisma.io/">Prisma</a></li>    
-    <li><a href="https://www.apollographql.com/">Apollo</a></li>
     <li><a href="https://graphql.org/">GraphQL</a></li>
   </ul>
 </details>
@@ -119,10 +108,6 @@ Maybe you can mention me or this repo in the acknowledgements too
 <details>
 <summary>Database</summary>
   <ul>
-    <li><a href="https://www.mysql.com/">MySQL</a></li>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-    <li><a href="https://redis.io/">Redis</a></li>
-    <li><a href="https://neo4j.com/">Neo4j</a></li>
     <li><a href="https://www.mongodb.com/">MongoDB</a></li>
   </ul>
 </details>
@@ -139,9 +124,9 @@ Maybe you can mention me or this repo in the acknowledgements too
 <!-- Features -->
 ### :dart: Features
 
-- Feature 1
-- Feature 2
-- Feature 3
+- Student Registration Module
+- Academic Records Module
+- Attendance Management Module
 
 <!-- Color Reference -->
 ### :art: Color Reference
@@ -169,7 +154,7 @@ To run this project, you will need to add the following environment variables to
 <!-- Prerequisites -->
 ### :bangbang: Prerequisites
 
-This project uses Yarn as package manager
+This project uses npm as a package manager
 
 ```bash
  npm install --global yarn
@@ -235,7 +220,7 @@ To deploy this project run
 <!-- Usage -->
 ## :eyes: Usage
 
-Use this space to tell a little more about your project and how it can be used. Show additional screenshots, code samples, demos or link to other resources.
+Use this space to tell a little more about your project and how it can be used. Show additional screenshots, code samples, demos or links to other resources.
 
 
 ```javascript
