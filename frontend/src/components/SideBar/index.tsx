@@ -73,7 +73,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             src={"/images/logo.jpg"}
             alt="Logo"
             priority
-            className="rounded-full"
+            className="rounded-2xl"
           />
           <div className="text-title-lg">
             SIMS
