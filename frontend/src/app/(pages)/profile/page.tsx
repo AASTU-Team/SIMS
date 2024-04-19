@@ -1,14 +1,11 @@
+"use client"
 import Breadcrumb from "@/components/Breadcrumbs";
 import Image from "next/image";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "SIMS | Profile",
-  description:
-    "This is the profile section of SIMS.",
-};
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
 
 const Settings = () => {
+  const user = useSelector((state: RootState) => state.user);
   return (
     <div className="mx-auto max-w-270">
       <Breadcrumb pageName="Settings" />
@@ -62,8 +59,8 @@ const Settings = () => {
                         type="text"
                         name="fullName"
                         id="fullName"
-                        placeholder="Yabsera Haile"
-                        defaultValue="Yabsera Haile"
+                        placeholder="Your Name"
+                        defaultValue={user?.name}
                         disabled
                       />
                     </div>
@@ -81,7 +78,7 @@ const Settings = () => {
                       type="text"
                       name="phoneNumber"
                       id="phoneNumber"
-                      placeholder="+251-985928080"
+                      placeholder="Your Phone"
                       defaultValue="+251-985928080"
                       disabled
                     />
@@ -126,8 +123,8 @@ const Settings = () => {
                       type="email"
                       name="emailAddress"
                       id="emailAddress"
-                      placeholder="haileyabsera3@gmail.com"
-                      defaultValue="haileyabsera3@gmail.com"
+                      placeholder="Your Email"
+                      defaultValue={user?.email}
                       disabled
                     />
                   </div>
@@ -136,17 +133,17 @@ const Settings = () => {
                 <div className="mb-5.5">
                   <label
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="Username"
+                    htmlFor="ID"
                   >
                     ID
                   </label>
                   <input
                     className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
                     type="text"
-                    name="Username"
-                    id="Username"
-                    placeholder="ETS0660/12"
-                    defaultValue="ETS0660/12"
+                    name="ID"
+                    id="ID"
+                    placeholder="Your ID"
+                    defaultValue={user?.id}
                   />
                 </div>
 

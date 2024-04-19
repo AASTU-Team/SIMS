@@ -1,17 +1,18 @@
+"use client"
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import Breadcrumb from "@/components/Breadcrumbs/";
-import { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "SIMS | Login",
-  description: "This is the login page for the SIMS.",
-};
+import Breadcrumb from "@/components/Breadcrumbs/";;
+import { useRouter } from "next/navigation";
 
 const SignIn: React.FC = () => {
+  const router = useRouter()
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    router.push("/dashboard")
+  }
   return (
-    <div>
+    <div suppressHydrationWarning={true}>
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
@@ -161,7 +162,11 @@ const SignIn: React.FC = () => {
                 Sign In to SIMS
               </h2>
 
-              <form>
+              <form
+                onSubmit={(e) => {
+                  handleSubmit(e);
+                }}
+              >
                 <div className="mb-4">
                   <label className="mb-2.5 block font-medium text-black dark:text-white">
                     Email

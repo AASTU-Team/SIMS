@@ -1,13 +1,22 @@
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
+import { useRouter } from "next/navigation";
 
 const DropdownUser = () => {
+  const router = useRouter()
+  const user = useSelector((state:RootState) => state.user)
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef<any>(null);
   const dropdown = useRef<any>(null);
 
+  const logout = () => {
+    // localStorage.removeItem("user")
+    router.push("/login")
+  }
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
@@ -44,16 +53,16 @@ const DropdownUser = () => {
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
-            Yabsera Haile
+            {user?.name}
           </span>
-          <span className="block text-xs">Student</span>
+          <span className="block text-xs">{user?.role}</span>
         </span>
 
         <span className="h-10 w-10 rounded-full">
           <Image
             width={40}
             height={40}
-            src={"/images/users/user01.jpg"}
+            src={user?.role=="Student"?"/images/users/user01.jpg":user?.role=="Staff"?"/images/users/user02.jpg":"/images/users/user03.png"}
             alt="User"
             className="rounded-full"
           />
@@ -112,7 +121,7 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base">
+        <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base" onClick={logout}>
           <svg
             className="fill-current"
             width="22"

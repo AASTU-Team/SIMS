@@ -156,9 +156,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Student --> */}
               <li>
                 <Link
-                  href="/calendar"
+                  href="/students"
                   className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes("calendar") &&
+                    pathname.includes("students") &&
                     "bg-graydark dark:bg-meta-4"
                   }`}
                 >
@@ -198,9 +198,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Staff --> */}
               <li>
                 <Link
-                  href="/calendar"
+                  href="/staffs"
                   className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes("calendar") &&
+                    pathname.includes("staffs") &&
                     "bg-graydark dark:bg-meta-4"
                   }`}
                 >
