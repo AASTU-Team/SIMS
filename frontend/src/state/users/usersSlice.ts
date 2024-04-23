@@ -12,7 +12,7 @@ interface UserState {
 const initialState: UserState = {
     name: "Yabsera Haile",
     email: "haileyabsera3@gmail.com",
-    role: "Student",
+    role: "Admin",
     id: "ETS0660/12"
 }
 

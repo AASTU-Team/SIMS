@@ -4,6 +4,8 @@ import React, { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/state/store";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -57,6 +59,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     }
   }, [sidebarExpanded]);
 
+  const user = useSelector((state: RootState) => state.user)
   return (
     <aside
       ref={sidebar}
@@ -155,6 +158,8 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
               {/* <!-- Menu Item Student --> */}
               <li>
+{                
+                user.role !== "Student" &&
                 <Link
                   href="/students"
                   className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
@@ -192,11 +197,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     />
                   </svg>
                   Student Management
-                </Link>
+                </Link>}
               </li>
               {/* <!-- Menu Item Student --> */}
               {/* <!-- Menu Item Staff --> */}
               <li>
+                
+{               user.role ==="Admin" &&
                 <Link
                   href="/staffs"
                   className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
@@ -222,7 +229,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     />
                   </svg>
                   Staff Management
-                </Link>
+                </Link>}
               </li>
               {/* <!-- Menu Item Staff --> */}
               {/* <!-- Menu Item Calendar --> */}
