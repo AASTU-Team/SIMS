@@ -1,9 +1,7 @@
-import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import SideBar from "@/components/sidebar";
-
-const inter = Inter({ subsets: ["latin"] });
+import "@/css/satoshi.css";
+import "@/css/style.css";
+import { Metadata } from "next";
 
 export const metadata: Metadata = {
   title: "SIMS",
@@ -15,15 +13,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+    
   return (
     <html lang="en">
-      <body className={inter.className}>
-        <div className="flex row">
-          <SideBar />
-        {children}
-        </div>
-
-        </body>
+      <body suppressHydrationWarning={true}>
+        
+            {children}
+        
+      </body>
     </html>
   );
 }
