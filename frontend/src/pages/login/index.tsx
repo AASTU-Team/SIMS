@@ -1,15 +1,12 @@
-"use client"
 import React from "react";
-import Link from "next/link";
-import Image from "next/image";
-import Breadcrumb from "@/components/Breadcrumbs/";;
-import { useRouter } from "next/navigation";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SignIn: React.FC = () => {
-  const router = useRouter()
+  const router = useNavigate()
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    router.push("/dashboard")
+    router("/dashboard")
   }
   return (
     <div suppressHydrationWarning={true}>
@@ -17,8 +14,8 @@ const SignIn: React.FC = () => {
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
             <div className="px-26 py-17.5 text-center">
-              <Link className="mb-5.5 inline-block" href="/">
-                <Image
+              <Link className="mb-5.5 inline-block" to="/">
+                <img
                   className="dark:hidden"
                   src={"/images/logo.jpg"}
                   alt="Logo"
@@ -243,7 +240,7 @@ const SignIn: React.FC = () => {
 
                 <div className="mt-6 text-center">
                   <p>
-                    <Link href="/forgot_pass" className="text-primary">
+                    <Link to="/forgot_pass" className="text-primary">
                       Forgot Password?
                     </Link>
                   </p>
