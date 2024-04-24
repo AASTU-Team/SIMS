@@ -1,0 +1,54 @@
+GET http://localhost:3000/auth
+
+### register
+
+POST http://localhost:3000/auth/register 
+Content-Type:  application/json
+
+{
+    "username": "newusuer",
+    "email" : "new@haislot.com",
+    "password" : "newpasswod"
+}
+### Login
+POST http://localhost:3000/auth/login 
+Content-Type:  application/json
+
+{
+    "email" : "new@haislot.com",
+    "password" : "newpasswod"
+}
+### Protected
+GET http://localhost:3000/auth/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjI3ZWQwMzFiNjJmZDQ5NGZmOTcyZTEiLCJpYXQiOjE3MTM5NzUyODAsImV4cCI6MTcxMzk3ODg4MH0.eOxvAWtNye1JH5MlqB_ryenjLkG8rODUhm92dqOqLEA
+### refresh token
+POST  http://localhost:3000/auth/refresh
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjI5MmVjZTJlMGI3YzE4YzJiN2FkZmIiLCJpYXQiOjE3MTM5Nzg4OTcsImV4cCI6MTcxMzk3ODkwMH0.gKQg3Y2_ZttdTngQADs4o2qYQ9abduPkB-iPrdEiphU
+ 
+
+### change pass
+PATCH  http://localhost:3000/auth/password
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjI5MmVjZTJlMGI3YzE4YzJiN2FkZmIiLCJpYXQiOjE3MTM5ODM3NzIsImV4cCI6MTcxMzk4NzM3Mn0.C4sHLacDdTrtYdZ954RFZFMkwH__mam8F7qwDJwpUts
+Content-Type:  application/json
+
+{
+    "password" : "newpasswod23"
+}
+### first time 
+
+PATCH  http://localhost:3000/auth/invitePass
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjI5MmVjZTJlMGI3YzE4YzJiN2FkZmIiLCJlbWFpbCI6Im5ld0BoYWlzbG90LmNvbSIsImlhdCI6MTcxMzk3NDk5MCwiZXhwIjoxNzE0NTc5NzkwfQ.2oXezWEkkF6_Qaz60Y5tuJJA-cdQ4HjMSvHfn9T21uw
+Content-Type:  application/json
+
+{
+    "password" : "newpasswod"
+}
+
+### logout 
+
+POST  http://localhost:3000/auth/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjI5MmVjZTJlMGI3YzE4YzJiN2FkZmIiLCJpYXQiOjE3MTM5ODMxOTcsImV4cCI6MTcxNDU4Nzk5N30.Lr-UTDbLgdeD5NTDLuo4KXGRWcn1_6SDmognoP2OBLE
+
+### logout all
+POST  http://localhost:3000/auth/logoutAll
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjI5MmVjZTJlMGI3YzE4YzJiN2FkZmIiLCJpYXQiOjE3MTM5ODI0MzksImV4cCI6MTcxMzk4NjAzOX0.a-bUBU_MRa_GjO5wsJ9wjs1FLnFaLLBm98CV8Cjblg4
