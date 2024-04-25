@@ -7,7 +7,7 @@ let studentSchema = new mongoose.Schema({
     },
     Stud_Image:
     {
-        type:Buffer,
+        type:String,
         required:false
     },
     Stud_Name:{
