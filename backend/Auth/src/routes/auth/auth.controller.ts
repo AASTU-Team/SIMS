@@ -15,6 +15,8 @@ interface IAuth {
   tokens: string[];
   salt: string;
 }
+const bcrypt = require ('bcrypt');
+
 
 async function register(req: Request, res: Response): Promise<any> {
   //  Validate user data
@@ -26,12 +28,14 @@ async function register(req: Request, res: Response): Promise<any> {
   //   "password",
   //   "salt",
   // ]);
-  const user = await createUser({ ...req.body, salt: "213456" });
+  const salt =await  bcrypt.genSalt(10)
+ // const password = await bcrypt.hash(req.body.password, salt)
+  const user = await createUser({ ...req.body, salt: salt });
   //send email with link
   await sendEmail(user);
   console.log(user);
-  if (!user) return res.status(409).json("Conflict");
-  return res.status(201).send({ success: "success message" });
+  if (!user) return res.status(409).json({message:"Conflict"});
+  return res.status(201).send({ message: "success message" });
 }
 async function login(req: Request, res: Response): Promise<any> {
   const { error } = validateAuth(req.body);
@@ -67,11 +71,14 @@ async function getNewAccessToken(req: any, res: Response): Promise<void> {
 async function changePassword(req: any, res: Response): Promise<void> {
   try {
     const user = req.user;
-    //password vaildation
-    // hashed bfr save check check the model
-    //compare old pass
+
+    //const isMatch = await bcrypt.compare(password , req.user.password)
+   
+    const salt =await  bcrypt.genSalt(10)
+   const password = await bcrypt.hash(req.body.password, salt)
     console.log(req.body);
-    user.password = req.body.password;
+    user.salt = salt
+    user.password = password;
     if (req.isFirstTime) user.invitations = "";
     console.log(user);
     await user.save();
@@ -115,8 +122,8 @@ async function findByCredentials(
   if (!user) {
     throw new Error("invalid email or password");
   }
-  // const isMatch = await bcrypt.compare(password , user.password)
-  if (password !== user.password) {
+   const isMatch = await bcrypt.compare(password , user.password)
+  if (!isMatch) {
     throw new Error(" invalid email or password");
   }
   return user;

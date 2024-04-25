@@ -98,26 +98,68 @@ export const registerStudent = async(req: Request, res: Response) => {
     try {
         const data = req.body;
 
-        const student  = await Student.findOne({Stud_Name: data.Stud_Name});
+     /*    const student  = await Student.findOne({Stud_Name: data.Stud_Name});
 
         if(student)
             {
                 res.status(400).json({ message: student.Stud_Name });
                 return;
             }
+ */
 
-
-        const newStudent = await new Student(data);
-        await newStudent.save()
-
+   
      /*    const newStatus = await new Status({status:"Active"})
         await newStatus.save() */
+
+        try {
+          const response:any = await fetch("http://localhost:5000/auth/register",{
+            method:"POST",
+            headers:{
+              "Content-Type":"application/json"
+            },
+            body:JSON.stringify({
+              email:req.body.email,
+            
+
+            })
+
+          
+            
+          })
+
+        
+          if(response.status === 201)
+            {
+              const r = await response.json()
+              console.log(r.message)
+              const newStudent = await new Student(data);
+              await newStudent.save()
+              return res.status(201).json({ message: "successfully created student profile" });
+      
+            
+            }
+            else{
+              const r = await response.json()
+              
+              console.log(r.message)
+              return res.status(400).json({ message: "An error happend please try again" });
+            }
+         
+          
+        }
+        catch (error:any) {
+          console.log(error.message)
+          
+
+          return res.status(500).json({ message: error.message });
+       
+        }
    
-    res.status(200).json({ message: data });
+   
         
     } catch (error:any) {
 
-        res.status(500).json({ message: error.message });
+        return res.status(500).json({ message: error.message });
         
     }
   };

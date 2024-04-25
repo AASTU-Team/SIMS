@@ -8,7 +8,6 @@ import mongoose, {
 
 import jwt from "jsonwebtoken";
 const Joi = require("joi");
-
 // Define the interface for the document
 interface IAuth {
   username: string;
@@ -17,7 +16,9 @@ interface IAuth {
   tokens: string[];
   salt: string;
   invitations: string;
+  role:string[]
 }
+const bcrypt = require ('bcrypt');
 
 // interface FindByCredentials extends Model<IAuth> {
 //   findByCredentials(email: string, password: string): Promise<IAuth | null>;
@@ -36,18 +37,19 @@ type AuthModel = Model<IAuth, {}, IAuthMethods>;
 
 // Define the schema
 const AuthSchema: Schema = new Schema<IAuth, AuthModel, IAuthMethods>({
-  username: { type: String, required: true, min: 5, max: 40 },
-  password: { type: String, required: true, min: 5, max: 1024 },
+  username: { type: String, required: false, min: 5, max: 40 },
+  password: { type: String, required: false, min: 5, max: 1024 },
   email: { type: String, required: true, unique: true, min: 5, max: 255 },
   tokens: { type: [String], default: [] },
   salt: { type: String, required: true },
   invitations: { type: String },
+  role: { type: [String], default: [] },
 });
 function validateUser(user: Document) {
   const schema = Joi.object({
-    username: Joi.string().alphanum().min(5).max(40).required(),
+   // username: Joi.string().alphanum().min(5).max(40).required(),
 
-    password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
+   // password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
 
     email: Joi.string().email({
       minDomainSegments: 2,
@@ -71,7 +73,9 @@ function validateAuth(user: Document) {
 AuthSchema.method("generateAuthTokens", async function generateAuthTokens() {
   const id: Types.ObjectId = this._id as Types.ObjectId;
   const accessTokenPromise = jwt.sign(
-    { _id: id.toString() },
+    { _id: id.toString(),
+      role: this.role,
+     },
     process.env.JWT_AT_SECRET as string,
     { expiresIn: "1h" }
   );
@@ -118,8 +122,8 @@ AuthSchema.statics.findByCredentials = async (
   if (!user) {
     throw new Error("invalid email or password");
   }
-  // const isMatch = await bcrypt.compare(password , user.password)
-  if (password !== user.password) {
+   const isMatch = await bcrypt.compare(password , user.password)
+  if (!isMatch) {
     throw new Error(" invalid email or password");
   }
   return user;

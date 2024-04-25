@@ -1,28 +1,28 @@
 import mongoose from "mongoose";
 
 let studentSchema = new mongoose.Schema({
-    Stud_Id:{
+    id:{
         type:String,
         required:false
     },
-    Stud_Image:
+    image:
     {
         type:Buffer,
         required:false
     },
-    Stud_Name:{
+    name:{
         type:String,
         required:false
     },
-    Stud_Phone:{
+    phone:{
         type:String,
         required:false
     },
-    Stud_birthday:{
+    birthday:{
         type:Date,
         required:false
     },
-    Stud_Gender: {
+    gender: {
         type: String,
         enum: ['MALE', 'FEMALE'],
         required: false
@@ -31,7 +31,7 @@ let studentSchema = new mongoose.Schema({
 
 
 
-    Stud_Email:{
+    email:{
         type:String,
         required:false
     },
@@ -39,28 +39,28 @@ let studentSchema = new mongoose.Schema({
         type:String,
         required:false
     },
-    Status_id:{
+    status_id:{
         type:mongoose.Schema.Types.ObjectId,
         required:false,
         ref:"Status"
     },
-    Stud_year:{
+    year:{
         type:Number,
         required:false
     },
-    Stud_year_admission:{
+    admission_date:{
         type:Date,
         required:false
     },
-    Sgrad_date:{
+    grad_date:{
         type:Date,
         required:false
     },
-    Stud_Contact:{
+    contact:{
         type:String,
         required:false
     },
-    Stud_address:{
+    address:{
         type:String,
         required:false
     },

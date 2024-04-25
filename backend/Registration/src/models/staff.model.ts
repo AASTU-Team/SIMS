@@ -22,7 +22,7 @@ let staffSchema  = new mongoose.Schema({
         type:String,
         required:false
     },
-    DateOfBirth:{
+    birthday:{
         type:Date,
         required:false
     },
