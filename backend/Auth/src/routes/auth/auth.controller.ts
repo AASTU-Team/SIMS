@@ -77,12 +77,33 @@ async function changePassword(req: any, res: Response): Promise<void> {
     const salt =await  bcrypt.genSalt(10)
    const password = await bcrypt.hash(req.body.password, salt)
     console.log(req.body);
-    user.salt = salt
-    user.password = password;
-    if (req.isFirstTime) user.invitations = "";
-    console.log(user);
-    await user.save();
-    res.status(200).send("password changed");
+   
+    if (req.isFirstTime)
+      {
+        user.invitations = "";
+        user.salt = salt
+        user.password = password;
+     
+
+      } 
+
+      else{
+        const isMatch = await bcrypt.compare(req.body.oldPassword , user.password)
+        if(isMatch)
+        {
+          user.password =await bcrypt.hash(req.body.password, salt)
+          user.salt = salt
+
+        }
+
+        else{
+         throw new Error(`Invalid password`)
+        }
+      }
+      console.log(user);
+      await user.save();
+      res.status(200).send("password changed");
+ 
   } catch (e: unknown) {
     console.log(e);
     res.status(400).send(e);
