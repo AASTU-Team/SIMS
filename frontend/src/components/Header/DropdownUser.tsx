@@ -1,13 +1,14 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
+import { Link } from "react-router-dom";
+
 import { useSelector } from "react-redux";
-import { RootState } from "@/state/store";
-import { useRouter } from "next/navigation";
+import { RootState } from "../../state/store";
+import { useNavigate } from "react-router-dom";
 
 const DropdownUser = () => {
-  const router = useRouter()
-  const user = useSelector((state:RootState) => state.user)
+  const router = useNavigate();
+  const user = useSelector((state: RootState) => state.user);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const trigger = useRef<any>(null);
@@ -15,8 +16,8 @@ const DropdownUser = () => {
 
   const logout = () => {
     // localStorage.removeItem("user")
-    router.push("/login")
-  }
+    router("/login");
+  };
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }: MouseEvent) => {
@@ -49,7 +50,7 @@ const DropdownUser = () => {
         ref={trigger}
         onClick={() => setDropdownOpen(!dropdownOpen)}
         className="flex items-center gap-4"
-        href="#"
+        to="#"
       >
         <span className="hidden text-right lg:block">
           <span className="block text-sm font-medium text-black dark:text-white">
@@ -59,10 +60,16 @@ const DropdownUser = () => {
         </span>
 
         <span className="h-10 w-10 rounded-full">
-          <Image
+          <img
             width={40}
             height={40}
-            src={user?.role=="Student"?"/images/users/user01.jpg":user?.role=="Staff"?"/images/users/user02.jpg":"/images/users/user03.png"}
+            src={
+              user?.role == "Student"
+                ? "/images/users/user01.jpg"
+                : user?.role == "Staff"
+                ? "/images/users/user02.jpg"
+                : "/images/users/user03.png"
+            }
             alt="User"
             className="rounded-full"
           />
@@ -97,7 +104,7 @@ const DropdownUser = () => {
         <ul className="flex flex-col gap-5 border-b border-stroke px-6 py-7.5 dark:border-strokedark">
           <li>
             <Link
-              href="/profile"
+              to="/profile"
               className="flex items-center gap-3.5 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
             >
               <svg
@@ -121,7 +128,10 @@ const DropdownUser = () => {
             </Link>
           </li>
         </ul>
-        <button className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base" onClick={logout}>
+        <button
+          className="flex items-center gap-3.5 px-6 py-4 text-sm font-medium duration-300 ease-in-out hover:text-primary lg:text-base"
+          onClick={logout}
+        >
           <svg
             className="fill-current"
             width="22"
