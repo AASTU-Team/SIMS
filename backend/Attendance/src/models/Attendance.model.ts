@@ -13,7 +13,7 @@ interface IAttendance {
   student_id: mongoose.Types.ObjectId;
   course_id: mongoose.Types.ObjectId;
   instructor_id: mongoose.Types.ObjectId;
-  semester_id: mongoose.Types.ObjectId;
+ // semester_id: Number;
   date: Date;
   status: "Present" | "Absent" | "Late" | "Excused";
 }
@@ -43,11 +43,11 @@ const AttendacneSchema: Schema = new Schema<
     ref: "Instructor",
     required: true,
   },
-  semester_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Semester",
+ /*  semester_id: {
+    type:Number,
+   // ref: "Semester",
     required: true,
-  },
+  }, */
   date: { type: Date, required: true },
   status: {
     type: String,
@@ -61,7 +61,7 @@ function validateAttendance(attendance: Document) {
     student_id: Joi.string().required(),
     course_id: Joi.string().required(),
     instructor_id: Joi.string().required(),
-    semester_id: Joi.string().required(),
+    //semester_id: Joi.string().required(),
     date: Joi.date().required(),
     status: Joi.string()
       .valid("Present", "Absent", "Late", "Excused")
@@ -73,7 +73,7 @@ function validateAttendance(attendance: Document) {
 AttendacneSchema.method("smFun", async function SomeFunction() {});
 
 const Attendacne = mongoose.model<IAttendance, AttendanceModel>(
-  "Attendacne",
+  "Attendance",
   AttendacneSchema
 );
 export default Attendacne;

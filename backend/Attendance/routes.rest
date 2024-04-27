@@ -1,0 +1,33 @@
+
+
+### register
+
+POST http://localhost:3000/attendance/new
+Content-Type:  application/json
+
+{
+   "course_name":"Maths",
+	"instructor_id":"6627f3543267383b7d6046e6",
+	"date":"2024-09-09",
+	"attendance":[
+		{
+			"student_id":"66279e0dda5951ab06556ed5",
+			"status":"Present"
+			
+},
+		{
+				"student_id":"66279e2fda5951ab06556ed7",
+			"status":"Present"
+			
+		}
+	]
+}
+### Get Instructor Attendance
+POST http://localhost:3000/attendance/instructor
+Content-Type:  application/json
+
+{
+   	"course_id":"662802ac728d90164b677588",
+	"instructor_id":"6627f3543267383b7d6046e6"
+}
+
