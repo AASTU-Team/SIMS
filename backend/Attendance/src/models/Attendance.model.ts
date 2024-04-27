@@ -9,11 +9,11 @@ const Joi = require("joi");
 
 // Define the interface for the document
 interface IAttendance {
-  attendance_id: number;
-  student_id: string;
-  course_id: string;
-  instructor_id: string;
-  semester_id: string;
+  
+  student_id: mongoose.Types.ObjectId;
+  course_id: mongoose.Types.ObjectId;
+  instructor_id: mongoose.Types.ObjectId;
+  semester_id: mongoose.Types.ObjectId;
   date: Date;
   status: "Present" | "Absent" | "Late" | "Excused";
 }
@@ -27,7 +27,7 @@ const AttendacneSchema: Schema = new Schema<
   AttendanceModel,
   IAttendance
 >({
-  attendance_id: { type: Number, required: true, unique: true },
+ 
   student_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Student",
