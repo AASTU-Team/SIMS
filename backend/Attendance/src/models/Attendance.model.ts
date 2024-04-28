@@ -8,14 +8,22 @@ import mongoose, {
 const Joi = require("joi");
 
 // Define the interface for the document
+
+interface DAttendance {
+  
+ 
+  date: Date;
+  status: "Present" | "Absent" | "Late" | "Excused";
+}
 interface IAttendance {
   
   student_id: mongoose.Types.ObjectId;
   course_id: mongoose.Types.ObjectId;
   instructor_id: mongoose.Types.ObjectId;
+  attendances:DAttendance[]
  // semester_id: Number;
-  date: Date;
-  status: "Present" | "Absent" | "Late" | "Excused";
+ // date: Date;
+  //status: "Present" | "Absent" | "Late" | "Excused";
 }
 interface IAttendanceMethods {
   // generateAuthTokens(): Promise<{}>;
@@ -48,12 +56,22 @@ const AttendacneSchema: Schema = new Schema<
    // ref: "Semester",
     required: true,
   }, */
-  date: { type: Date, required: true },
+/*   date: { type: Date, required: true },
   status: {
     type: String,
     enum: ["Present", "Absent", "Late", "Excused"],
     required: true,
-  },
+  }, */
+  attendances: [
+    {
+      date: { type: Date, required: true },
+      status: {
+        type: String,
+        enum: ["Present", "Absent", "Late", "Excused"],
+        required: true,
+      },
+    },
+  ],
 });
 function validateAttendance(attendance: Document) {
   const schema = Joi.object({
