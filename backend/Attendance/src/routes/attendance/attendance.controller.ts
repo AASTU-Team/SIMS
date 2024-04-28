@@ -35,8 +35,6 @@ export const registerAttendance = async (req: Request, res: Response) => {
     //student_id: student_id,
   });
 
- 
-
   const newArray = [];
   let updatesMade = false;
 
@@ -44,12 +42,12 @@ export const registerAttendance = async (req: Request, res: Response) => {
   for (const item of attendance) {
     let student_id = item.student_id;
     let status = item.status;
-  
+
     const currentAttendance = await Attendacne.findOne({
       course_id: course_id,
       student_id: item.student_id,
     });
-  
+
     if (currentAttendance) {
       const updatedAttendance = await Attendacne.findOneAndUpdate(
         { course_id, student_id },
@@ -63,9 +61,9 @@ export const registerAttendance = async (req: Request, res: Response) => {
         },
         { new: true }
       );
-  
-      console.log('Updated attendance:', updatedAttendance);
-      updatesMade = true
+
+      console.log("Updated attendance:", updatedAttendance);
+      updatesMade = true;
       //return res.status(200).json({ message: "Attendance registered successfully" });
     } else {
       newArray.push({
@@ -81,23 +79,25 @@ export const registerAttendance = async (req: Request, res: Response) => {
       });
     }
   }
-  
+
   if (updatesMade) {
-    console.log('Attendance updated successfully');
+    console.log("Attendance updated successfully");
     return res.status(200).json({ message: "Attendance updated successfully" });
   } else {
     Attendacne.insertMany(newArray)
       .then((result) => {
         console.log("Inserted", result.length, "attendance records");
-        return res.status(200).json({ message: "Attendance registered successfully" });
+        return res
+          .status(200)
+          .json({ message: "Attendance registered successfully" });
       })
       .catch((error) => {
         console.error("Error inserting attendance records:", error);
-        return res.status(500).json({ message: "Error inserting attendance records" });
+        return res
+          .status(500)
+          .json({ message: "Error inserting attendance records" });
       });
   }
-
- 
 };
 export const getInstructorAttendance = async (req: Request, res: Response) => {
   const data = req.body;
@@ -137,18 +137,39 @@ export const getAttendance = async (req: Request, res: Response) => {
 };
 
 export const editAttendance = async (req: Request, res: Response) => {
-  const attendance: edit[] = req.body.attendance;
+  console.log(req.body.attendance[0].attendances);
+  const data = req.body.attendance;
+  try {
+    const edits = data.map(async ({ attendance_id, attendances }: any) => {
+      const student = await Attendacne.findById(attendance_id);
+      if (!student) {
+        throw new Error(`Student with ID ${attendance_id} not found`);
+      }
+      attendances.forEach(({ date, status }: any) => {
+        const attendanceIndex = student.attendances.findIndex((att) => {
+          const newdate = new Date(date);
+          console.log(att.date.getTime(), new Date(date));
+          return att.date.getTime() === new Date(date).getTime();
+        });
+        console.log(attendanceIndex);
+        if (attendanceIndex !== -1) {
+          student.attendances[attendanceIndex].status = status;
+        } else {
+          // If day not found, create a new attendance record
+          student.attendances.push({ date, status });
+        }
+      });
 
-  const ids = attendance.map((item) => item.attendance_id);
-  const updates = attendance.map((item) => {
-    const { attendance_id, ...rest } = item; // Destructure to exclude attendance_id
-    return { _id: attendance_id, ...rest }; // Create new object with _id and rest
-  });
-  const attendanceResut = await Attendacne.updateMany(
-    { _id: { $in: ids } },
-    { $setOnInsert: updates }, // Update based on corresponding id in updates array
-    { multi: true } // Allow updating multiple documents
-  );
-  if (!attendance) return res.status(400).send({ message: "not found" });
-  res.send(200).send(attendance);
+      return await student.save();
+    });
+
+    const edit = await Promise.all(edits);
+
+    return res.status(200).send({
+      message: "Attendance records updated successfully!",
+      update: edit,
+    });
+  } catch (error: any) {
+    console.error(error.message);
+  }
 };

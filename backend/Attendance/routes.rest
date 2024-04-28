@@ -11,12 +11,12 @@ Content-Type:  application/json
 	"date":"2024-09-09",
 	"attendance":[
 		{
-			"student_id":"66279e0dda5951ab06556ed5",
+			"student_id":"66279e0dda5951ab06556ed7",
 			"status":"Present"
 			
 },
 		{
-				"student_id":"66279e2fda5951ab06556ed7",
+				"student_id":"66279e2fda5951ab06556ed8",
 			"status":"Present"
 			
 		}
@@ -38,14 +38,33 @@ Content-Type:  application/json
 {
 	"attendance":[
 		{
-			"attendance_id":"66279e0dda5951ab06556ed5",
-			"status":"Present"
+			"attendance_id":"662e49eee52af96417d47605",
+			"attendances":[
+				{
+					"status":"Present",
+					"date" : "2024-09-09"
+				},
+				{
+					"status":"Absent",
+					"date" : "2024-09-10"
+				}
+			]
 			
 },
 		{
-			"attendance_id":"66279e2fda5951ab06556ed7",
-			"status":"Present"
+			"attendance_id":"662e49eee52af96417d47607",
+			"attendances":[
+				{
+					"status":"Absent",
+					"date" : "2024-09-09"
+				},
+				{
+					"status":"Absent",
+					"date" : "2024-09-10"
+				}
+			]
 			
 		}
 	]
 }
+ 
