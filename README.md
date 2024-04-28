@@ -4,7 +4,7 @@
   <h1>Student Information Management System</h1>
   
   <p>
-    This is a compressive student information management system built using microservice architecture.
+    This is a compressive student information management system built using microservice architecture. An awesome README template for your projects! 
   </p>
   
   
