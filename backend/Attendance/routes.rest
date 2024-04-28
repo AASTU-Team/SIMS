@@ -6,7 +6,7 @@ POST http://localhost:3000/attendance/new
 Content-Type:  application/json
 
 {
-   "course_name":"Maths",
+    "course_name":"Maths",
 	"instructor_id":"6627f3543267383b7d6046e6",
 	"date":"2024-09-09",
 	"attendance":[
@@ -31,3 +31,21 @@ Content-Type:  application/json
 	"instructor_id":"6627f3543267383b7d6046e6"
 }
 
+### edit
+PATCH  http://localhost:3000/attendance/attendance
+Content-Type:  application/json
+
+{
+	"attendance":[
+		{
+			"attendance_id":"66279e0dda5951ab06556ed5",
+			"status":"Present"
+			
+},
+		{
+			"attendance_id":"66279e2fda5951ab06556ed7",
+			"status":"Present"
+			
+		}
+	]
+}
