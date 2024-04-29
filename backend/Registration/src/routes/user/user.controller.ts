@@ -161,6 +161,7 @@ export const getStudentProfile = async (req: Request, res: Response) => {
       method: "get",
       headers: {
         "Content-Type": "application/json",
+        Authorization: req.header("Authorization") as string,
       },
     });
 
