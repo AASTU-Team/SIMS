@@ -24,11 +24,11 @@ const SignIn: React.FC = () => {
   const OnFinish: FormProps<LoginForm>["onFinish"] = (values) => {
     loginMutation.mutate(values)
     loginMutation.isError && notification.error({message:"Invalid Username or Password"})
-    if(loginMutation.isSuccess){
-      setCookie("access_token",loginMutation.data.data.accessToken,7)
-      setCookie("refresh_token", loginMutation.data.data.refreshToken, 7);
+    // console.log(loginMutation)
+    if(loginMutation.isSuccess || loginMutation.isIdle){
+      setCookie("access_token", loginMutation.data?.data?.accessToken || "", 7)
+      setCookie("refresh_token", loginMutation.data?.data?.refreshToken || "", 7);
       router("/")
-      // console.log(loginMutation.data)
     }
   };
 
