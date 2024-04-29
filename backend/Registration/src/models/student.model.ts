@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 let studentSchema = new mongoose.Schema({
     id:{
         type:String,
-        required:false
+        required:true
     },
     image:
     {
@@ -12,20 +12,20 @@ let studentSchema = new mongoose.Schema({
     },
     name:{
         type:String,
-        required:false
+        required:true
     },
     phone:{
         type:String,
-        required:false
+        required:true
     },
     birthday:{
         type:Date,
-        required:false
+        required:true
     },
     gender: {
         type: String,
         enum: ['MALE', 'FEMALE'],
-        required: false
+        required: true
       },
 
 
@@ -33,7 +33,7 @@ let studentSchema = new mongoose.Schema({
 
     email:{
         type:String,
-        required:false
+        required:true
     },
     department_id:{
         type:String,
@@ -46,35 +46,35 @@ let studentSchema = new mongoose.Schema({
     },
     year:{
         type:Number,
-        required:false
+        required:true
     },
     admission_date:{
         type:Date,
-        required:false
+        required:true
     },
     grad_date:{
         type:Date,
-        required:false
+        required:true
     },
     contact:{
         type:String,
-        required:false
+        required:true
     },
     address:{
         type:String,
-        required:false
+        required:true
     },
     emergencycontact_name:{
         type:String,
-        required:false
+        required:true
     },
     emergencycontact_phone:{
         type:String,
-        required:false
+        required:true
     },
     emergencycontact_relation:{
         type:String,
-        required:false
+        required:true
     },
    
 
