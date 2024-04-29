@@ -5,6 +5,8 @@ import { registerStaff } from './user.controller';
 import { registerDependency } from './user.controller';
 import { registerStudentCsv } from './user.controller';
 import { uploadFile } from './user.controller';
+import { getStudentProfile } from './user.controller';
+
 import { Request,Response } from "express";
 const validateRegistration = require('../../middlware/validateRegistration')
 const validateSRegistration = require('../../middlware/validateSRegistration')
@@ -28,6 +30,7 @@ Studentrouter.post('/register/student', validateRegistration, registerStudent);
 Studentrouter.post('/register/studentCsv', registerStudentCsv);
 Studentrouter.post('/register/staff', validateSRegistration, registerStaff);
 Studentrouter.post('/register/add', registerDependency);
+Studentrouter.post('/me', getStudentProfile);
 
 Studentrouter.post('/upload', upload.single('file'), uploadFile);
 

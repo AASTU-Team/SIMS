@@ -52,7 +52,7 @@ async function login(req: Request, res: Response): Promise<any> {
 }
 async function getUserProfile(req: any, res: Response) {
   try {
-    res.status(200).send({ email: req.user.email, username: req.user.role });
+    res.status(200).send({ email: req.user.email, role: req.user.role });
   } catch (e: any) {
     res.status(500).send(e.message);
   }

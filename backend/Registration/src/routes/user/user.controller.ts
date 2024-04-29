@@ -170,7 +170,12 @@ export const getStudentProfile = async (req: Request, res: Response) => {
       const student = await Student.findOne({
         email,
       });
-      return res.status(200).json({ ...student, role });
+      return res.status(200).json({ "student":student
+        
+        , "role":role 
+
+
+      });
     } else {
       return res.status(401).json({ message: "unAuthorized" });
     }
