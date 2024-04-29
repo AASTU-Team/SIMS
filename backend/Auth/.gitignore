@@ -1,3 +1,6 @@
+#Mail Config
+src/helper/mail.ts
+
 # Logs
 logs
 *.log
