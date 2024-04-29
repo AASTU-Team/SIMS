@@ -15,8 +15,7 @@ interface IAuth {
   tokens: string[];
   salt: string;
 }
-const bcrypt = require ('bcrypt');
-
+const bcrypt = require("bcrypt");
 
 async function register(req: Request, res: Response): Promise<any> {
   //  Validate user data
@@ -28,13 +27,13 @@ async function register(req: Request, res: Response): Promise<any> {
   //   "password",
   //   "salt",
   // ]);
-  const salt =await  bcrypt.genSalt(10)
- // const password = await bcrypt.hash(req.body.password, salt)
+  const salt = await bcrypt.genSalt(10);
+  // const password = await bcrypt.hash(req.body.password, salt)
   const user = await createUser({ ...req.body, salt: salt });
   //send email with link
   await sendEmail(user);
   console.log(user);
-  if (!user) return res.status(409).json({message:"Conflict"});
+  if (!user) return res.status(409).json({ message: "Conflict" });
   return res.status(201).send({ message: "success message" });
 }
 async function login(req: Request, res: Response): Promise<any> {
@@ -53,9 +52,9 @@ async function login(req: Request, res: Response): Promise<any> {
 }
 async function getUserProfile(req: any, res: Response) {
   try {
-    res.status(200).send("user profile");
-  } catch (e) {
-    // res.status(500).send(error.message)
+    res.status(200).send({ email: req.user.email, username: req.user.role });
+  } catch (e: any) {
+    res.status(500).send(e.message);
   }
 }
 async function getNewAccessToken(req: any, res: Response): Promise<void> {
@@ -73,37 +72,27 @@ async function changePassword(req: any, res: Response): Promise<void> {
     const user = req.user;
 
     //const isMatch = await bcrypt.compare(password , req.user.password)
-   
-    const salt =await  bcrypt.genSalt(10)
-   const password = await bcrypt.hash(req.body.password, salt)
+
+    const salt = await bcrypt.genSalt(10);
+    const password = await bcrypt.hash(req.body.password, salt);
     console.log(req.body);
-   
-    if (req.isFirstTime)
-      {
-        user.invitations = "";
-        user.salt = salt
-        user.password = password;
-     
 
-      } 
-
-      else{
-        const isMatch = await bcrypt.compare(req.body.oldPassword , user.password)
-        if(isMatch)
-        {
-          user.password =await bcrypt.hash(req.body.password, salt)
-          user.salt = salt
-
-        }
-
-        else{
-         throw new Error(`Invalid password`)
-        }
+    if (req.isFirstTime) {
+      user.invitations = "";
+      user.salt = salt;
+      user.password = password;
+    } else {
+      const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
+      if (isMatch) {
+        user.password = await bcrypt.hash(req.body.password, salt);
+        user.salt = salt;
+      } else {
+        throw new Error(`Invalid password`);
       }
-      console.log(user);
-      await user.save();
-      res.status(200).send("password changed");
- 
+    }
+    console.log(user);
+    await user.save();
+    res.status(200).send("password changed");
   } catch (e: unknown) {
     console.log(e);
     res.status(400).send(e);
@@ -143,7 +132,7 @@ async function findByCredentials(
   if (!user) {
     throw new Error("invalid email or password");
   }
-   const isMatch = await bcrypt.compare(password , user.password)
+  const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     throw new Error(" invalid email or password");
   }
