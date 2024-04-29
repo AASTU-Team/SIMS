@@ -9,6 +9,7 @@ import Dashboard from "../pages/Dashboard";
 import RegisterUser from "../pages/RegisterUser";
 import Profile from "../pages/Profile";
 import SetPassword from "../pages/SetPassword";
+import Loader from "../components/Loader";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -17,6 +18,7 @@ const AllRoutes = () => {
       <Routes>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/setpass" element={<SetPassword />} />
+        <Route path="/loading" element={<Loader/>} />
 
         <Route
           path="/*"
