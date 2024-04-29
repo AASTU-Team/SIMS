@@ -17,7 +17,6 @@ interface IAuth {
 }
 const bcrypt = require ('bcrypt');
 
-
 async function register(req: Request, res: Response): Promise<any> {
   //  Validate user data
   const { error } = validateUser(req.body);
@@ -70,7 +69,7 @@ async function getNewAccessToken(req: any, res: Response): Promise<void> {
 }
 async function changePassword(req: any, res: Response): Promise<void> {
   try {
-    const user = req.user;
+    const user = req.user;  //database user object
 
     //const isMatch = await bcrypt.compare(password , req.user.password)
    
