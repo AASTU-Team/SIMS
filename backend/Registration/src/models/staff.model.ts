@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 let staffSchema  = new mongoose.Schema({
     name:{
         type:String,
-        required:false
+        required:true
     },
     email:{
         type:String,
-        required:false
+        required:true
     },
     department_id:{
         type:mongoose.Schema.Types.ObjectId,
@@ -16,20 +16,20 @@ let staffSchema  = new mongoose.Schema({
     },
     phone:{
         type:String,
-        required:false
+        required:true
     },
     address:{
         type:String,
-        required:false
+        required:true
     },
     birthday:{
         type:Date,
-        required:false
+        required:true
     },
     gender:{
         type: String,
         enum: ['MALE', 'FEMALE'],
-        required: false
+        required: true
     }
 
 
