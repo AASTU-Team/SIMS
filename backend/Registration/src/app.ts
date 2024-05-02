@@ -21,3 +21,5 @@ app.use("/curriculum", curriculumRoute);
 // });
 
 export = app;
+
+

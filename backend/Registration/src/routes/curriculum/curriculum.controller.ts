@@ -8,6 +8,8 @@ const Joi = require("joi");
 let results: any = [];
 
 const Curriculum = require("../../models/curriculum.model");
+const Department = require("../../models/department.model");
+const Course = require("../../models/course.model");
 
 // export const uploadFile = (req: Request, res: Response) => {
 //   if (!req.file) {
@@ -76,6 +78,139 @@ export const createCurriculum = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const createCurriculumCsv = async(req: Request, res: Response) => {
+
+
+  let errors:String[] = [""] 
+
+  
+  
+     
+
+  fs.createReadStream('./cur.csv')
+.pipe(csv())
+.on('data', (data:any) => {
+  // Process each row of data
+  results.push(data);
+})
+.on('end', async() => {
+  try {
+    // The parsing is complete
+    console.log(results);
+
+    let  i = 0
+
+   
+
+    async function courseNameToObjectId(name: string): Promise<string> {
+      const course = await Course.findOne({ code: name });
+      console.log("course", course);
+      if (!course) {
+        errors.push("Could not find course: " + name);
+        // Handle the error case accordingly
+      }
+      return course._id;
+    }
+    async function getDeparmentId(name: string): Promise<string> {
+      const department_id = await Department.findOne({name:name});
+      
+      if(!department_id)
+        {
+          errors.push("could not find department" + results[0].department)
+          
+        }
+
+        return  department_id._id
+
+    }
+
+  
+ 
+      const transformedData = await Promise.all(results.map(async (item: any, index: number) => {
+        const courseNames = item.course.split(',');
+        const semesters = item.semester.split(',').map((semester: any) => parseInt(semester));
+      
+        const courses = await Promise.all(courseNames.map(async (courseName: any, index: any) => ({
+          courseId: await courseNameToObjectId(courseName),
+          semester: semesters[index]
+        })));
+      
+        const departmentId = await getDeparmentId(results[index].department); // Await the Promise
+      
+        return {
+          name: results[index].name,
+          department_id: departmentId, // Use the resolved value
+          credits_required: results[index].credits_required,
+          year: results[index].year,
+          courses: courses
+        };
+      }));
+    
+    
+
+   
+
+   
+
+  /*   for (const curriculum of results) {
+
+      const department_id = await Department.findOne({name:curriculum.department});
+      did = department_id
+      if(!department_id)
+        {
+          errors.push("could not find department" + curriculum.department)
+          
+        }
+      
+
+   
+      const { error } = validateCurriculum(curriculum);
+      if (error) {
+        console.error('Validation error:', error);
+        continue; // Skip this student and move to the next one
+        
+      }
+
+      
+
+     
+      //await Curriculum.create(curriculum);
+      i++
+    
+    } */
+      await Curriculum.create(transformedData);
+
+    console.log('Data inserted successfully');
+    res.status(200).json({ message: transformedData });
+  
+  } catch (error:any) {
+    console.error('Error inserting data:', error);
+    res.status(500).json({ message: error.message });
+  }
+})
+.on('error', (error:any) => {
+  // Handle any errors that occur during the parsing
+  console.error(error);
+  res.status(500).json({ message: error.message });
+});
+  
+};
+function validateCurriculum(curriculum: any) {
+  const schema = Joi.object({
+   
+    name: Joi.string(),
+    department: Joi.string().optional(),
+    credits_required: Joi.number().integer(),
+    year:Joi.date(),  
+    course:Joi.string(),
+    semester: Joi.string(),
+ 
+
+  });
+
+  return schema.validate(curriculum);
+}
 export const updateCurriculum = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

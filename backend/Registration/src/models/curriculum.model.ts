@@ -3,37 +3,33 @@ import mongoose from "mongoose";
 let curriculumSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: false,
+    required: true,
   },
 
   department_id: {
     type: mongoose.Schema.Types.ObjectId,
-    required: false,
+    required: true,
     ref: "Department",
   },
-
   credits_required: {
     type: Number,
-    required: false,
+    required: true,
   },
-  semister: {
-    type: String,
-    required: false,
-  },
+
   year: {
     type: Date,
-    required: false,
+    required: true,
   },
   courses: [
     {
       courseId: {
         type: mongoose.Schema.Types.ObjectId,
-        required: false,
+        required: true,
         ref: "Course",
       },
       semester: {
         type: Number,
-        required: false,
+        required: true,
       },
     },
   ],

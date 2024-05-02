@@ -3,11 +3,11 @@ import mongoose from "mongoose";
 let courseSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: false,
+    required: true,
   },
   department_id: {
     type: mongoose.Schema.Types.ObjectId,
-    required: false,
+    required: true,
     ref: "Department",
   },
   instructors: {
@@ -17,30 +17,30 @@ let courseSchema = new mongoose.Schema({
   },
   credits: {
     type: Number,
-    required: false,
+    required: true,
     default: 0,
   },
   prerequisites: {
     type: Array<mongoose.Schema.Types.ObjectId>,
-    required: false,
+    required: true,
     ref: "Course",
   },
   type: {
     type: String,
-    required: false,
+    required: true,
   },
   code: {
     type: String,
-    required: false,
+    required: true,
     unique: true,
   },
   lec: {
     type: String,
-    required: false,
+    required: true,
   },
   lab: {
     type: String,
-    required: false,
+    required: true,
   },
   description: {
     type: String,

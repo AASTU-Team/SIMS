@@ -1,14 +1,16 @@
 import { head } from "app";
+import { required } from "joi";
 import mongoose from "mongoose";
 
 let departmentSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: false,
+    required: true,
   },
 
   description: {
     type: String,
+    required:false,
   },
   dep_head: { type: mongoose.Types.ObjectId, required: false, ref: "staff" },
 });

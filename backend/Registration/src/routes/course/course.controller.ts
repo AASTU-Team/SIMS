@@ -7,6 +7,9 @@ const Joi = require("joi");
 let results: any = [];
 
 const Course = require("../../models/course.model");
+const Curriculum = require("../../models/curriculum.model");
+const Department = require("../../models/department.model");
+const Staff = require("../../models/staff.model");
 
 // export const uploadFile = (req: Request, res: Response) => {
 //   if (!req.file) {
@@ -37,6 +40,118 @@ const Course = require("../../models/course.model");
 //       res.status(500).json({ error: "Internal server error" });
 //     });
 // };
+export const createCourseCsv = async(req: Request, res: Response) => {
+
+
+  let errors:String[] = [""] 
+
+  
+  
+     
+
+  fs.createReadStream('./course.csv')
+.pipe(csv())
+.on('data', (data:any) => {
+  // Process each row of data
+  results.push(data);
+})
+.on('end', async() => {
+  try {
+    // The parsing is complete
+    console.log(results);
+    async function getEmailObjectIds(emails:any) {
+      const staffIds = [];
+      const emailList = emails.split(',');
+      for (const email of emailList) {
+        const staff = await Staff.findOne({ email: email.trim() });
+        if (staff) {
+          staffIds.push(staff._id);
+        }
+      }
+      return staffIds;
+    }
+    
+    async function getPrerequisiteObjectIds(prerequisites:any) {
+      const courseIds = [];
+      const prerequisiteList = prerequisites.split(',');
+      for (const prerequisite of prerequisiteList) {
+        const course = await Course.findOne({ code: prerequisite.trim() });
+        if (course) {
+          courseIds.push(course._id);
+        }
+      }
+      return courseIds;
+    }
+
+    async function getDeparmentId(name:any) {
+   
+    
+        const id = await Department.findOne({name:name})
+        if (id) {
+          return id._id;
+        }
+      
+    
+    }
+    
+    const transformedData = await Promise.all(results.map(async (item:any) => {
+      const instructorIds = await getEmailObjectIds(item.instructors);
+      const prerequisiteIds = await getPrerequisiteObjectIds(item.prerequisites);
+      const departmentId = await getDeparmentId(item.department);
+    
+     const  course  = {
+        name: item.name,
+        department_id:departmentId ,
+        instructors: instructorIds,
+        credits: item.credits,
+        prerequisites: prerequisiteIds,
+        type: item.type,
+        code: item.code,
+        lec: item.lec,
+        lab: item.lab,
+        description: item.description
+      };
+      const validatedData = course;
+    
+
+      return validatedData;
+    }
+  ));
+
+  
+      await Course.create(transformedData);
+
+    console.log('Data inserted successfully');
+    res.status(200).json({ message: transformedData });
+  
+  } catch (error:any) {
+    console.error('Error inserting data:', error);
+    res.status(500).json({ message: error.message });
+  }
+})
+.on('error', (error:any) => {
+  // Handle any errors that occur during the parsing
+  console.error(error);
+  res.status(500).json({ message: error.message });
+});
+  
+};
+function validateCourse(course: any) {
+  const courseSchema = Joi.object({
+    name: Joi.string().required(),
+    department_id: Joi.string().required(),
+    instructors: Joi.array().items(Joi.string().optional()),
+    credits: Joi.number().required(),
+    prerequisites: Joi.array().items(Joi.string().required()),
+    type: Joi.string().required(),
+    code: Joi.string().required(),
+    lec: Joi.string().required(),
+    lab: Joi.string().required(),
+    description: Joi.string().optional(),
+  });
+
+  return courseSchema.validate(course);
+}
 
 export const getCourses = async (req: Request, res: Response) => {
   // fetch dep id from the auth

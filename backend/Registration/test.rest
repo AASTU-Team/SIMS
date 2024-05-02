@@ -2,7 +2,17 @@ POST http://localhost:3000/course/create
 Content-Type:  application/json
 
 {
-  "name": "jh"
+  "name": "maa",
+  "department_id":"6627f1cb16bcc35f5d498f30",
+  "instructors":["6627f3543267383b7d6046e6"],
+  "credits":5,
+  "prerequisites":[],
+  "type":"freshmancourse",
+  "code":"m10",
+  "lec":"5",
+  "lab":"5",
+  "description":""
+
 }
 ### fetch based on dep 
 GET  http://localhost:3000/course 
@@ -31,7 +41,7 @@ POST http://localhost:3000/department/create
 Content-Type:  application/json
 
 {
-  "name": "new dept"
+  "name": "Software"
 }
 ### get dept
 GET  http://localhost:3000/department/6633446ee8182ca5eb01630e
@@ -61,7 +71,10 @@ POST http://localhost:3000/curriculum/create
 Content-Type:  application/json
 
 {
-  "name": "new curr",
+  "name": "Freshman",
+  "department_id":"6627f1cb16bcc35f5d498f30",
+  "credits_required":10,
+  "year":"2024-09-09",
    "courses" : [
         {"courseId": "6633548832ad25537ba63d13" , 
         "semester" : 2}
