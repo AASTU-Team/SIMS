@@ -12,7 +12,6 @@ let curriculumSchema  = new mongoose.Schema({
         required:false,
         ref:"Department"
     },
-
     credits_required:{
         type:Number,
         required:false
