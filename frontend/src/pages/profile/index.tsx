@@ -1,20 +1,24 @@
 import Breadcrumb from "../../components/Breadcrumbs";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
+import { Button } from "antd";
+import { useState } from "react";
 
-const Settings = () => {
+const Profile = () => {
+  const [changePass,setChangePass] = useState(false)
   const user = useSelector((state: RootState) => state.user);
   return (
-    <div className="mx-auto max-w-270">
-      <Breadcrumb pageName="Settings" />
+    <div className="mx-10 max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+      <Breadcrumb pageName="Profile" />
 
       <div className="grid grid-cols-5 gap-8">
         <div className="col-span-5 xl:col-span-3">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
+            <div className="flex justify-between border-b border-stroke px-7 py-4 dark:border-strokedark">
               <h3 className="font-medium text-black dark:text-white">
                 Personal Information
               </h3>
+              <Button danger onClick={()=>setChangePass(!changePass)}>Change Password</Button>
             </div>
             <div className="p-7">
               <form action="#">
@@ -163,6 +167,7 @@ const Settings = () => {
             </div>
           </div>
         </div>
+{       changePass &&
         <div className="col-span-5 xl:col-span-2">
           <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
             <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
@@ -221,7 +226,7 @@ const Settings = () => {
                 <div className="flex justify-end gap-4.5">
                   <button
                     className="flex justify-center rounded border border-stroke px-6 py-2 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
-                    type="submit"
+                    onClick={()=>setChangePass(false)}
                   >
                     Cancel
                   </button>
@@ -235,10 +240,10 @@ const Settings = () => {
               </form>
             </div>
           </div>
-        </div>
+        </div>}
       </div>
     </div>
   );
 };
 
-export default Settings;
+export default Profile;

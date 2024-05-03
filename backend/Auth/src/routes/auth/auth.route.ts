@@ -7,7 +7,10 @@ import {
   changePassword,
   logout,
   logoutAll,
+  deleteUser
+  
 } from "./auth.controller";
+
 import { accessAuth } from "../../middleware/auth";
 import { role } from "../../middleware/role";
 import { refAuth } from "../../middleware/refAuth";
@@ -16,6 +19,7 @@ import { inviteAuth } from "../../middleware/inviteAuth";
 const auth = Router();
 
 auth.post("/register", register);
+auth.delete("/delete", deleteUser);
 auth.post("/login", login);
 // auth.get("/me", [accessAuth, role], getUserProfile);
 auth.get("/me", [accessAuth], getUserProfile);

@@ -1,42 +1,43 @@
 import mongoose from "mongoose";
 
-let curriculumSchema  = new mongoose.Schema({
+let curriculumSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
 
-    name:{
-        type:String,
-        required:false
-    },
+  department_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "Department",
+  },
+  credits_required: {
+    type: Number,
+    required: true,
+  },
 
-    department_id:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:false,
-        ref:"Department"
+  year: {
+    type: Date,
+    required: true,
+  },
+  courses: [
+    {
+      courseId: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: "Course",
+      },
+      semester: {
+        type: Number,
+        required: true,
+      },
     },
+  ],
+  description: {
+    type: String,
+    required: false,
+  },
+});
 
-    credits_required:{
-        type:Number,
-        required:false
-    },
-    semister:{
-        type:String,
-        required:false
-    },
-    year:{
-        type:Date,
-        required:false
-    },
-    courses:{
-        type:Array<mongoose.Schema.Types.ObjectId>,
-        required:false,
-        ref:"Course"
-        
-    },
-    description:{
-        type:String,
-        required:false
-    }
-
-
-})
-
-module.exports = mongoose.models.Curriculum || mongoose.model("Curriculum", curriculumSchema);
+module.exports =
+  mongoose.models.Curriculum || mongoose.model("Curriculum", curriculumSchema);

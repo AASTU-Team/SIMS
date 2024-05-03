@@ -4,10 +4,10 @@ import { Request,Response } from "express";
 
 // Validation middleware
 const validateRegistration = [
-    body('id')
+   /*  body('id')
     
     .isString()
-    .withMessage(' ID must be a string'),
+    .withMessage(' ID must be a string'), */
  
   body('email').isEmail().withMessage('Invalid email address'),
   body('name')
@@ -45,12 +45,12 @@ const validateRegistration = [
     .withMessage('graduation date must be in the format YYYY-MM-DD'),
 
     body('contact')
-    .optional()
+   
     .isString()
     .withMessage('contact must be a string'),
 
     body('address')
-    .optional()
+   
     .isString()
     .withMessage('address must be a string'),
 
@@ -59,7 +59,7 @@ const validateRegistration = [
     .withMessage('Name must contain only letters and whitespace'),
 
     body('emergencycontact_relation')
-    .optional()
+   
     .isString()
     .withMessage(' must be a string'),
 

@@ -47,14 +47,12 @@ const AuthSchema: Schema = new Schema<IAuth, AuthModel, IAuthMethods>({
 });
 function validateUser(user: Document) {
   const schema = Joi.object({
-   // username: Joi.string().alphanum().min(5).max(40).required(),
-
-   // password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-
+    id: Joi.string().optional(),
     email: Joi.string().email({
       minDomainSegments: 2,
       tlds: { allow: ["com", "net"] },
     }),
+    role: Joi.array().items(Joi.string()),
   });
   return schema.validate(user);
 }
