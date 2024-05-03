@@ -1,0 +1,16 @@
+POST http://localhost:3000/course/create 
+Content-Type:  application/json
+
+{
+  "name": "maa",
+  "department_id":"6627f1cb16bcc35f5d498f30",
+  "instructors":["6627f3543267383b7d6046e6"],
+  "credits":5,
+  "prerequisites":[],
+  "type":"freshmancourse",
+  "code":"m10",
+  "lec":"5",
+  "lab":"5",
+  "description":""
+
+}
