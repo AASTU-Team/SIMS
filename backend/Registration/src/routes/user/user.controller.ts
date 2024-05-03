@@ -543,6 +543,36 @@ export const registerStudent = async (req: Request, res: Response) => {
     }
   };
 
+  export const getStudentProfile = async (req: Request, res: Response) => {
+    try {
+      const response: any = await fetch("http://localhost:5000/auth/me", {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: req.header("Authorization") as string,
+        },
+      });
+  
+      if (response.status === 200) {
+        const { email, role } = await response.json();
+        const student = await Student.findOne({
+          email,
+        });
+        return res.status(200).json({ "student":student
+          
+          , "role":role 
+  
+  
+        });
+      } else {
+        return res.status(401).json({ message: "unAuthorized" });
+      }
+    } catch (error: any) {
+      console.log(error.message);
+      return res.status(500).json({ message: error.message });
+    }
+  };
+
 
 
 

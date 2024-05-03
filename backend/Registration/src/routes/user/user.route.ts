@@ -5,7 +5,7 @@ import { registerStaff } from './user.controller';
 import { registerDependency } from './user.controller';
 import { registerStudentCsv } from './user.controller';
 import { uploadFile } from './user.controller';
-//import { getStudentProfile } from './user.controller';
+import { getStudentProfile } from './user.controller';
 
 import { getAllStudent } from './user.controller';
 import { getStudentByDepartment } from './user.controller';
@@ -34,7 +34,7 @@ Studentrouter.post('/register/student', validateRegistration, registerStudent);
 Studentrouter.post('/register/studentCsv', registerStudentCsv);
 Studentrouter.post('/register/staff', validateSRegistration, registerStaff);
 Studentrouter.post('/register/add', registerDependency);
-//Studentrouter.post('/me', getStudentProfile);
+Studentrouter.post('/me', getStudentProfile);
 
 Studentrouter.post('/upload', upload.single('file'), uploadFile);
 Studentrouter.get('/student/all', getAllStudent);
