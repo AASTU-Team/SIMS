@@ -29,13 +29,40 @@ async function register(req: Request, res: Response): Promise<any> {
   // ]);
   const salt =await  bcrypt.genSalt(10)
  // const password = await bcrypt.hash(req.body.password, salt)
-  const user = await createUser({ ...req.body, salt: salt });
+  const user = await createUser({ ...req.body, salt: salt,role:req.body.role });
   //send email with link
   await sendEmail(user);
   console.log(user);
   if (!user) return res.status(409).json({message:"Conflict"});
   return res.status(201).send({ message: "success message" });
 }
+async function deleteUser(req: Request, res: Response): Promise<any> {
+  //  Validate user data
+  const { error } = validateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  try {
+    const deleteduser = await Auth.deleteOne({email: req.body.email})
+    if(!deleteduser)
+      {
+        return res.status(404).json({message:"Not found"})
+      }
+
+
+      return res.status(200).json({message:"success"})
+  
+    
+  } catch (error:any) {
+
+    return res.status(400).send(error.message);
+
+    
+  }
+ 
+  
+  
+}
+
 async function login(req: Request, res: Response): Promise<any> {
   const { error } = validateAuth(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -157,4 +184,5 @@ export {
   changePassword,
   logout,
   logoutAll,
+  deleteUser
 };
