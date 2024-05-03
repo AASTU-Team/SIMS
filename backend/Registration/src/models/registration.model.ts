@@ -12,10 +12,36 @@ let registrationSchema  = new mongoose.Schema({
         ref:"Section",
         required:false
     },
-    courses:{
-        type:Array,
-        required:false
-    },
+    year: {
+        type: Number,
+        required: true,
+      },
+      semester: {
+        type: Number,
+        required: true,
+      },
+      courses: [
+        {
+          courseID: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Course",
+            required: true,
+          },
+          grade: {
+            type: String,
+            required: false,
+          },
+          status: {
+            type: String,
+            enum: ["Active", "Completed", "Dropped"],
+            required: true,
+          },
+          isRetake: {
+            type: Boolean,
+            required: true,
+          },
+        },
+      ],
     registration_date:{
         type:Date,
         required:false
