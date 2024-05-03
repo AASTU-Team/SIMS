@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
+const assignCourse = require("../../helper/assignFreshmanCourse")
+
 const fs = require("fs");
 const csv = require("csv-parser");
 const Joi = require('joi');
@@ -239,6 +241,7 @@ export const registerStudent = async (req: Request, res: Response) => {
     const year = subtractedYear % 100;
     
     console.log(year);
+    const insertedIds:String[] = [];
     
     
            const count = await Student.countDocuments();
@@ -286,7 +289,16 @@ export const registerStudent = async (req: Request, res: Response) => {
         }
 
         // Insert the student into the database
-        await Student.create({ ...student, id });
+      const newstudent =   await Student.create({ ...student, id });
+      if(newstudent)
+        {
+          insertedIds.push(newstudent._id);
+       
+
+        }
+        else{
+          console.log("error")
+        }
         ///////////////////////////////////////////////////////////////////////
         try {
           const response:any = await fetch("http://localhost:5000/auth/register",{
@@ -351,6 +363,9 @@ export const registerStudent = async (req: Request, res: Response) => {
       }
 
       console.log('Data inserted successfully');
+    const registration = await assignCourse(insertedIds);
+     console.log(registration);
+      //console.log(insertedIds);
       res.status(200).json({ message: "Data inserted successfully" });
       console.log("emails", emails)
     } catch (error:any) {
