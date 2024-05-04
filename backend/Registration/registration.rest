@@ -14,3 +14,7 @@ Content-Type:  application/json
   "description":""
 
 }
+
+### check section for fresh man using assign fresh man helper function 
+Get http://localhost:3000/user/student/test
+Content-Type:  application/json

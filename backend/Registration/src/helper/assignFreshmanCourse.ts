@@ -1,6 +1,7 @@
 const Student = require("../models/student.model");
 const Curriculum = require("../models/curriculum.model");
 const Registration = require("../models/registration.model");
+const Department = require("../models/department.model");
 const Section = require("../models/section.model");
 
 async function assignCourse(Ids: String[]): Promise<any> {
@@ -55,11 +56,19 @@ interface AssignSection {
   year: Number;
   semester: Number;
 }
-async function assignSection({ department, year, semester }: AssignSection) {
+async function assignSection({
+  department,
+  year,
+  semester,
+}: AssignSection): Promise<void> {
   try {
-    console.log(department, year, semester);
     // Get students based on department, year, and semester
-    const students = await Student.find({ department, year });
+    const dept = await Department.findOne({ name: department });
+
+    if (!dept) {
+      throw new Error("Department not found");
+    }
+    const students = await Student.find({ department_id: dept._id, year });
 
     // Calculate the number of sections (rounded up)
     const numSections = Math.ceil(students.length / 30);
@@ -81,8 +90,8 @@ async function assignSection({ department, year, semester }: AssignSection) {
 
       if (existingSection) {
         // Section exists, assign it to the student
-        await Registration.findOneAndUpdate(
-          { _id: student._id },
+        const a = await Registration.findOneAndUpdate(
+          { stud_id: student._id, semester },
           { section_id: existingSection._id }
         );
       } else {
