@@ -2,13 +2,13 @@ POST http://localhost:3000/course/create
 Content-Type:  application/json
 
 {
-  "name": "maa",
+  "name": "physics2",
   "department_id":"6627f1cb16bcc35f5d498f30",
   "instructors":["6627f3543267383b7d6046e6"],
   "credits":5,
-  "prerequisites":[],
+  "prerequisites":["6633753421c6431fbbd36514","663382e7a0411f84d80671f6"],
   "type":"freshmancourse",
-  "code":"m10",
+  "code":"p20",
   "lec":"5",
   "lab":"5",
   "description":""
@@ -74,10 +74,24 @@ Content-Type:  application/json
   "name": "Freshman",
   "department_id":"6627f1cb16bcc35f5d498f30",
   "credits_required":10,
-  "year":"2024-09-09",
+  "year":1,
    "courses" : [
-        {"courseId": "6633548832ad25537ba63d13" , 
-        "semester" : 2}
+        {
+          "courseId": "6633753421c6431fbbd36514" , 
+        "semester" : 1
+        },
+        {
+          "courseId": "663382e7a0411f84d80671f6" , 
+        "semester" : 1
+        },
+        {
+          "courseId": "6635375c6c47724068fb48b5" , 
+        "semester" : 2
+        },
+        {
+          "courseId": "663537946c47724068fb48b7" , 
+        "semester" : 2
+        }
     ]
 }
 ### get curr

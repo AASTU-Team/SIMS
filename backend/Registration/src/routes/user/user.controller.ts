@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 const assignCourse = require("../../helper/assignFreshmanCourse")
+const checkPrerequisite = require("../../helper/checkPrerequisite")
 
 const fs = require("fs");
 const csv = require("csv-parser");
@@ -15,6 +16,8 @@ const Department = require("../../models/department.model");
 const Course = require("../../models/course.model");
 const Curriculum = require("../../models/curriculum.model");
 const Assignment = require("../../models/Assignment.model");
+const Registration = require("../../models/registration.model");
+const RegistrationStatus = require("../../models/RegistrationStatus.model");
 
 export const uploadFile = (req: Request, res: Response) => {
   if (!req.file) {
@@ -126,7 +129,7 @@ export const registerStaff = async(req: Request, res: Response) => {
         const data = req.body;
 
 
-        const newValue = new Assignment(data);
+        const newValue = new RegistrationStatus(data);
         newValue.save()
    
    
@@ -163,6 +166,10 @@ export const registerStudent = async (req: Request, res: Response) => {
         const year = subtractedYear % 100;
         
         console.log(year);
+
+
+
+
         
         
                const count = await Student.countDocuments();
@@ -243,6 +250,20 @@ export const registerStudent = async (req: Request, res: Response) => {
     console.log(year);
     const insertedIds:String[] = [];
     
+  
+
+
+    const department = await Department.findOne({ name: "Freshman" });
+
+    let department_id = ""
+    
+    if (department) {
+      department_id = department._id;
+      console.log("department_id:", department_id);
+    } else {
+      console.log("Department not found");
+    }
+    
     
            const count = await Student.countDocuments();
     console.log(`Total number of documents: ${count}`);
@@ -289,7 +310,7 @@ export const registerStudent = async (req: Request, res: Response) => {
         }
 
         // Insert the student into the database
-      const newstudent =   await Student.create({ ...student, id });
+      const newstudent =   await Student.create({ ...student, id,department_id });
       if(newstudent)
         {
           insertedIds.push(newstudent._id);
@@ -587,6 +608,173 @@ export const registerStudent = async (req: Request, res: Response) => {
       return res.status(500).json({ message: error.message });
     }
   };
+
+
+  ////get student courses
+
+  export const getStudentCourses = async (req: Request, res: Response) => {
+
+    const student_id = req.body.student_id;
+    const courseids:String[] =[]
+
+    const registration = await Registration.find({stud_id: student_id})
+
+    if(!registration)
+      {
+        return res.status(404).json({message:"Courses Not found"})
+      }
+
+      const registrationData:any[] = registration
+
+      registrationData.map(registration=>{
+
+       
+
+        registration.courses.map((course:any)=>{
+         // console.log(course)
+
+          if(course.status === 'Active'){
+
+            courseids.push(course.courseID);
+
+          }
+
+        })
+
+
+      })
+
+
+      return res.status(200).json({ message: courseids });
+  
+
+
+
+
+}
+
+
+export const studentRegistration = async (req: Request, res: Response) => {
+  const student_id = req.body.student_id;
+
+  let department_id = ""
+  let newyear = 0
+  let newsemester = 0
+
+  const courses:String[]  = []
+  const CourseStatus:any[]=[]
+
+
+  const student = await Student.findById(student_id);
+
+  if(!student) {
+    return res.status(404).json({message:"student not found"})
+
+  }
+  department_id = student.department_id
+
+
+
+
+
+
+  const highestCombination = await Registration
+  .findOne({ stud_id: student_id })
+  .sort({ year: -1, semester: -1 })
+  .select('year semester')
+  .limit(1);
+
+if (highestCombination) {
+  const highestYear = highestCombination.year;
+  const highestSemester = highestCombination.semester;
+  //console.log(`Highest combination: Year ${highestYear}, Semester ${highestSemester}`);
+ // res.status(200).send(`Highest combination: Year ${highestYear}, Semester ${highestSemester}`)
+
+ const status = await RegistrationStatus.findOne({year:highestYear})
+ if(!status)
+  {
+    return res.status(404).json({message:"Registration data not found"})
+  }
+
+  if(!status.status)
+    {
+      return res.status(400).json({message:"Registration is not active. contact the administrator"})
+    }
+    if(highestSemester == 1)
+      {
+        newyear = highestYear
+        newsemester = highestSemester + 1
+      }
+      else{
+        newyear = highestYear + 1
+        newsemester = 1
+      }
+
+      console.log("semister", newsemester)
+      console.log("year", newyear)
+      console.log("department", department_id)
+
+
+    const curriculum = await Curriculum.findOne({year:newyear,department_id:department_id})
+
+    if(!curriculum)
+      {
+        return res.status(404).json({message:"Registration data not found"})
+      }
+
+
+      const allCourses:any[]=curriculum.courses
+
+      console.log("All courses", allCourses)
+
+
+      allCourses.map((course:any)=>{
+
+        if(course.semester === newsemester)
+          {
+            courses.push(course.courseId)
+          }
+
+       
+
+      })
+
+      for (const course of courses) {
+
+        const status = await checkPrerequisite(course,student_id)
+        CourseStatus.push({
+          courseId:course,
+          status:status
+        })
+
+
+      }
+
+
+    
+
+
+
+
+      return res.status(200).json({message:CourseStatus})
+  
+
+
+ 
+
+
+} else {
+  console.log('No registrations found for the given stud_id');
+  res.status(200).send(`error`)
+}
+
+
+
+
+
+}
+
+
 
 
 

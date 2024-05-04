@@ -36,8 +36,9 @@ let studentSchema = new mongoose.Schema({
         required:true
     },
     department_id:{
-        type:String,
-        required:false
+        type:mongoose.Schema.Types.ObjectId,
+        required:false,
+        ref:"Department"
     },
     status_id:{
         type:mongoose.Schema.Types.ObjectId,

@@ -4,11 +4,10 @@ const Registration = require("../models/registration.model");
 
 
   async function assignCourse(Ids:String[]): Promise<any> {
-
     const courses:any[] = []
     const success:any = []
 
-    const freshmancurriculum = await Curriculum.findOne({name:"freshman"})
+    const freshmancurriculum = await Curriculum.findOne({name:"Freshman"})
 
     if(!freshmancurriculum){
 

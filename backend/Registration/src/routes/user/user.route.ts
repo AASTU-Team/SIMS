@@ -11,6 +11,8 @@ import { getAllStudent } from './user.controller';
 import { getStudentByDepartment } from './user.controller';
 import { deleteStudent } from './user.controller';
 import { updateStudent } from './user.controller';
+import { getStudentCourses } from './user.controller';
+import { studentRegistration } from './user.controller';
 import { Request,Response } from "express";
 const validateRegistration = require('../../middlware/validateRegistration')
 const validateSRegistration = require('../../middlware/validateSRegistration')
@@ -42,6 +44,8 @@ Studentrouter.get('/student/department', getStudentByDepartment);
 Studentrouter.delete('/student/delete', deleteStudent); 
 Studentrouter.patch('/student/update', updateStudent);
 
+Studentrouter.get('/student/courses', getStudentCourses);
+Studentrouter.post('/student/register', studentRegistration);
 
 
 module.exports =  Studentrouter;
