@@ -18,3 +18,11 @@ Content-Type:  application/json
 ### check section for fresh man using assign fresh man helper function 
 Get http://localhost:3000/user/student/test
 Content-Type:  application/json
+
+### drop coourse for fresh or any 
+POST  http://localhost:3000/user/student/dropcourse/663618696664a0c0488e0a95
+Content-Type:  application/json
+
+{
+  "course_id":"6633753421c6431fbbd36514"
+}

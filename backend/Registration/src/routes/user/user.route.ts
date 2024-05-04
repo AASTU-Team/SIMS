@@ -1,6 +1,6 @@
 import express from "express";
 
-import { registerStudent } from "./user.controller";
+import { dropCourse, registerStudent } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
 import { registerStudentCsv } from "./user.controller";
@@ -46,6 +46,8 @@ Studentrouter.patch("/student/update", updateStudent);
 
 Studentrouter.get("/student/courses", getStudentCourses);
 Studentrouter.post("/student/register", studentRegistration);
+
+Studentrouter.post("/student/dropcourse/:id", dropCourse);
 
 Studentrouter.get("/student/test", async (req: Request, res: Response) => {
   //   const a = await assignSection({
