@@ -26,3 +26,11 @@ Content-Type:  application/json
 {
   "course_id":"6633753421c6431fbbd36514"
 }
+### add coourse for fresh or any // check for prereq  
+POST  http://localhost:3000/user/student/addcourse/663618696664a0c0488e0a95
+Content-Type:  application/json
+
+{
+  "course_id":"6633753421c6431fbbd36514",
+  "semester" : 2
+}

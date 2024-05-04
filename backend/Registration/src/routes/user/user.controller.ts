@@ -624,3 +624,52 @@ export const dropCourse = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: "success" });
 };
+
+export const addCourse = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { course_id, semester } = req.body;
+
+  const registration = await Registration.aggregate([
+    { $match: { stud_id: new mongoose.Types.ObjectId(id) } },
+    { $sort: { year: -1, semester: -1 } },
+    { $limit: 1 },
+  ]);
+  console.log(registration);
+  if (!registration) {
+    return res.status(404).json({ message: "Registration not found" });
+  }
+
+  const registrationData: any = registration[0];
+
+  const courses = registrationData.courses;
+  // check pre requisit
+  // check courses semester
+
+  // check if the course is already taken if so make is reateken true and add a section else just add
+  if (registrationData.semester !== semester) {
+    return res
+      .status(400)
+      .json({ message: "You can only add courses for the current semester" });
+  }
+  let isRetake = false;
+  if (true) {
+    isRetake = true;
+  }
+  const newCourse = {
+    courseID: course_id,
+    grade: "",
+    status: "Active",
+    isRetake,
+  };
+  const updatedRegistration = await Registration.findByIdAndUpdate(
+    registrationData._id,
+    { $push: { courses: newCourse } },
+    { new: true }
+  );
+
+  if (!updatedRegistration) {
+    return res.status(404).json({ message: "Registration not found" });
+  }
+
+  return res.status(200).json({ message: "success" });
+};
