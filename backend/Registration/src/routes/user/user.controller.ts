@@ -1,14 +1,10 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-<<<<<<< HEAD
-const assignCourse = require("../../helper/assignFreshmanCourse")
-const checkPrerequisite = require("../../helper/checkPrerequisite")
-const isCourseTaken = require("../../helper/isCourseTaken")
-const getPossibleAddCourses = require("../../helper/getPossibleAddCourses")
-=======
+
 const assignCourse = require("../../helper/assignFreshmanCourse");
 const checkPrerequisite = require("../../helper/checkPrerequisite");
->>>>>>> 94a343b95da7c39e2eb0b8859f961c15a2b1a0d3
+const isCourseTaken = require("../../helper/isCourseTaken");
+const getPossibleAddCourses = require("../../helper/getPossibleAddCourses");
 
 const fs = require("fs");
 const csv = require("csv-parser");
@@ -650,6 +646,10 @@ export const addCourse = async (req: Request, res: Response) => {
 
   const courses = registrationData.courses;
   // check pre requisit
+  const checked = await checkPrerequisite(course_id, id);
+  if (!checked) {
+    return res.status(403).send("You have to take the prerequisite first");
+  }
   // check courses semester
 
   // check if the course is already taken if so make is reateken true and add a section else just add
@@ -658,10 +658,8 @@ export const addCourse = async (req: Request, res: Response) => {
       .status(400)
       .json({ message: "You can only add courses for the current semester" });
   }
-  let isRetake = false;
-  if (true) {
-    isRetake = true;
-  }
+  let isRetake = await isCourseTaken(course_id, id);
+
   const newCourse = {
     courseID: course_id,
     grade: "",
@@ -677,53 +675,9 @@ export const addCourse = async (req: Request, res: Response) => {
   if (!updatedRegistration) {
     return res.status(404).json({ message: "Registration not found" });
   }
-
-<<<<<<< HEAD
-    
-
-
-
-
-      return res.status(200).json({message:CourseStatus})
-  
-
-
- 
-
-
-} else {
-  console.log('No registrations found for the given stud_id');
-  res.status(200).send(`error`)
-}
-
-
-
-
-
-}
-
-
-export const ListAddCourses = async (req: Request, res: Response) => {
-
- 
-
-
-  res.status(200).send(await getPossibleAddCourses("663618696664a0c0488e0a95",))
-
-
-
-}
-
-
-
-
-
-
-
-
-
-  
-=======
   return res.status(200).json({ message: "success" });
 };
->>>>>>> 94a343b95da7c39e2eb0b8859f961c15a2b1a0d3
+
+export const ListAddCourses = async (req: Request, res: Response) => {
+  res.status(200).send(await getPossibleAddCourses("663618696664a0c0488e0a95"));
+};
