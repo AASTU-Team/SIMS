@@ -3,10 +3,15 @@ import mongoose from "mongoose";
 const fs = require("fs");
 const csv = require("csv-parser");
 const Joi = require("joi");
+const checkPrerequisite= require("../../helper/checkPrerequisite")
 
 let results: any = [];
 
 const Department = require("../../models/department.model");
+const Student = require("../../models/student.model");
+const Registration = require("../../models/registration.model");
+const Curriculum = require("../../models/curriculum.model");
+
 
 // export const uploadFile = (req: Request, res: Response) => {
 //   if (!req.file) {
@@ -109,36 +114,102 @@ export const deleteDep = async (req: Request, res: Response) => {
 };
 
 ///assign deparmtent for students
-export const assignDepartmentCsv = async(req: Request, res: Response) => {
+export const assignDepartmentCsv = async (req: Request, res: Response) => {
+  let errors: string[] = [""];
 
+  const results: any[] = [];
 
-  let errors:String[] = [""] 
+  fs.createReadStream("./department.csv")
+    .pipe(csv())
+    .on("data", async (data: any) => {
+      // Process each row of data
+      results.push(data);
 
-  
-  
-     
+      let department_id = "";
+      let student_id = "";
+      let semester = 1;
+      const courses: any[] = [];
 
-  fs.createReadStream('./department.csv')
-.pipe(csv())
-.on('data', (data:any) => {
-  // Process each row of data
-  results.push(data);
-})
-.on('end', async() => {
-  try {
-    // The parsing is complete
-    console.log(results);
-    
-  
-  } catch (error:any) {
-    console.error('Error inserting data:', error);
-    res.status(500).json({ message: error.message });
-  }
-})
-.on('error', (error:any) => {
-  // Handle any errors that occur during the parsing
-  console.error(error);
-  res.status(500).json({ message: error.message });
-});
-  
+      if (data.semester) {
+        semester = parseInt(data.semester);
+      }
+
+      console.log("Processing student:", data.id);
+
+      const theStudent = await Student.findOne({ id: data.id });
+      if (!theStudent) {
+        errors.push(`Can't find student with id ${data.id}`);
+        return;
+      }
+
+      const department = await Department.findOne({ name: data.department });
+      if (!department) {
+        errors.push(`Can't find department for student with id ${data.id}`);
+        return;
+      }
+
+      department_id = department._id;
+      student_id = theStudent._id;
+
+      if (theStudent && department) {
+        department_id = department._id;
+        theStudent.department_id = department_id;
+        await theStudent.save();
+        console.log(`Student with id ${data.id} assigned to department ${data.department}`);
+      }
+
+      const curriculum = await Curriculum.findOne({
+        department_id: department_id,
+        year: data.year,
+      });
+
+      if (!curriculum) {
+        errors.push(`Can't find curriculum for student with id ${data.id}`);
+        return;
+      }
+
+      const departmentCourses: any[] = curriculum.courses;
+
+      departmentCourses.forEach((course) => {
+        if (course.semester === semester) {
+          if(checkPrerequisite(course.courseId,student_id)){  ///validate here
+            
+         
+          courses.push({
+            courseID: course.courseId,
+            grade: "",
+            status: "Active",
+            isRetake: false,
+          });
+        }
+
+        }
+      });
+
+      const registration = new Registration({
+        stud_id: student_id,
+        year: data.year,
+        semester: semester,
+        courses: courses,
+        registration_date: new Date(),
+      });
+
+      try {
+        const savedRegistration = await registration.save();
+        console.log("Registration saved successfully:", savedRegistration);
+      } catch (error) {
+        console.error("Error saving registration:", error);
+        errors.push(`Unable to save registration of student ${data.id}`);
+      }
+    })
+    .on("end", () => {
+      // Send the response after the parsing and processing is complete
+      console.log("Total results:", results.length);
+      res.status(200).json({ message: errors });
+    })
+    .on("error", (error: any) => {
+      // Handle any errors that occur during the parsing
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    });
 };

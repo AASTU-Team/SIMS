@@ -2,6 +2,8 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 const assignCourse = require("../../helper/assignFreshmanCourse")
 const checkPrerequisite = require("../../helper/checkPrerequisite")
+const isCourseTaken = require("../../helper/isCourseTaken")
+const getPossibleAddCourses = require("../../helper/getPossibleAddCourses")
 
 const fs = require("fs");
 const csv = require("csv-parser");
@@ -769,6 +771,18 @@ if (highestCombination) {
 }
 
 
+
+
+
+}
+
+
+export const ListAddCourses = async (req: Request, res: Response) => {
+
+ 
+
+
+  res.status(200).send(await getPossibleAddCourses("663618696664a0c0488e0a95",))
 
 
 
