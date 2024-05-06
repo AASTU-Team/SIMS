@@ -1,14 +1,10 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
-<<<<<<< HEAD
-const assignCourse = require("../../helper/assignFreshmanCourse")
-const checkPrerequisite = require("../../helper/checkPrerequisite")
-const isCourseTaken = require("../../helper/isCourseTaken")
-const getPossibleAddCourses = require("../../helper/getPossibleAddCourses")
-=======
+
 const assignCourse = require("../../helper/assignFreshmanCourse");
 const checkPrerequisite = require("../../helper/checkPrerequisite");
->>>>>>> 94a343b95da7c39e2eb0b8859f961c15a2b1a0d3
+const isCourseTaken = require("../../helper/isCourseTaken");
+const getPossibleAddCourses = require("../../helper/getPossibleAddCourses");
 
 const fs = require("fs");
 const csv = require("csv-parser");
@@ -683,5 +679,6 @@ export const addCourse = async (req: Request, res: Response) => {
 };
 
 export const ListAddCourses = async (req: Request, res: Response) => {
-  res.status(200).send(await getPossibleAddCourses("663618696664a0c0488e0a95"));
+  const { id } = req.params;
+  res.status(200).send(await getPossibleAddCourses(id));
 };
