@@ -20,17 +20,17 @@ Get http://localhost:3000/user/student/test
 Content-Type:  application/json
 
 ### drop coourse for fresh or any 
-POST  http://localhost:3000/user/student/dropcourse/663618696664a0c0488e0a95
+POST  http://localhost:3000/user/student/dropcourse/6636186a6664a0c0488e0a97
 Content-Type:  application/json
 
 {
-  "course_id":"6633753421c6431fbbd36514"
+  "course_id":"663a03d879c454a6075ec31d"
 }
 ### add coourse for fresh or any // check for prereq  
-POST  http://localhost:3000/user/student/addcourse/663618696664a0c0488e0a95
+POST  http://localhost:3000/user/student/addcourse/6636186a6664a0c0488e0a97
 Content-Type:  application/json
 
 {
-  "course_id":"6633753421c6431fbbd36514",
+  "course_id":"663a03d879c454a6075ec31d",
   "semester" : 2
 }

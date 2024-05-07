@@ -6,16 +6,14 @@ const checkPrerequisite = require("../../helper/checkPrerequisite");
 const isCourseTaken = require("../../helper/isCourseTaken");
 const getPossibleAddCourses = require("../../helper/getPossibleAddCourses");
 async function getCredit(Id: String): Promise<any> {
-
   const course = await Course.findById(Id);
   if (!course) {
     //console.error("Course not found");
     return 0;
   }
- // console.log(parseInt(course.credits));
+  // console.log(parseInt(course.credits));
 
   return parseInt(course.credits);
-
 }
 
 const fs = require("fs");
@@ -182,7 +180,6 @@ export const registerStudent = async (req: Request, res: Response) => {
       });
 
       if (response.status === 201) {
-        
         const r = await response.json();
         console.log(r.message);
         const newStudent = await new Student({ ...data, id: id });
@@ -191,8 +188,8 @@ export const registerStudent = async (req: Request, res: Response) => {
         insertedIds.push(newStudent._id);
 
         const registration = await assignCourse(insertedIds);
-        console.log("registration",registration);
-      
+        console.log("registration", registration);
+
         return res
           .status(201)
           .json({ message: "successfully created student profile" });
@@ -597,21 +594,19 @@ export const studentRegistration = async (req: Request, res: Response) => {
         courseId: course,
         status: status,
       });
-      if(status)
-        {
-          regCourses.push({
-            courseID: course,
-            grade: "",
-            status: "Active",
-            isRetake: false,
-          })
-          const value = await getCredit(course)
-          total_credit.push(value); 
-        }
-      
+      if (status) {
+        regCourses.push({
+          courseID: course,
+          grade: "",
+          status: "Active",
+          isRetake: false,
+        });
+        const value = await getCredit(course);
+        total_credit.push(value);
+      }
     }
-    let sum:number = 0
-    total_credit.map((credit:any) => {
+    let sum: number = 0;
+    total_credit.map((credit: any) => {
       sum += credit;
     });
     const registration = await new Registration({
@@ -628,7 +623,6 @@ export const studentRegistration = async (req: Request, res: Response) => {
       console.log("Registration saved successfully:", savedRegistration);
     } catch (error) {
       console.error("Error saving registration:", error);
-   
     }
 
     return res.status(200).json({ message: CourseStatus });
@@ -653,17 +647,32 @@ export const dropCourse = async (req: Request, res: Response) => {
   }
 
   const registrationData: any = registration[0];
+  const course = await Course.findById(course_id).select("credits").lean();
 
   const courses = registrationData.courses;
-
+  const isOverLoad = checkOverLoad(
+    registrationData.total_credit,
+    course.credits,
+    false
+  );
+  if (isOverLoad === "under") {
+    return res.status(400).json({ message: "You are underloading" });
+  }
+  let found = false;
   const newCourses = courses.filter((course: any) => {
     if (course.courseID.toString() === course_id) {
+      found = true;
       return false;
     } else {
       return true;
     }
   });
+  if (!found) {
+    return res.status(400).send({ message: "course nor found" });
+  }
   registrationData.courses = newCourses;
+  registrationData.total_credit =
+    registrationData.total_credit - course.credits;
 
   const updatedRegistration = await Registration.findByIdAndUpdate(
     registrationData._id,
@@ -687,7 +696,7 @@ export const addCourse = async (req: Request, res: Response) => {
     { $sort: { year: -1, semester: -1 } },
     { $limit: 1 },
   ]);
-  console.log(registration);
+  // console.log(registration);
   if (!registration) {
     return res.status(404).json({ message: "Registration not found" });
   }
@@ -700,13 +709,26 @@ export const addCourse = async (req: Request, res: Response) => {
   if (!checked) {
     return res.status(403).send("You have to take the prerequisite first");
   }
-  // check courses semester
-
-  // check if the course is already taken if so make is reateken true and add a section else just add
   if (registrationData.semester !== semester) {
     return res
       .status(400)
       .json({ message: "You can only add courses for the current semester" });
+  }
+  const found = courses.find((course: any) => {
+    return course.courseID.toString() === course_id;
+  });
+  if (found) {
+    return res.status(400).send({ message: "course existes" });
+  }
+  const course = await Course.findById(course_id).select("credits").lean();
+
+  const isOverLoad = checkOverLoad(
+    registrationData.total_credit,
+    course.credits,
+    true
+  );
+  if (isOverLoad === "overload") {
+    return res.status(400).json({ message: "You are overloading" });
   }
   let isRetake = await isCourseTaken(course_id, id);
 
@@ -718,7 +740,10 @@ export const addCourse = async (req: Request, res: Response) => {
   };
   const updatedRegistration = await Registration.findByIdAndUpdate(
     registrationData._id,
-    { $push: { courses: newCourse } },
+    {
+      $push: { courses: newCourse },
+      total_credit: registrationData.total_credit + course.credits,
+    },
     { new: true }
   );
 
@@ -732,3 +757,15 @@ export const ListAddCourses = async (req: Request, res: Response) => {
   const { id } = req.params;
   res.status(200).send(await getPossibleAddCourses(id));
 };
+
+function checkOverLoad(total_credit: Number, credits: Number, add: boolean) {
+  if (add) {
+    if (Number(total_credit) + Number(credits) > 21) {
+      return "overload";
+    }
+  } else if (Number(total_credit) - Number(credits) < 12) {
+    return "under";
+  } else {
+    return "ok";
+  }
+}
