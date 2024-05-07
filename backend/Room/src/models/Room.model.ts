@@ -8,9 +8,7 @@ let roomSchema = new mongoose.Schema({
   block: {
     type: String,
     required: false,
-  }
-
+  },
 });
 
-module.exports =
-  mongoose.models.Room || mongoose.model("Room", roomSchema);
+module.exports = mongoose.models.Room || mongoose.model("Room", roomSchema);
