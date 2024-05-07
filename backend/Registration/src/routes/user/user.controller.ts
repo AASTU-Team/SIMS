@@ -5,6 +5,18 @@ const assignCourse = require("../../helper/assignFreshmanCourse");
 const checkPrerequisite = require("../../helper/checkPrerequisite");
 const isCourseTaken = require("../../helper/isCourseTaken");
 const getPossibleAddCourses = require("../../helper/getPossibleAddCourses");
+async function getCredit(Id: String): Promise<any> {
+
+  const course = await Course.findById(Id);
+  if (!course) {
+    //console.error("Course not found");
+    return 0;
+  }
+ // console.log(parseInt(course.credits));
+
+  return parseInt(course.credits);
+
+}
 
 const fs = require("fs");
 const csv = require("csv-parser");
@@ -170,13 +182,17 @@ export const registerStudent = async (req: Request, res: Response) => {
       });
 
       if (response.status === 201) {
-        ////////////////////////////////////////////////////
-
-        /////////////////////////////////////////////////
+        
         const r = await response.json();
         console.log(r.message);
         const newStudent = await new Student({ ...data, id: id });
         await newStudent.save();
+        const insertedIds: String[] = [];
+        insertedIds.push(newStudent._id);
+
+        const registration = await assignCourse(insertedIds);
+        console.log("registration",registration);
+      
         return res
           .status(201)
           .json({ message: "successfully created student profile" });
@@ -513,6 +529,8 @@ export const studentRegistration = async (req: Request, res: Response) => {
 
   const courses: String[] = [];
   const CourseStatus: any[] = [];
+  const regCourses: any[] = [];
+  const total_credit: Number[] = [];
 
   const student = await Student.findById(student_id);
 
@@ -579,6 +597,38 @@ export const studentRegistration = async (req: Request, res: Response) => {
         courseId: course,
         status: status,
       });
+      if(status)
+        {
+          regCourses.push({
+            courseID: course,
+            grade: "",
+            status: "Active",
+            isRetake: false,
+          })
+          const value = await getCredit(course)
+          total_credit.push(value); 
+        }
+      
+    }
+    let sum:number = 0
+    total_credit.map((credit:any) => {
+      sum += credit;
+    });
+    const registration = await new Registration({
+      stud_id: student_id,
+      year: newyear,
+      semester: newsemester,
+      courses: regCourses,
+      registration_date: new Date(),
+      total_credit: sum,
+    });
+
+    try {
+      const savedRegistration = await registration.save();
+      console.log("Registration saved successfully:", savedRegistration);
+    } catch (error) {
+      console.error("Error saving registration:", error);
+   
     }
 
     return res.status(200).json({ message: CourseStatus });

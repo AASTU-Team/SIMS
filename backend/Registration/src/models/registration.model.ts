@@ -20,6 +20,11 @@ let registrationSchema  = new mongoose.Schema({
         type: Number,
         required: true,
       },
+      total_credit:{
+        type: Number,
+        required: false,
+
+      },
       courses: [
         {
           courseID: {
