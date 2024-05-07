@@ -185,30 +185,33 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
 
       const departmentCourses: any[] = curriculum.courses;
 
-      departmentCourses.forEach(async(course) => {
+      const promises = departmentCourses.map(async (course) => {
         if (course.semester === semester) {
-          if(checkPrerequisite(course.courseId,student_id)){  ///validate here
-            
-         
-          courses.push({
-            courseID: course.courseId,
-            grade: "",
-            status: "Active",
-            isRetake: false,
-          });
-          const value = await getCredit(course.courseId)
-          total_credit.push(value); 
-
-        }
-
+          const status = await checkPrerequisite(course.courseId, student_id);
+          console.log(status + " FOR STUDENT " + student_id);
+          if (status === true) {
+            console.log("here");
+      
+            courses.push({
+              courseID: course.courseId,
+              grade: "",
+              status: "Active",
+              isRetake: false,
+            });
+      
+            const value = await getCredit(course.courseId);
+            total_credit.push(value);
+          }
         }
       });
+      
+      await Promise.all(promises);
       let sum:number = 0
       total_credit.map((credit:any) => {
         sum += credit;
       });
 
-      const registration = new Registration({
+      const registration = await new Registration({
         stud_id: student_id,
         year: data.year,
         semester: semester,

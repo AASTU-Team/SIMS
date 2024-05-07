@@ -702,7 +702,6 @@ export const addCourse = async (req: Request, res: Response) => {
   }
 
   const registrationData: any = registration[0];
-
   const courses = registrationData.courses;
   // check pre requisit
   const checked = await checkPrerequisite(course_id, id);
@@ -754,7 +753,7 @@ export const addCourse = async (req: Request, res: Response) => {
 };
 
 export const ListAddCourses = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { id } = req.body;
   res.status(200).send(await getPossibleAddCourses(id));
 };
 

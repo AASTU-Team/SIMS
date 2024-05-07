@@ -119,8 +119,13 @@ async function getPossibleAddCourses(StudentID:String): Promise<any> {
 
             const status = await checkPrerequisite(course,student_id)
 
+            if(status == true)
+                {
+                    PossibleCourse.push(course)
+                }
+
             
-                PossibleCourse.push(status)
+                //PossibleCourse.push(status)
             
            
            
