@@ -6,6 +6,7 @@ import {
   createDep,
   updateDep,
   deleteDep,
+  assignDepartmentCsv
 } from "./department.controller";
 
 import { Request, Response } from "express";
@@ -26,5 +27,6 @@ departmentRoute.get("/:id", getDepById);
 departmentRoute.post("/create", createDep);
 departmentRoute.patch("/:id", updateDep);
 departmentRoute.delete("/:id", deleteDep);
+departmentRoute.post("/assignStudents", assignDepartmentCsv);
 
 module.exports = departmentRoute;

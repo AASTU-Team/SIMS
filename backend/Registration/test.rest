@@ -2,13 +2,13 @@ POST http://localhost:3000/course/create
 Content-Type:  application/json
 
 {
-  "name": "maa",
-  "department_id":"6627f1cb16bcc35f5d498f30",
+  "name": "FP2",
+  "department_id":"66339dd2caaf3b0b164e50e2",
   "instructors":["6627f3543267383b7d6046e6"],
   "credits":5,
   "prerequisites":[],
-  "type":"freshmancourse",
-  "code":"m10",
+  "type":"Softwarecourse",
+  "code":"Fp201",
   "lec":"5",
   "lab":"5",
   "description":""
@@ -24,11 +24,12 @@ GET  http://localhost:3000/course/66333884b2387b39d3a9bf0b
 Content-Type:  application/json
 
 ### update 
-PATCH  http://localhost:3000/course/66333884b2387b39d3a9bf0b  
+PATCH  http://localhost:3000/course/6637392d883de948fc00f776 
 Content-Type:  application/json
 
 {
-  "name": "new name"
+  "name":"SDS"
+   "prerequisites":["66363f250dfeb00796223221"],
 }
 ### delete 
 DELETE   http://localhost:3000/course/66333884b2387b39d3a9bf0b 
@@ -71,13 +72,20 @@ POST http://localhost:3000/curriculum/create
 Content-Type:  application/json
 
 {
-  "name": "Freshman",
-  "department_id":"6627f1cb16bcc35f5d498f30",
+  "name": "Software",
+  "department_id":"66339dd2caaf3b0b164e50e2",
   "credits_required":10,
-  "year":"2024-09-09",
+  "year":3,
    "courses" : [
-        {"courseId": "6633548832ad25537ba63d13" , 
-        "semester" : 2}
+        {
+          "courseId": "66373921883de948fc00f774" , 
+        "semester" : 1
+        },
+        {
+          "courseId": "6637392d883de948fc00f776" , 
+        "semester" : 1
+        }
+       
     ]
 }
 ### get curr

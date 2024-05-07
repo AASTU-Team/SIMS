@@ -1,0 +1,36 @@
+POST http://localhost:3000/course/create 
+Content-Type:  application/json
+
+{
+  "name": "maa",
+  "department_id":"6627f1cb16bcc35f5d498f30",
+  "instructors":["6627f3543267383b7d6046e6"],
+  "credits":5,
+  "prerequisites":[],
+  "type":"freshmancourse",
+  "code":"m10",
+  "lec":"5",
+  "lab":"5",
+  "description":""
+
+}
+
+### check section for fresh man using assign fresh man helper function 
+Get http://localhost:3000/user/student/test
+Content-Type:  application/json
+
+### drop coourse for fresh or any 
+POST  http://localhost:3000/user/student/dropcourse/6636186a6664a0c0488e0a97
+Content-Type:  application/json
+
+{
+  "course_id":"663a03d879c454a6075ec31d"
+}
+### add coourse for fresh or any // check for prereq  
+POST  http://localhost:3000/user/student/addcourse/6636186a6664a0c0488e0a97
+Content-Type:  application/json
+
+{
+  "course_id":"663a03d879c454a6075ec31d",
+  "semester" : 2
+}

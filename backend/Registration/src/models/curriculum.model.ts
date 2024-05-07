@@ -17,8 +17,12 @@ let curriculumSchema = new mongoose.Schema({
   },
 
   year: {
-    type: Date,
+    type: Number,
     required: true,
+  },
+  startDate: {
+    type: Date,
+    required: false,
   },
   courses: [
     {
