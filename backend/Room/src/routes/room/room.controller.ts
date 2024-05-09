@@ -43,6 +43,40 @@ export const createRoom = async (req: Request, res: Response) => {
   }
 };
 
+export const createRooms = async (req:Request, res:Response) => {
+  const { block, rooms, start_with } = req.body;
+
+  const schema = Joi.object({
+    rooms: Joi.number().required(),
+    block: Joi.string().required(),
+    start_with: Joi.number().required(),
+  });
+
+  const { error } = schema.validate(req.body);
+  if (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+
+  try {
+    const roomData = [];
+    let x = start_with;
+    for (let i = 0; i < rooms; i++) {
+      roomData.push({
+        room_number: x,
+        block: block,
+      });
+      x++;
+    }
+
+    const createdRooms = await Room.create(roomData);
+
+    return res.status(200).json({ message: 'Rooms created successfully.', rooms: createdRooms });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'An error occurred while creating rooms.' });
+  }
+};
+
 export const getAllRooms = async (req: Request, res: Response) => {
   try {
     const rooms = await Room.find();

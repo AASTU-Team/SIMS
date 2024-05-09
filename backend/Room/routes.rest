@@ -7,6 +7,16 @@ Content-Type:  application/json
       { "room_number": "102", "block": "B" }
     ]
 }
+### create rooms 
+POST http://localhost:4000/rooms/createRooms
+Content-Type:  application/json
+
+{
+  "block":"65",
+  "rooms":10,
+  "start_with":101
+ 
+}
 
 ### get rooms 
 GET  http://localhost:4000/rooms
