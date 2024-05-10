@@ -18,11 +18,11 @@ let sectionSchema = new mongoose.Schema({
     required: false,
   },
 
-  assignment_ids: {
+ /*  assignment_ids: {
     type: mongoose.Schema.Types.ObjectId,
     required: false,
     ref: "Assignment",
-  },
+  }, */
 });
 
 module.exports =
