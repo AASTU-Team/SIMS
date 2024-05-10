@@ -38,9 +38,9 @@ const RegistrationStatus = require("../../models/RegistrationStatus.model");
 
 export const createSchedule = async(req: Request, res: Response) => {
 
-  const assignments = req.body
+  const assignments = req.body.data
 
-  const { error } = Joi.array().items(assignmentSchema).validate(req.body);
+  const { error } = Joi.array().items(assignmentSchema).validate(req.body.data);
 
 if (error) {
   // Handle validation error
@@ -55,7 +55,7 @@ const newschedule = await Assignment.create(assignments)
 if (!newschedule) {
   return res.status(400).json({ error: 'an error happened' });
 }
-  return res.status(201).json(newschedule)
+  return res.status(201).json({"message":"created successfully"})
   
 } catch (error) {
   console.error(error);
