@@ -1,4 +1,5 @@
 import express from "express";
+import { createSchedule } from "./assignment.controller";
 
 
 
@@ -6,9 +7,8 @@ import express from "express";
 
 const Assignmentrouter = express.Router();
 
-// Register a student
 
-//Assignmentrouter.post("/register/schedule");
+Assignmentrouter.post("/register",createSchedule);
 
 
 module.exports = Assignmentrouter;
