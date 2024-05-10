@@ -12,6 +12,11 @@ let assignmentSchema  = new mongoose.Schema({
         required: false,
         ref: "Staff",
     },
+    section_id:{
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "Section",
+    },
     room_number:{
         type: mongoose.Schema.Types.ObjectId,
         required: false,
