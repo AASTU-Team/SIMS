@@ -1,8 +1,9 @@
-PATCH  http://localhost:3000/schedule/663e2824e93443964afd9bcc
+PATCH  http://localhost:3000/schedule/663fd59dce2b8ec340cd1bfc
 Content-Type:  application/json
 
 {
-  "start_time": "5"
+   "room_number": "6627f1cb16bcc35f5d498f31",
+    "instructor_id": "6627f1cb16bcc35f5d498f30"
 }
 ### get by id req assignmetn id
 GET http://localhost:3000/schedule/663e24bae93443964afd9bc5 
