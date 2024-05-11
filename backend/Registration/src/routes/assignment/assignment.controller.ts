@@ -31,10 +31,12 @@ const Assignment = require("../../models/Assignment.model");
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
 
-export const createSchedule = async (req: Request, res: Response) => {
-  const assignments = req.body;
 
-  const { error } = Joi.array().items(assignmentSchema).validate(req.body);
+
+export const createSchedule = async (req: Request, res: Response) => {
+  const assignments = req.body.data;
+
+  const { error } = Joi.array().items(assignmentSchema).validate(req.body.data);
 
   if (error) {
     // Handle validation error
@@ -45,15 +47,21 @@ export const createSchedule = async (req: Request, res: Response) => {
   try {
     const newschedule = await Assignment.create(assignments);
 
-    if (!newschedule) {
-      return res.status(400).json({ error: "an error happened" });
-    }
-    return res.status(201).json(newschedule);
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "an error happened" });
-  }
-};
+if (!newschedule) {
+  return res.status(400).json({ error: 'an error happened' });
+}
+  return res.status(201).json({"message":"created successfully"})
+  
+} catch (error) {
+  console.error(error);
+  return res.status(500).json({ error: 'an error happened' });
+  
+}
+   
+   
+ 
+ }
+
 export const getAssignmentById = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {

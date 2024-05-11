@@ -30,6 +30,11 @@ let assignmentSchema  = new mongoose.Schema({
         type:String,
         required:false
     },
+    day_of_week:{
+        type:String,
+        required:false
+
+    },
     Lab_Lec:{
         type:String,
         required:false
