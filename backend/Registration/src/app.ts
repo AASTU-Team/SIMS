@@ -6,7 +6,7 @@ const userrouter = require("./routes/user/user.route");
 const courseRouter = require("./routes/course/course.route");
 const departmentRoute = require("./routes/department/department.route");
 const curriculumRoute = require("./routes/curriculum/curriculum.route");
-const assignmentRoute = require("./routes/curriculum/assignment.route");
+const assignmentRoute = require("./routes/assignment/assignment.route");
 
 const app = express();
 
