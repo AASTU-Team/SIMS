@@ -31,8 +31,41 @@ const Curriculum = require("../../models/curriculum.model");
 const Assignment = require("../../models/Assignment.model");
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
+import path from "path";
 
+export const UploadFile = (req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
 
+  const results: any = [];
+
+  const file: any = req.file;
+  console.log(file);
+
+  // Process the uploaded CSV file
+  fs.createReadStream(req.file.path)
+    .pipe(csv())
+    .on("data", (data: any) => {
+      console.log(data);
+      results.push(data);
+    })
+    .on("end", () => {
+      // Remove the temporary file
+      fs.unlinkSync(file.path);
+
+      // Do something with the parsed CSV data
+      console.log(results);
+
+      // Return a response
+      res.json({ message: "File uploaded and processed successfully" });
+    })
+    .on("error", (error: any) => {
+      // Handle any errors
+      console.error(error);
+      res.status(500).json({ error: "Internal server error" });
+    });
+};
 
 export const registerStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
@@ -779,3 +812,16 @@ function checkOverLoad(total_credit: Number, credits: Number, add: boolean) {
     return "ok";
   }
 }
+export const getTemplate = async (req: Request, res: Response) => {
+  const file = path.join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+
+    "public",
+    "students_template.csv"
+  );
+  console.log(__dirname);
+  res.download(file);
+};

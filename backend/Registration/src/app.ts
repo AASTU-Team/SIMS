@@ -23,5 +23,3 @@ app.use("/schedule", assignmentRoute);
 // });
 
 export = app;
-
-
