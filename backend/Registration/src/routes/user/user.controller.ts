@@ -31,6 +31,7 @@ const Curriculum = require("../../models/curriculum.model");
 const Assignment = require("../../models/Assignment.model");
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
+import path from "path";
 
 export const uploadFile = (req: Request, res: Response) => {
   if (!req.file) {
@@ -40,11 +41,15 @@ export const uploadFile = (req: Request, res: Response) => {
   const results: any = [];
 
   const file: any = req.file;
+  console.log(file);
 
   // Process the uploaded CSV file
   fs.createReadStream(req.file.path)
     .pipe(csv())
-    .on("data", (data: any) => results.push(data))
+    .on("data", (data: any) => {
+      console.log(data);
+      results.push(data);
+    })
     .on("end", () => {
       // Remove the temporary file
       fs.unlinkSync(file.path);
@@ -768,3 +773,16 @@ function checkOverLoad(total_credit: Number, credits: Number, add: boolean) {
     return "ok";
   }
 }
+export const getTemplate = async (req: Request, res: Response) => {
+  const file = path.join(
+    __dirname,
+    "..",
+    "..",
+    "..",
+
+    "public",
+    "students_template.csv"
+  );
+  console.log(__dirname);
+  res.download(file);
+};

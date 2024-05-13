@@ -6,16 +6,14 @@ const Section = require("../models/section.model");
 const Course = require("../models/course.model");
 
 async function getCredit(Id: String): Promise<any> {
-
   const course = await Course.findById(Id);
   if (!course) {
     //console.error("Course not found");
     return 0;
   }
- // console.log(parseInt(course.credits));
+  // console.log(parseInt(course.credits));
 
   return parseInt(course.credits);
-
 }
 
 async function assignCourse(Ids: String[]): Promise<any> {
@@ -40,16 +38,15 @@ async function assignCourse(Ids: String[]): Promise<any> {
           status: "Active",
           isRetake: false,
         });
-        const value = await getCredit(course.courseId)
-        total_credit.push(value); 
+        const value = await getCredit(course.courseId);
+        total_credit.push(value);
       }
-      
     })
   );
 
   Ids.map((studentId) => {
-    let sum:number = 0
-    total_credit.map((credit:any) => {
+    let sum: number = 0;
+    total_credit.map((credit: any) => {
       sum += credit;
     });
     const registration = new Registration({
@@ -59,7 +56,7 @@ async function assignCourse(Ids: String[]): Promise<any> {
       courses: courses,
       registration_date: new Date(),
       total_credit: sum,
-      // section_id:"",
+       section_id:null,
     });
 
     registration.save();
@@ -129,8 +126,12 @@ async function assignSection({
           semester,
         }); // Get the newly created section
         await Registration.findOneAndUpdate(
-          { _id: student._id },
+          { stud_id: student._id, semester },
+<<<<<<< HEAD
+          { section_id: existingSection._id }
+=======
           { section_id: section._id }
+>>>>>>> c13544384cd276178dc254f52788322c8bbaadf1
         );
       }
 

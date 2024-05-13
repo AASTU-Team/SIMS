@@ -1,6 +1,11 @@
 import express from "express";
 
-import { addCourse, dropCourse, registerStudent } from "./user.controller";
+import {
+  addCourse,
+  getTemplate,
+  dropCourse,
+  registerStudent,
+} from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
 import { registerStudentCsv } from "./user.controller";
@@ -13,7 +18,7 @@ import { deleteStudent } from "./user.controller";
 import { updateStudent } from "./user.controller";
 import { getStudentCourses } from "./user.controller";
 import { studentRegistration } from "./user.controller";
-import { ListAddCourses } from './user.controller';
+import { ListAddCourses } from "./user.controller";
 import { Request, Response } from "express";
 
 // import { assignSection } from "../../helper/assignFreshmanCourse";
@@ -47,10 +52,12 @@ Studentrouter.patch("/student/update", updateStudent);
 
 Studentrouter.get("/student/courses", getStudentCourses);
 Studentrouter.post("/student/register", studentRegistration);
-Studentrouter.get('/student/addcourses', ListAddCourses);
+Studentrouter.get("/student/addcourses", ListAddCourses);
 
 Studentrouter.post("/student/dropcourse/:id", dropCourse);
 Studentrouter.post("/student/addcourse/:id", addCourse);
+
+Studentrouter.get("/template", getTemplate);
 
 Studentrouter.get("/student/test", async (req: Request, res: Response) => {
   //   const a = await assignSection({

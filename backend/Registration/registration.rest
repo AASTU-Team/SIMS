@@ -34,3 +34,6 @@ Content-Type:  application/json
   "course_id":"663a03d879c454a6075ec31d",
   "semester" : 2
 }
+### check section for fresh man using assign fresh man helper function 
+POST http://localhost:3000/user/register/studentCsv
+Content-Type:  application/json

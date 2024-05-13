@@ -1,3 +1,12 @@
 name,email,phone,birthday,gender,admission_date,grad_date,year,address,contact,emergencycontact_name,emergencycontact_phone,emergencycontact_relation
-emran,imra@gmail.com,2a192772712,1/1/2024,MALE,9/9/2001,11-Sep,2029,here,woe,im,im,im
-emran,imr@gmail.com,a25192772712,1/1/2024,MALE,9/9/2001,11-Sep,2029,here,woe,im,im,im
+<<<<<<< HEAD
+effn ba,imra@gmail.com,2a192772712,1/1/2024,MALE,9/9/2001,11-Sep,1,here,woe,im,im,im
+exggn aaa,imr@gmail.com,a25192772712,1/1/2024,MALE,9/9/2001,11-Sep,2,here,woe,im,im,im
+eff aaa,ir@gmail.com,a25192772712,1/1/2024,MALE,9/9/2001,11-Sep,2,here,woe,im,im,im
+=======
+emran,imra@gmail.com,2a192772712,1/1/2024,MALE,9/9/2001,11-Sep,1,here,woe,im,im,im
+emran,imr@gmail.com,a25192772712,1/1/2024,MALE,9/9/2001,11-Sep,1,here,woe,im,im,im
+abel,imr@gmail.com,a25192772712,1/1/2024,MALE,9/9/2001,11-Sep,1,here,woe,im,im,im
+abel,imr@gmail.com,a25192772712,1/1/2024,MALE,9/9/2001,11-Sep,1,here,woe,im,im,im
+name,imr@gmail.com,a25192772712,1/1/2024,MALE,9/9/2001,11-Sep,1,here,woe,im,im,im
+>>>>>>> c13544384cd276178dc254f52788322c8bbaadf1
