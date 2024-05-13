@@ -11,6 +11,9 @@ import Profile from "../pages/Profile";
 import SetPassword from "../pages/SetPassword";
 import Loader from "../components/Loader";
 import StudentManagement from "../pages/StudentManagement";
+import StaffManagement from "../pages/StaffManagement";
+import RoomManagement from "../pages/RoomManagement";
+import Calendar from "../pages/Calendar";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -37,7 +40,10 @@ const AllRoutes = () => {
                   />
                   <Routes>
                     <Route index element={<Dashboard />} />
-                    <Route path="/students" element={<StudentManagement/>} />
+                    <Route path="/students" element={<StudentManagement />} />
+                    <Route path="/staff" element={<StaffManagement />} />
+                    <Route path="/room" element={<RoomManagement />} />
+                    <Route path="/calendar" element={<Calendar />} />
                     <Route path="/registration" element={<RegisterUser />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="*" element={<NotFoundPage />} />
