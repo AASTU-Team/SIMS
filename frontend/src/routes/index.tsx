@@ -10,6 +10,7 @@ import RegisterUser from "../pages/RegisterUser";
 import Profile from "../pages/Profile";
 import SetPassword from "../pages/SetPassword";
 import Loader from "../components/Loader";
+import StudentManagement from "../pages/StudentManagement";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -18,7 +19,7 @@ const AllRoutes = () => {
       <Routes>
         <Route path="/signin" element={<SignIn />} />
         <Route path="/setpass" element={<SetPassword />} />
-        <Route path="/loading" element={<Loader/>} />
+        <Route path="/loading" element={<Loader />} />
 
         <Route
           path="/*"
@@ -36,8 +37,9 @@ const AllRoutes = () => {
                   />
                   <Routes>
                     <Route index element={<Dashboard />} />
+                    <Route path="/students" element={<StudentManagement/>} />
                     <Route path="/registration" element={<RegisterUser />} />
-                    <Route path="/profile" element={<Profile/>} />
+                    <Route path="/profile" element={<Profile />} />
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>
                 </div>
