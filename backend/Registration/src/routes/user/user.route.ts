@@ -13,7 +13,7 @@ import { deleteStudent } from "./user.controller";
 import { updateStudent } from "./user.controller";
 import { getStudentCourses } from "./user.controller";
 import { studentRegistration } from "./user.controller";
-import { ListAddCourses } from './user.controller';
+import { ListAddCourses } from "./user.controller";
 import { Request, Response } from "express";
 
 // import { assignSection } from "../../helper/assignFreshmanCourse";
@@ -47,7 +47,7 @@ Studentrouter.patch("/student/update", updateStudent);
 
 Studentrouter.get("/student/courses", getStudentCourses);
 Studentrouter.post("/student/register", studentRegistration);
-Studentrouter.get('/student/addcourses', ListAddCourses);
+Studentrouter.get("/student/addcourses", ListAddCourses);
 
 Studentrouter.post("/student/dropcourse/:id", dropCourse);
 Studentrouter.post("/student/addcourse/:id", addCourse);
