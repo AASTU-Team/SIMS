@@ -21,6 +21,7 @@ const assignmentSchema = Joi.object<AssignmentI>({
   Lab_Lec: Joi.string().optional(),
 });
 
+
 const Student = require("../../models/student.model");
 const Staff = require("../../models/staff.model");
 const Status = require("../../models/status.model");
@@ -124,3 +125,4 @@ export const getAssignmentBySecId = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "An error occurred" });
   }
 };
+

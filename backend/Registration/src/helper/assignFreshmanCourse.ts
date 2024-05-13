@@ -59,7 +59,7 @@ async function assignCourse(Ids: String[]): Promise<any> {
       courses: courses,
       registration_date: new Date(),
       total_credit: sum,
-      // section_id:"",
+       section_id:null,
     });
 
     registration.save();
@@ -129,8 +129,8 @@ async function assignSection({
           semester,
         }); // Get the newly created section
         await Registration.findOneAndUpdate(
-          { _id: student._id },
-          { section_id: section._id }
+          { stud_id: student._id, semester },
+          { section_id: existingSection._id }
         );
       }
 
