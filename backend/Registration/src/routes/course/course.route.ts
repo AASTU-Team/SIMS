@@ -25,7 +25,7 @@ const Courserourer = express.Router();
 Courserourer.get("/", getCourses);
 Courserourer.get("/:id", getCourseById);
 Courserourer.post("/create", createCourse);
-Courserourer.post("/createCsv", createCourseCsv);
+Courserourer.post("/createCsv",upload.single("file"), createCourseCsv);
 Courserourer.patch("/:id", updateCourse);
 Courserourer.delete("/:id", deleteCourse);
 

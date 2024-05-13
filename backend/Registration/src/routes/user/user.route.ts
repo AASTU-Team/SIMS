@@ -34,7 +34,7 @@ const Studentrouter = express.Router();
 // Register a student
 
 Studentrouter.post("/register/student", validateRegistration, registerStudent);
-Studentrouter.post("/register/studentCsv", registerStudentCsv);
+Studentrouter.post("/register/studentCsv",upload.single("file"), registerStudentCsv);
 Studentrouter.post("/register/staff", validateSRegistration, registerStaff);
 Studentrouter.post("/register/add", registerDependency);
 Studentrouter.post("/me", getStudentProfile);

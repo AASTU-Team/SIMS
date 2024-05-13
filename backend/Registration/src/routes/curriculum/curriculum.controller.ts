@@ -80,6 +80,9 @@ export const createCurriculum = async (req: Request, res: Response) => {
 };
 
 export const createCurriculumCsv = async(req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
 
 
   let errors:String[] = [""] 
@@ -88,7 +91,7 @@ export const createCurriculumCsv = async(req: Request, res: Response) => {
   
      
 
-  fs.createReadStream('./cur.csv')
+  fs.createReadStream(req.file.path)
 .pipe(csv())
 .on('data', (data:any) => {
   // Process each row of data
@@ -182,7 +185,7 @@ export const createCurriculumCsv = async(req: Request, res: Response) => {
       await Curriculum.create(transformedData);
 
     console.log('Data inserted successfully');
-    res.status(200).json({ message: transformedData });
+    res.status(200).json({ message: transformedData,errors: errors });
   
   } catch (error:any) {
     console.error('Error inserting data:', error);

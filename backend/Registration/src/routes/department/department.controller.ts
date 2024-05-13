@@ -129,12 +129,15 @@ export const deleteDep = async (req: Request, res: Response) => {
 
 ///assign deparmtent for students
 export const assignDepartmentCsv = async (req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
   let errors: string[] = [""];
 
   const results: any[] = [];
   const total_credit: Number[] = [];
 
-  fs.createReadStream("./department.csv")
+  fs.createReadStream(req.file.path)
     .pipe(csv())
     .on("data", async (data: any) => {
       // Process each row of data
