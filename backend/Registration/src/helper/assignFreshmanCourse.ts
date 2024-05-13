@@ -127,11 +127,7 @@ async function assignSection({
         }); // Get the newly created section
         await Registration.findOneAndUpdate(
           { stud_id: student._id, semester },
-<<<<<<< HEAD
-          { section_id: existingSection._id }
-=======
           { section_id: section._id }
->>>>>>> c13544384cd276178dc254f52788322c8bbaadf1
         );
       }
 

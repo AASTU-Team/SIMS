@@ -825,3 +825,123 @@ export const getTemplate = async (req: Request, res: Response) => {
   console.log(__dirname);
   res.download(file);
 };
+
+export const WithdrawalRequest = async (req: Request, res: Response) => {
+
+  const id  = req.body.id;
+
+  const student = await Student.findById(id);
+
+  if(!student)
+    {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const updated = await Student.findByIdAndUpdate(id,{"status":"Pending-Withdrawal"})
+
+    if(!updated)
+      {
+        return res.status(404).json({ message: "Unable to update" });
+      }
+
+      return res.status(200).json({ message: "success" });
+
+
+
+
+}
+
+
+
+export const getWithdrawalRequests = async (req: Request, res: Response) => {
+
+  const students = await Student.find({status:"Pending-Withdrawal"})
+
+  if(!students)
+    {
+      return res.status(404).json({ message: " No Student found" });
+    }
+
+    return res.status(200).json(students);
+
+
+
+
+}
+
+export const AcceptWithdrawalRequest = async (req: Request, res: Response) => {
+
+  const id  = req.body.stud_id;
+
+  const student = await Student.findById(id);
+  let status:Boolean = false
+
+  if(!student)
+    {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    const highestCombination = await Registration.findOne({ stud_id: id })
+    .sort({ year: -1, semester: -1 })
+    .select("year semester")
+    .limit(1);
+
+  if (highestCombination) {
+    const highestYear = highestCombination.year;
+    const highestSemester = highestCombination.semester;
+
+    const currentRegistration = await Registration.findOne({year: highestYear, semester: highestSemester})
+    const courses:any[] = currentRegistration.courses;
+
+    for (const course of courses) {
+      if (course.status !== "Completed") {
+        status = true;
+        await Registration.deleteOne({ _id: currentRegistration._id });
+        break; // Stop further iteration
+      }
+    }
+
+
+
+  }
+
+
+  
+
+    const updated = await Student.findByIdAndUpdate(id,{"status":"Withdrawn"})
+
+    if(!updated)
+      {
+        return res.status(404).json({ message: "Unable to update" });
+      }
+
+      return res.status(200).json({ message: "success" });
+
+
+
+
+}
+
+export const activateStudent = async (req: Request, res: Response) => {
+
+  const id  = req.body.id;
+
+  const student = await Student.findById(id);
+
+  if(!student)
+    {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const updated = await Student.findByIdAndUpdate(id,{"status":"Active"})
+
+    if(!updated)
+      {
+        return res.status(404).json({ message: "Unable to update" });
+      }
+
+      return res.status(200).json({ message: "success" });
+
+
+
+
+}

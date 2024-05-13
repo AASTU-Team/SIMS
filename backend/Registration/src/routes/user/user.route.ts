@@ -5,6 +5,8 @@ import {
   getTemplate,
   dropCourse,
   registerStudent,
+  WithdrawalRequest
+  
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
@@ -20,6 +22,9 @@ import { getStudentCourses } from "./user.controller";
 import { studentRegistration } from "./user.controller";
 import { ListAddCourses } from "./user.controller";
 import { Request, Response } from "express";
+import { getWithdrawalRequests } from "./user.controller";
+import { AcceptWithdrawalRequest } from "./user.controller";
+import { activateStudent } from "./user.controller";
 
 // import { assignSection } from "../../helper/assignFreshmanCourse";
 
@@ -56,6 +61,13 @@ Studentrouter.get("/student/addcourses", ListAddCourses);
 
 Studentrouter.post("/student/dropcourse/:id", dropCourse);
 Studentrouter.post("/student/addcourse/:id", addCourse);
+
+Studentrouter.post("/student/withdrawalRequest",WithdrawalRequest);
+Studentrouter.get("/students/withdrawalRequests",getWithdrawalRequests);
+Studentrouter.post("/students/acceptWithdrawalRequests",AcceptWithdrawalRequest);
+Studentrouter.post("/students/activateStudent",activateStudent);
+
+
 
 Studentrouter.get("/template", getTemplate);
 
