@@ -16,22 +16,22 @@ import setCookie from "../../hooks/setCookie";
 const SignIn: React.FC = () => {
   const router = useNavigate()
 
-  const loginMutation= useMutation({
-    mutationKey: ['login'],
-    mutationFn: (values:LoginForm)=>Login(values)
-  });
+const loginMutation = useMutation({
+  mutationFn: (values: LoginForm) => Login(values),
+  onError: () => {
+    notification.error({ message: "Invalid Username or Password" });
+  },
+  onSuccess: (data) => {
+    setCookie("access_token", data?.data?.accessToken || "", 7);
+    setCookie("refresh_token", data?.data?.refreshToken || "", 7);
+    router("/");
+  },
+});
 
   const OnFinish: FormProps<LoginForm>["onFinish"] = (values) => {
     loginMutation.mutate(values)
-    loginMutation.isError && notification.error({message:"Invalid Username or Password"})
-    // console.log(loginMutation)
-    if(loginMutation.isSuccess || loginMutation.isIdle){
-      setCookie("access_token", loginMutation.data?.data?.accessToken || "", 7)
-      setCookie("refresh_token", loginMutation.data?.data?.refreshToken || "", 7);
-      router("/")
-    }
-  };
 
+  };
   const onFinishFailed: FormProps<LoginForm>["onFinishFailed"] = (
     errorInfo
   ) => {
@@ -67,12 +67,11 @@ const SignIn: React.FC = () => {
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
                 Sign In to SIMS
               </h2>
-{             loginMutation.isPending ? <Loader/>:
+{             (loginMutation.isPending)? <Loader/>:
               <Form
                 name="login_form"
                 onFinish={OnFinish}
                 onFinishFailed={onFinishFailed}
-                autoComplete="off"
               >
                 <Form.Item<LoginForm>
                   name="email"

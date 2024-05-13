@@ -1,7 +1,7 @@
 import type { AxiosResponse, AxiosError } from "axios";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import { LoginForm } from "../type/user";
+import { ChangePasswordForm, LoginForm } from "../type/user";
 import getCookie from "../hooks/getCookie";
 import removeCookie from "../hooks/removeCookie";
 
@@ -55,6 +55,11 @@ export const Logout = async () => {
   return res
 }
 
+export const ChangePassword = async ({old_password, password}: ChangePasswordForm) => {
+  const access_token = getCookie("access_token") || ""
+  setHeaderToken(access_token)
+  return await client.patch('/password',{old_password,password})
+}
 export const useMe = () =>
   useQuery<AxiosResponse, AxiosError>({
     queryKey: ["me"],

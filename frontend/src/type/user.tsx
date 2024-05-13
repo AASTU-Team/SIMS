@@ -7,3 +7,20 @@ export interface LoginForm {
     email: string,
     password: string,
 }
+
+export interface ChangePasswordForm {
+  old_password: string;
+  password: string;
+  confirm_password:string;
+}
+
+
+
+export type UserFields = {
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  tasks?: Array<string>;
+  profile_pic?: string;
+};

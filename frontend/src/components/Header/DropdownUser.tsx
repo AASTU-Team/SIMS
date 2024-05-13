@@ -21,14 +21,19 @@ const DropdownUser = () => {
   const logoutMutation = useMutation({
     mutationKey: ["logout"],
     mutationFn: Logout,
+    onError: () => {
+      notification.error({ message: "Logout Failed" });
+    },
+    onSuccess: () => {
+      router("/signin")
+    }
   });
 
   const logout = () => {
     // localStorage.removeItem("user")
     logoutMutation.mutate();
     // console.log(logoutMutation)
-    logoutMutation.isError && notification.error({ message: "Logout Failed" });
-    !logoutMutation.isError && router("/signin");
+
   };
   // close on click outside
   useEffect(() => {
