@@ -1,0 +1,19 @@
+PATCH  http://localhost:3000/schedule/663fd59dce2b8ec340cd1bfc
+Content-Type:  application/json
+
+{
+   "room_number": "6627f1cb16bcc35f5d498f31",
+    "instructor_id": "6627f1cb16bcc35f5d498f30"
+}
+### get by id req assignmetn id
+GET http://localhost:3000/schedule/663e24bae93443964afd9bc5 
+Content-Type:  application/json
+
+### get by section id req section id
+GET http://localhost:3000/schedule/section/6627f1cb16bcc35f5d498f30
+Content-Type:  application/json
+
+### delete req : assignemtn id
+DELETE http://localhost:3000/schedule/663e27afe93443964afd9bcb
+Content-Type:  application/json
+ 
