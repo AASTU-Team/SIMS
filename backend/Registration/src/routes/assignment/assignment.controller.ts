@@ -81,6 +81,11 @@ export const updateAssignment = async (req: Request, res: Response) => {
   const { id } = req.params;
   const assignment = req.body;
   try {
+    const conflict = await checkConflict(assignment, id);
+    console.log(conflict);
+    if (conflict) {
+      return res.status(400).json(conflict);
+    }
     const updatedAssignment = await Assignment.findByIdAndUpdate(
       id,
       assignment,
@@ -125,4 +130,68 @@ export const getAssignmentBySecId = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "An error occurred" });
   }
 };
+
+export const checkConflict = async (assignment: any, id: any) => {
+  const assignmentData = await Assignment.findById(id);
+  let iConflict;
+  let rConflict;
+  if (assignment.start_time) {
+    if (assignment.instructor_id) {
+      iConflict = await instructorConflict(
+        assignment.instructor_id,
+        assignment.start_time
+      );
+    }
+    if (assignment.room_number) {
+      rConflict = await roomConflict(
+        assignment.room_number,
+        assignment.start_time
+      );
+    }
+    if (rConflict || iConflict) {
+      return { error: "Conflict", rConflict, iConflict };
+    } else {
+      return false;
+    }
+  } else {
+    if (assignment.instructor_id) {
+      iConflict = await instructorConflict(
+        assignment.instructor_id,
+        assignmentData.start_time
+      );
+    }
+    if (assignment.room_number) {
+      rConflict = await roomConflict(
+        assignment.room_number,
+        assignmentData.start_time
+      );
+    }
+    console.log(rConflict, iConflict);
+    if (rConflict || iConflict) {
+      return { error: "Conflict", rConflict, iConflict };
+    } else {
+      return false;
+    }
+  }
+};
+async function instructorConflict(instructor_id: any, start_time: any) {
+  const conflict = await Assignment.find({
+    $and: [{ instructor_id: instructor_id }, { start_time: start_time }],
+  });
+  if (conflict.length > 0) {
+    return { error: "Conflict on instructor", conflict };
+  } else {
+    return false;
+  }
+}
+async function roomConflict(room_id: any, start_time: any) {
+  const conflict = await Assignment.find({
+    $and: [{ room_number: room_id }, { start_time: start_time }],
+  });
+  if (conflict.length > 0) {
+    return { error: "Conflict on room", conflict };
+  } else {
+    return false;
+  }
+}
 
