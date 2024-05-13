@@ -7,7 +7,7 @@ import { RootState } from "../../state/store";
 import DashboardIcon from "../../assets/sidebar/DashboardIcon";
 import StudentIcon from "../../assets/sidebar/StudentIcon";
 import StaffIcon from "../../assets/sidebar/StaffIcon";
-import CalendarIcon from "../../assets/sidebar/CalendarIcon";
+import {InsertRowLeftOutlined,CalendarOutlined } from "@ant-design/icons";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -123,13 +123,13 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               {/* <!-- Menu Item Dashboard --> */}
               <li>
                 <Link
-                  to="/dashboard"
+                  to="/"
                   className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                     pathname.includes("dashboard") &&
                     "bg-graydark dark:bg-meta-4"
                   }`}
                 >
-                  <DashboardIcon/>
+                  <DashboardIcon />
                   Dashboard
                 </Link>
               </li>
@@ -145,7 +145,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       "bg-graydark dark:bg-meta-4"
                     }`}
                   >
-                    <StudentIcon/>
+                    <StudentIcon />
                     Student Management
                   </Link>
                 )}
@@ -155,18 +155,32 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
               <li>
                 {user.role === "Admin" && (
                   <Link
-                    to="/registration"
+                    to="/staff"
                     className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                      pathname.includes("registration") &&
-                      "bg-graydark dark:bg-meta-4"
+                      pathname.includes("staff") && "bg-graydark dark:bg-meta-4"
                     }`}
                   >
-                    <StaffIcon/>
+                    <StaffIcon />
                     Staff Management
                   </Link>
                 )}
               </li>
               {/* <!-- Menu Item Staff --> */}
+              {/* <!-- Menu Item Room --> */}
+              <li>
+                {user.role === "Admin" && (
+                  <Link
+                    to="/room"
+                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                      pathname.includes("room") && "bg-graydark dark:bg-meta-4"
+                    }`}
+                  >
+                    <InsertRowLeftOutlined />
+                    Room Management
+                  </Link>
+                )}
+              </li>
+              {/* <!-- Menu Item Room --> */}
               {/* <!-- Menu Item Calendar --> */}
               <li>
                 <Link
@@ -176,7 +190,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                     "bg-graydark dark:bg-meta-4"
                   }`}
                 >
-                  <CalendarIcon/>
+                  <CalendarOutlined />
                   Calendar
                 </Link>
               </li>
