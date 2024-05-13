@@ -1,9 +1,8 @@
 import express from "express";
-
-
+import { createEvaluation } from "./evaluation.controller";
 
 const Evaluationrouter = express.Router();
 
-//Attendancerouter.post("/new");
+Evaluationrouter.post("/", createEvaluation);
 
 module.exports = Evaluationrouter;
