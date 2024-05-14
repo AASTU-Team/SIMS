@@ -1,16 +1,25 @@
 import type { FormProps } from "antd";
-import {UploadOutlined, UserAddOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Select, Upload, DatePicker } from "antd";
-import { StudentFields } from "../../type/student";
+import {  Form, Input, Select, DatePicker } from "antd";
+import {  UserOutlined } from "@ant-design/icons";
+import { StaffFields } from "../../type/staff";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
-export default function AddStaff() {
+export default function EdditStaff() {
   const [form] = Form.useForm();
+  const {state}: {state: StaffFields} = useLocation();
+  console.log(state)
+  useEffect(() => {
+    if (state) {
+      form.setFieldsValue(state);
+    }
+  }, [form, state]);
   
-  const onFinish: FormProps<StudentFields>["onFinish"] = (values) => {
+  const onFinish: FormProps<StaffFields>["onFinish"] = (values) => {
     console.log("Success:", values);
   };
 
-  const onFinishFailed: FormProps<StudentFields>["onFinishFailed"] = (
+  const onFinishFailed: FormProps<StaffFields>["onFinishFailed"] = (
     errorInfo
   ) => {
     console.log("Failed:", errorInfo);
@@ -25,14 +34,12 @@ export default function AddStaff() {
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex justify-between border-b border-stroke px-7 py-4 dark:border-strokedark">
           <h3 className="font-medium text-lg text-black dark:text-white">
-            Register Student
+            Edit Staff
           </h3>
 
-           <button 
-          className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90" 
-          >
-            <UserAddOutlined />
-            Register User
+          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90">
+            <UserOutlined />
+            Edit Staff
           </button>
         </div>
         <div className="p-7">
@@ -45,7 +52,7 @@ export default function AddStaff() {
             form={form}
           >
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
-              <Form.Item<StudentFields>
+              <Form.Item<StaffFields>
                 name="name"
                 rules={[
                   {
@@ -63,9 +70,10 @@ export default function AddStaff() {
                 <Input
                   placeholder="Enter the full name"
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  defaultValue={state?.name}
                 />
               </Form.Item>
-              <Form.Item<StudentFields>
+              <Form.Item<StaffFields>
                 name="email"
                 rules={[{ required: true, message: "Please input the email!" }]}
               >
@@ -79,27 +87,11 @@ export default function AddStaff() {
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   type="email"
                   placeholder="Enter the email"
+                  defaultValue={state?.email}
                 />
               </Form.Item>
-              <Form.Item<StudentFields>
-                name="id"
-                rules={[{ required: true, message: "Please input the ID!" }]}
-              >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="id"
-                >
-                  ID
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the ID"
-                />
-              </Form.Item>
-            </div>
-            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
-              <Form.Item<StudentFields>
-                name="contact"
+              <Form.Item<StaffFields>
+                name="phone"
                 rules={[
                   {
                     required: true,
@@ -109,21 +101,24 @@ export default function AddStaff() {
               >
                 <label
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="contact"
+                  htmlFor="phone"
                 >
                   Phone Number
                 </label>
                 <Input
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   placeholder="Enter the phone number"
+                  defaultValue={state?.phone}
                 />
               </Form.Item>
-              <Form.Item<StudentFields>
+            </div>
+            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+              <Form.Item<StaffFields>
                 name="address"
                 rules={[
                   {
                     required: true,
-                    message: "Please input the student's address!",
+                    message: "Please input the address!",
                   },
                 ]}
               >
@@ -136,25 +131,10 @@ export default function AddStaff() {
                 <Input
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   placeholder="Enter the address"
+                  defaultValue={state?.address}
                 />
               </Form.Item>
-              <Form.Item>
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="profile_pic"
-                >
-                  Profile Picture
-                </label>
-                <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
-                  <Upload>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
-                </div>
-              </Form.Item>
-            </div>
-
-            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
-              <Form.Item<StudentFields>
+              <Form.Item<StaffFields>
                 name="department_id"
                 rules={[
                   {
@@ -175,6 +155,7 @@ export default function AddStaff() {
                     placeholder="Select Department"
                     optionFilterProp="children"
                     filterOption={filterOption}
+                    defaultValue={state?.department_id}
                     options={[
                       {
                         value: "Seng",
@@ -192,29 +173,12 @@ export default function AddStaff() {
                   />
                 </div>
               </Form.Item>
-              <Form.Item<StudentFields>
-                name="year"
-                rules={[{ required: true, message: "Please input the Year!" }]}
-              >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="year"
-                >
-                  Year
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the address"
-                  type="number"
-                />
-              </Form.Item>
-
-              <Form.Item<StudentFields>
-                name="admission_date"
+              <Form.Item<StaffFields>
+                name="birthday"
                 rules={[
                   {
                     required: true,
-                    message: "Please input the Admission Date!",
+                    message: "Please input the Date of Birth!",
                   },
                 ]}
               >
@@ -222,76 +186,63 @@ export default function AddStaff() {
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
                   htmlFor="admission_date"
                 >
-                  Admission Date
+                  Date of Birth
                 </label>
                 <DatePicker className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
               </Form.Item>
             </div>
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
-              <Form.Item<StudentFields>
-                name="emergencycontact_name"
+              <Form.Item<StaffFields>
+                name="role"
                 rules={[
                   {
                     required: true,
-                    message: "Please input the full name!",
+                    message: "Please select at least one role!",
                   },
                 ]}
               >
                 <label
                   className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="emergencycontact_name"
+                  htmlFor="department_id"
                 >
-                  Emergency Contact Full Name
+                  Staff Role
                 </label>
-
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the full name"
-                />
-              </Form.Item>
-              <Form.Item<StudentFields>
-                name="emergencycontact_phone"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the phone number!",
-                  },
-                ]}
-              >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="emergencycontact_phone"
-                >
-                  Emergency Contact Phone Number
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the phone number"
-                />
-              </Form.Item>
-              <Form.Item<StudentFields>
-                name="emergencycontact_relation"
-                rules={[
-                  { required: true, message: "Please input the relation!" },
-                ]}
-              >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="emergencycontact_relation"
-                >
-                  Emergency Contact Relations
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the relation"
-                />
+                <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                  <Select
+                    showSearch
+                    placeholder="Select staff permissions"
+                    mode="multiple"
+                    optionFilterProp="children"
+                    filterOption={filterOption}
+                    options={[
+                      {
+                        value: "student",
+                        label: "Student Management",
+                      },
+                      {
+                        value: "staff",
+                        label: "Staff Management",
+                      },
+                      {
+                        value: "course",
+                        label: "Course Management",
+                      },
+                      {
+                        value: "room",
+                        label: "Room Management",
+                      },
+                      {
+                        value: "curriculum",
+                        label: "Curriculum Management",
+                      },
+                    ]}
+                  />
+                </div>
               </Form.Item>
             </div>
           </Form>
         </div>
       </div>
-
-
     </div>
   );
 }

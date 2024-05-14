@@ -16,6 +16,8 @@ import RoomManagement from "../pages/RoomManagement";
 import Calendar from "../pages/Calendar";
 import AddStudent from "../pages/StudentManagement/AddStudent";
 import EditStudent from "../pages/StudentManagement/EditStudent";
+import AddStaff from "../pages/StaffManagement/AddStaff";
+import EdditStaff from "../pages/StaffManagement/EditStaff";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -46,6 +48,8 @@ const AllRoutes = () => {
                     <Route path="/students/add" element={<AddStudent/>} />
                     <Route path="/students/edit/" element={<EditStudent />} />
                     <Route path="/staff" element={<StaffManagement />} />
+                    <Route path="/staff/add" element={<AddStaff/>} />
+                    <Route path="/staff/edit" element={<EdditStaff />} />
                     <Route path="/room" element={<RoomManagement />} />
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/registration" element={<RegisterUser />} />

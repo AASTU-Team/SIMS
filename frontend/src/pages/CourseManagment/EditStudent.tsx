@@ -1,10 +1,19 @@
 import type { FormProps } from "antd";
-import {UploadOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Select, Upload, DatePicker } from "antd";
+import { UploadOutlined, UserOutlined } from "@ant-design/icons";
 import { StudentFields } from "../../type/student";
+import { useLocation } from "react-router-dom";
+import { useEffect } from "react";
 
-export default function AddStaff() {
+export default function EditStudent() {
   const [form] = Form.useForm();
+  const {state}: {state: StudentFields} = useLocation();
+  console.log(state)
+  useEffect(() => {
+    if (state) {
+      form.setFieldsValue(state);
+    }
+  }, [form, state]);
   
   const onFinish: FormProps<StudentFields>["onFinish"] = (values) => {
     console.log("Success:", values);
@@ -25,14 +34,14 @@ export default function AddStaff() {
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex justify-between border-b border-stroke px-7 py-4 dark:border-strokedark">
           <h3 className="font-medium text-lg text-black dark:text-white">
-            Register Student
+            Edit Student
           </h3>
 
            <button 
           className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90" 
           >
-            <UserAddOutlined />
-            Register User
+            <UserOutlined />
+            Edit User
           </button>
         </div>
         <div className="p-7">
@@ -63,6 +72,7 @@ export default function AddStaff() {
                 <Input
                   placeholder="Enter the full name"
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  defaultValue={state?.name}
                 />
               </Form.Item>
               <Form.Item<StudentFields>
@@ -79,6 +89,7 @@ export default function AddStaff() {
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   type="email"
                   placeholder="Enter the email"
+                  defaultValue={state?.email}
                 />
               </Form.Item>
               <Form.Item<StudentFields>
@@ -94,6 +105,7 @@ export default function AddStaff() {
                 <Input
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   placeholder="Enter the ID"
+                  defaultValue={state?.id}
                 />
               </Form.Item>
             </div>
@@ -116,6 +128,7 @@ export default function AddStaff() {
                 <Input
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   placeholder="Enter the phone number"
+                  defaultValue={state?.contact}
                 />
               </Form.Item>
               <Form.Item<StudentFields>
@@ -136,6 +149,7 @@ export default function AddStaff() {
                 <Input
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   placeholder="Enter the address"
+                  defaultValue={state?.address}
                 />
               </Form.Item>
               <Form.Item>
@@ -175,6 +189,7 @@ export default function AddStaff() {
                     placeholder="Select Department"
                     optionFilterProp="children"
                     filterOption={filterOption}
+                    defaultValue={state?.department_id}
                     options={[
                       {
                         value: "Seng",
@@ -206,6 +221,7 @@ export default function AddStaff() {
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   placeholder="Enter the address"
                   type="number"
+                  defaultValue={state?.year}
                 />
               </Form.Item>
 
@@ -224,7 +240,7 @@ export default function AddStaff() {
                 >
                   Admission Date
                 </label>
-                <DatePicker className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
+                <DatePicker className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"/>
               </Form.Item>
             </div>
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
@@ -247,6 +263,7 @@ export default function AddStaff() {
                 <Input
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   placeholder="Enter the full name"
+                  defaultValue={state?.emergencycontact_name}
                 />
               </Form.Item>
               <Form.Item<StudentFields>
@@ -267,6 +284,7 @@ export default function AddStaff() {
                 <Input
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   placeholder="Enter the phone number"
+                  defaultValue={state?.emergencycontact_phone}
                 />
               </Form.Item>
               <Form.Item<StudentFields>
@@ -284,6 +302,7 @@ export default function AddStaff() {
                 <Input
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   placeholder="Enter the relation"
+                  defaultValue={state?.emergencycontact_relation}
                 />
               </Form.Item>
             </div>

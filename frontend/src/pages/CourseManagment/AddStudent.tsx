@@ -3,7 +3,7 @@ import {UploadOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Select, Upload, DatePicker } from "antd";
 import { StudentFields } from "../../type/student";
 
-export default function AddStaff() {
+export default function AddStudent() {
   const [form] = Form.useForm();
   
   const onFinish: FormProps<StudentFields>["onFinish"] = (values) => {
