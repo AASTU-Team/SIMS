@@ -8,4 +8,38 @@ Content-Type:  application/json
 {
 	"all" : true
 }
+### some
+
+POST http://localhost:4000/evaluation
+Content-Type:  application/json
+
+{
+	"all" : false,
+	"ids" :  [
+  { "_id": "664217adf8b1cf7706c8c48c" },
+  { "_id": "6642184df8b1cf7706c8c48d" }
+]
+}
  
+### fill eval
+
+POST http://localhost:4000/evaluation/eval/664217adf8b1cf7706c8c48c
+Content-Type:  application/json
+
+{
+		"student_id": "664223823276240b7fe9136a",
+		"course_id": "664223823276240b7fe9136a",
+		"professionalismI": 5,
+		"knowledgeI": 5,
+		"communicationI": 5,
+		"organizationI": 5,
+		"responsivenessI": 5,
+		"teaching_styleI": 5
+}
+### get eval
+GET http://localhost:4000/evaluation/664217adf8b1cf7706c8c48c
+Content-Type:  application/json
+
+  
+
+
