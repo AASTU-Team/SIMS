@@ -7,7 +7,7 @@ import { RootState } from "../../state/store";
 import DashboardIcon from "../../assets/sidebar/DashboardIcon";
 import StudentIcon from "../../assets/sidebar/StudentIcon";
 import StaffIcon from "../../assets/sidebar/StaffIcon";
-import {InsertRowLeftOutlined,CalendarOutlined } from "@ant-design/icons";
+import {InsertRowLeftOutlined,CalendarOutlined, BookOutlined, ProfileOutlined } from "@ant-design/icons";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -66,7 +66,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-9999 flex h-screen w-64 flex-col overflow-y-hidden bg-boxdark duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+      className={`absolute left-0 top-0 z-9999 flex h-screen w-auto flex-col overflow-y-hidden bg-boxdark duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
@@ -166,6 +166,38 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                 )}
               </li>
               {/* <!-- Menu Item Staff --> */}
+              {/* <!-- Menu Item Course --> */}
+              <li>
+                {user.role === "Admin" && (
+                  <Link
+                    to="/course"
+                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                      pathname.includes("course") &&
+                      "bg-graydark dark:bg-meta-4"
+                    }`}
+                  >
+                    <BookOutlined />
+                    Course Management
+                  </Link>
+                )}
+              </li>
+              {/* <!-- Menu Item Course --> */}
+              {/* <!-- Menu Item Curriculum --> */}
+              <li>
+                {user.role === "Admin" && (
+                  <Link
+                    to="/curriculum"
+                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                      pathname.includes("curriculum") &&
+                      "bg-graydark dark:bg-meta-4"
+                    }`}
+                  >
+                    <ProfileOutlined />
+                    Curriculum Management
+                  </Link>
+                )}
+              </li>
+              {/* <!-- Menu Item Curriculum --> */}
               {/* <!-- Menu Item Room --> */}
               <li>
                 {user.role === "Admin" && (

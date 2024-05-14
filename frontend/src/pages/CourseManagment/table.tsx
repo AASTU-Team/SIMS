@@ -1,136 +1,126 @@
 import React from 'react';
 import { Table, Space } from 'antd';
 import type { TableColumnsType } from 'antd';
-import {StudentFields} from "../../type/student";
+import {CourseFields} from "../../type/course";
 import { useNavigate } from 'react-router-dom';
 
-
-
-
-
-const data: StudentFields[] = [
-{
-  id: "ETS0660/12",
-  name: "John Doe",
-  email: "johndoe@example.com",
-  contact: "1234567890",
-  address: "123 Main St",
-  department_id: "Seng",
-  year: 3,
-  admission_date: "2022-01-01",
-  emergencycontact_name: "Jane Doe",
-  emergencycontact_phone: "9876543210",
-  emergencycontact_relation: "Spouse",
-},
-{
-  id: "ETS0678/12",
-  name: "Jane Smith",
-  email: "janesmith@example.com",
-  contact: "0987654321",
-  address: "456 Elm St",
-  department_id: "Eeng",
-  year: 2,
-  admission_date: "2021-09-15",
-  emergencycontact_name: "John Smith",
-  emergencycontact_phone: "1234567890",
-  emergencycontact_relation: "Parent",
-}
+const data: CourseFields[] = [
+  {
+    name: "Course 1",
+    department_id: "Dept 1",
+    credits: 3,
+    prerequisites: ["SWEG103", "SWEG102"],
+    type: "Type 1",
+    code: "Code 1",
+    lec: "Lecture 1",
+    lab: "Lab 1",
+    description: "Description 1",
+  },
+  {
+    name: "Course 2",
+    department_id: "Dept 2",
+    credits: 4,
+    prerequisites: ["SWEG101", "SWEG102"],
+    type: "Type 2",
+    code: "Code 2",
+    lec: "Lecture 2",
+    lab: "Lab 2",
+    description: "Description 2",
+  },
 ];
 
-const StudentTable: React.FC = () =>
-  {
-    const navigate = useNavigate();
-    const columns: TableColumnsType<StudentFields> = [
-      {
-        title: "Full Name",
-        width: 150,
-        dataIndex: "name",
-        key: "name",
-        fixed: "left",
-        sorter: true,
-      },
-      {
-        title: "ID",
-        width: 150,
-        dataIndex: "id",
-        key: "id",
-        fixed: "left",
-        sorter: true,
-      },
-      {
-        title: "Email",
-        dataIndex: "email",
-        key: "email",
-        width: 250,
-      },
-      {
-        title: "Phone",
-        dataIndex: "contact",
-        key: "contact",
-        width: 150,
-      },
-      {
-        title: "Address",
-        dataIndex: "address",
-        key: "address",
-        width: 150,
-      },
-      {
-        title: "Department",
-        dataIndex: "department_id",
-        key: "department_id",
-        width: 150,
-      },
-      {
-        title: "Year",
-        dataIndex: "year",
-        key: "year",
-        width: 150,
-      },
-      {
-        title: "Admission Date",
-        dataIndex: "admission_date",
-        key: "admission_date",
-        width: 150,
-      },
-      {
-        title: "Emergency Contact Name",
-        dataIndex: "emergencycontact_name",
-        key: "emergencycontact_name",
-        width: 150,
-      },
-      {
-        title: "Emergency Contact Phone",
-        dataIndex: "emergencycontact_phone",
-        key: "emergencycontact_phone",
-        width: 150,
-      },
-      {
-        title: "Emergency Contact Relation",
-        dataIndex: "emergencycontact_relation",
-        key: "emergencycontact_relation",
-        width: 150,
-      },
+const CourseTable: React.FC = () => {
+  const navigate = useNavigate();
+  const columns: TableColumnsType<CourseFields> = [
+    {
+      title: "Course Name",
+      width: 150,
+      dataIndex: "name",
+      key: "name",
+      fixed: "left",
+      sorter: true,
+    },
+    {
+      title: "Department",
+      dataIndex: "department_id",
+      key: "department_id",
+      width: 150,
+    },
+    {
+      title: "Credits",
+      dataIndex: "credits",
+      key: "credits",
+      width: 150,
+    },
+    {
+      title: "Prerequisites",
+      dataIndex: "prerequisites",
+      key: "prerequisites",
+      width: 150,
+      render: (prerequisites: string[]) => (
+        <ul>
+          {prerequisites.map((prerequisite) => (
+            <li key={prerequisite}>{prerequisite}</li>
+          ))}
+        </ul>
+      ),
+    },
+    {
+      title: "Type",
+      dataIndex: "type",
+      key: "type",
+      width: 150,
+    },
+    {
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
+      width: 150,
+    },
+    {
+      title: "Lecture",
+      dataIndex: "lec",
+      key: "lec",
+      width: 150,
+    },
+    {
+      title: "Lab",
+      dataIndex: "lab",
+      key: "lab",
+      width: 150,
+    },
+    {
+      title: "Description",
+      dataIndex: "description",
+      key: "description",
+      width: 150,
+    },
+    {
+      title: "Action",
+      key: "operation",
+      fixed: "right",
+      width: 180,
+      render: (text, record) => (
+        <Space size="middle" className="px-4 font-semibold">
+          <a
+            onClick={() => {
+              navigate(`/courses/edit/`, { state: record });
+            }}
+          >
+            Edit
+          </a>
+          <a className=" hover:text-red">Delete</a>
+        </Space>
+      ),
+    },
+  ];
 
-      {
-        title: "Action",
-        key: "operation",
-        fixed: "right",
-        width: 180,
-        render: (text, record) => (
-          <Space size="middle" className="px-4 font-semibold">
-            <a onClick={()=>{
-              navigate(`/students/edit/`, {state: record})
-            }}>Edit</a>
-            <a className=" hover:text-red">Delete</a>
-          </Space>
-        ),
-      },
-    ];
-    return(
-      <div className='shadow-lg py-4'>
+  return (
+    <div className="shadow-lg py-4">
       <Table columns={columns} dataSource={data} scroll={{ x: 1300 }} />
-      </div>
-    )
-  }
-export default StudentTable;
+    </div>
+  );
+};
+
+export default CourseTable;
+
