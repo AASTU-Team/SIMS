@@ -3,43 +3,50 @@ import { Table, Space } from 'antd';
 import type { TableColumnsType } from 'antd';
 import {StudentFields} from "../../type/student";
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { getStudent } from '../../api/student';
+import Loader from '../../components/Loader';
 
 
 
 
 
-const data: StudentFields[] = [
-{
-  id: "ETS0660/12",
-  name: "John Doe",
-  email: "johndoe@example.com",
-  contact: "1234567890",
-  address: "123 Main St",
-  department_id: "Seng",
-  year: 3,
-  admission_date: "2022-01-01",
-  emergencycontact_name: "Jane Doe",
-  emergencycontact_phone: "9876543210",
-  emergencycontact_relation: "Spouse",
-},
-{
-  id: "ETS0678/12",
-  name: "Jane Smith",
-  email: "janesmith@example.com",
-  contact: "0987654321",
-  address: "456 Elm St",
-  department_id: "Eeng",
-  year: 2,
-  admission_date: "2021-09-15",
-  emergencycontact_name: "John Smith",
-  emergencycontact_phone: "1234567890",
-  emergencycontact_relation: "Parent",
-}
-];
+// const data: StudentFields[] = [
+// {
+//   id: "ETS0660/12",
+//   name: "John Doe",
+//   email: "johndoe@example.com",
+//   contact: "1234567890",
+//   address: "123 Main St",
+//   department_id: "Seng",
+//   year: 3,
+//   admission_date: "2022-01-01",
+//   emergencycontact_name: "Jane Doe",
+//   emergencycontact_phone: "9876543210",
+//   emergencycontact_relation: "Spouse",
+// },
+// {
+//   id: "ETS0678/12",
+//   name: "Jane Smith",
+//   email: "janesmith@example.com",
+//   contact: "0987654321",
+//   address: "456 Elm St",
+//   department_id: "Eeng",
+//   year: 2,
+//   admission_date: "2021-09-15",
+//   emergencycontact_name: "John Smith",
+//   emergencycontact_phone: "1234567890",
+//   emergencycontact_relation: "Parent",
+// }
+// ];
 
 const StudentTable: React.FC = () =>
   {
     const navigate = useNavigate();
+    const query = useQuery({
+        queryKey: ["student"],
+        queryFn: getStudent,
+      });
     const columns: TableColumnsType<StudentFields> = [
       {
         title: "Full Name",
@@ -127,10 +134,22 @@ const StudentTable: React.FC = () =>
         ),
       },
     ];
-    return(
-      <div className='shadow-lg py-4'>
-      <Table columns={columns} dataSource={data} scroll={{ x: 1300 }} />
+    return (
+      <div className="shadow-lg py-4 ">
+        {query.isPending ? (
+          <div className="h-auto">
+            <Loader />
+          </div>
+        ) : query.isError ? (
+          <>{`${query.error}`}</>
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={query?.data?.data?.data || []} // Fix: Access the 'data' property of the resolved data
+            scroll={{ x: 1300 }}
+          />
+        )}
       </div>
-    )
+    );
   }
 export default StudentTable;

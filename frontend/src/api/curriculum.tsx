@@ -4,7 +4,7 @@ import getCookie from "../hooks/getCookie";
 import { CurriculumFields } from "../type/curriculum";
 
 const client = axios.create({
-  baseURL: "http://localhost:5000/curriculum",
+  baseURL: "http://localhost:3000/curriculum",
 });
 
 export const setHeaderToken = (token: string) => {

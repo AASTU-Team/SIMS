@@ -1,13 +1,26 @@
 import type { FormProps } from "antd";
 import {UploadOutlined, UserAddOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Select, Upload, DatePicker } from "antd";
+import { Button, Form, Input, Select, Upload, DatePicker, notification } from "antd";
 import { StudentFields } from "../../type/student";
+import { useMutation } from "@tanstack/react-query";
+import { registerStudent } from "../../api/student";
 
-export default function AddStaff() {
+export default function AddStudent() {
   const [form] = Form.useForm();
-  
+     const AddStudentMutation = useMutation({
+       mutationKey: ["addStudent"],
+       mutationFn: (values: StudentFields) => registerStudent(values),
+       onError: () => {
+         notification.error({ message: "Department Not Created" });
+       },
+       onSuccess: () => {
+         notification.success({ message: "Department Created Successfully" });
+         form.resetFields();
+       },
+     });
   const onFinish: FormProps<StudentFields>["onFinish"] = (values) => {
-    console.log("Success:", values);
+    console.log(values);
+    AddStudentMutation.mutate(values);
   };
 
   const onFinishFailed: FormProps<StudentFields>["onFinishFailed"] = (
@@ -28,9 +41,10 @@ export default function AddStaff() {
             Register Student
           </h3>
 
-           <button 
-          className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90" 
-          >
+          <button 
+          onClick={() => form.submit()}
+          disabled={AddStudentMutation.isPending}
+          className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90">
             <UserAddOutlined />
             Register User
           </button>
@@ -54,47 +68,53 @@ export default function AddStaff() {
                   },
                 ]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="fullName"
-                >
-                  Full Name
-                </label>
-                <Input
-                  placeholder="Enter the full name"
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="fullName"
+                  >
+                    Full Name
+                  </label>
+                  <Input
+                    placeholder="Enter the full name"
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  />
+                </div>
               </Form.Item>
               <Form.Item<StudentFields>
                 name="email"
                 rules={[{ required: true, message: "Please input the email!" }]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="email"
-                >
-                  Email
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  type="email"
-                  placeholder="Enter the email"
-                />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="email"
+                  >
+                    Email
+                  </label>
+                  <Input
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    type="email"
+                    placeholder="Enter the email"
+                  />
+                </div>
               </Form.Item>
               <Form.Item<StudentFields>
                 name="id"
                 rules={[{ required: true, message: "Please input the ID!" }]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="id"
-                >
-                  ID
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the ID"
-                />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="id"
+                  >
+                    ID
+                  </label>
+                  <Input
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    placeholder="Enter the ID"
+                  />
+                </div>
               </Form.Item>
             </div>
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
@@ -107,16 +127,18 @@ export default function AddStaff() {
                   },
                 ]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="contact"
-                >
-                  Phone Number
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the phone number"
-                />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="contact"
+                  >
+                    Phone Number
+                  </label>
+                  <Input
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    placeholder="Enter the phone number"
+                  />
+                </div>
               </Form.Item>
               <Form.Item<StudentFields>
                 name="address"
@@ -127,28 +149,32 @@ export default function AddStaff() {
                   },
                 ]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="address"
-                >
-                  Address
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the address"
-                />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="address"
+                  >
+                    Address
+                  </label>
+                  <Input
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    placeholder="Enter the address"
+                  />
+                </div>
               </Form.Item>
               <Form.Item>
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="profile_pic"
-                >
-                  Profile Picture
-                </label>
-                <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
-                  <Upload>
-                    <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                  </Upload>
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="profile_pic"
+                  >
+                    Profile Picture
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Upload>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  </div>
                 </div>
               </Form.Item>
             </div>
@@ -163,50 +189,54 @@ export default function AddStaff() {
                   },
                 ]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="department_id"
-                >
-                  Department
-                </label>
-                <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
-                  <Select
-                    showSearch
-                    placeholder="Select Department"
-                    optionFilterProp="children"
-                    filterOption={filterOption}
-                    options={[
-                      {
-                        value: "Seng",
-                        label: "Software Engineering",
-                      },
-                      {
-                        value: "Eeng",
-                        label: "Electrical Engineering",
-                      },
-                      {
-                        value: "Ceng",
-                        label: "Civil Engineering",
-                      },
-                    ]}
-                  />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="department_id"
+                  >
+                    Department
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder="Select Department"
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      options={[
+                        {
+                          value: "Seng",
+                          label: "Software Engineering",
+                        },
+                        {
+                          value: "Eeng",
+                          label: "Electrical Engineering",
+                        },
+                        {
+                          value: "Ceng",
+                          label: "Civil Engineering",
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
               </Form.Item>
               <Form.Item<StudentFields>
                 name="year"
                 rules={[{ required: true, message: "Please input the Year!" }]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="year"
-                >
-                  Year
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the address"
-                  type="number"
-                />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="year"
+                  >
+                    Year
+                  </label>
+                  <Input
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    placeholder="Enter the address"
+                    type="number"
+                  />
+                </div>
               </Form.Item>
 
               <Form.Item<StudentFields>
@@ -218,15 +248,18 @@ export default function AddStaff() {
                   },
                 ]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="admission_date"
-                >
-                  Admission Date
-                </label>
-                <DatePicker className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="admission_date"
+                  >
+                    Admission Date
+                  </label>
+                  <DatePicker className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
+                </div>
               </Form.Item>
             </div>
+
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<StudentFields>
                 name="emergencycontact_name"
@@ -237,17 +270,19 @@ export default function AddStaff() {
                   },
                 ]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="emergencycontact_name"
-                >
-                  Emergency Contact Full Name
-                </label>
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="emergencycontact_name"
+                  >
+                    Emergency Contact Full Name
+                  </label>
 
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the full name"
-                />
+                  <Input
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    placeholder="Enter the full name"
+                  />
+                </div>
               </Form.Item>
               <Form.Item<StudentFields>
                 name="emergencycontact_phone"
@@ -258,16 +293,18 @@ export default function AddStaff() {
                   },
                 ]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="emergencycontact_phone"
-                >
-                  Emergency Contact Phone Number
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the phone number"
-                />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="emergencycontact_phone"
+                  >
+                    Emergency Contact Phone Number
+                  </label>
+                  <Input
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    placeholder="Enter the phone number"
+                  />
+                </div>
               </Form.Item>
               <Form.Item<StudentFields>
                 name="emergencycontact_relation"
@@ -275,23 +312,23 @@ export default function AddStaff() {
                   { required: true, message: "Please input the relation!" },
                 ]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="emergencycontact_relation"
-                >
-                  Emergency Contact Relations
-                </label>
-                <Input
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                  placeholder="Enter the relation"
-                />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="emergencycontact_relation"
+                  >
+                    Emergency Contact Relations
+                  </label>
+                  <Input
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    placeholder="Enter the relation"
+                  />
+                </div>
               </Form.Item>
             </div>
           </Form>
         </div>
       </div>
-
-
     </div>
   );
 }

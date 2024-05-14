@@ -4,7 +4,7 @@ import getCookie from "../hooks/getCookie";
 import { StaffFields } from "../type/staff";
 
 const client = axios.create({
-  baseURL: "http://localhost:5000/user",
+  baseURL: "http://localhost:3000/user",
 });
 
 export const setHeaderToken = (token: string) => {
