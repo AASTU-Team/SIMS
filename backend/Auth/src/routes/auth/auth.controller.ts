@@ -31,7 +31,19 @@ async function register(req: Request, res: Response): Promise<any> {
  // const password = await bcrypt.hash(req.body.password, salt)
   const user = await createUser({ ...req.body, salt: salt,role:req.body.role });
   //send email with link
-  await sendEmail(user);
+
+    try {
+      const info = await sendEmail(user);
+      console.log("Email sent successfully!", info);
+      // Handle success case
+    } catch (error) {
+      console.error("Error sending email:", error);
+      // Handle error case
+    }
+
+
+    
+  
   console.log(user);
   if (!user) return res.status(409).json({ message: "Conflict" });
   return res.status(201).send({ message: "success message" });
@@ -120,9 +132,9 @@ async function changePassword(req: any, res: Response): Promise<void> {
     console.log(user);
     await user.save();
     res.status(200).send("password changed");
-  } catch (e: unknown) {
+  } catch (e: any) {
     console.log(e);
-    res.status(400).send(e);
+    res.status(400).send(e.message);
   }
 }
 async function logout(req: any, res: Response): Promise<void> {
