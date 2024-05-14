@@ -21,6 +21,9 @@ import EdditStaff from "../pages/StaffManagement/EditStaff";
 import CourseManagement from "../pages/CourseManagment";
 import AddCourse from "../pages/CourseManagment/AddCourse";
 import EditCourse from "../pages/CourseManagment/EditCourse";
+import CurriculumManagement from "../pages/CurriculumManagment";
+import AddCurriculum from "../pages/CurriculumManagment/AddCurriculum";
+import EditCurriculum from "../pages/CurriculumManagment/EditCurriculum";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -56,6 +59,9 @@ const AllRoutes = () => {
                     <Route path="/course" element={<CourseManagement />} />
                     <Route path="/courses/add" element={<AddCourse />} />
                     <Route path="/courses/edit" element={<EditCourse />} />
+                    <Route path="/curriculum" element={<CurriculumManagement />} />
+                    <Route path="/curriculum/add" element={<AddCurriculum />} />
+                    <Route path="/curriculum/edit" element={<EditCurriculum />} />
                     <Route path="/room" element={<RoomManagement />} />
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/registration" element={<RegisterUser />} />

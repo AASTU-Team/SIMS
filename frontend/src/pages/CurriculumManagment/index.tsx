@@ -1,4 +1,4 @@
-import StudentTable from "./table";
+import CurriculumTalbe from "./table";
 import { useState } from "react";
 import { UserAddOutlined, UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import { Button, Modal, Form, Upload } from "antd";
@@ -6,7 +6,7 @@ import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
 
 
-export default function StudentManagement() {
+export default function CurriculumManagement() {
   const [open, setOpen] = useState(false);
   const router = useNavigate()
   const onFinish: FormProps["onFinish"] = (values) => {
@@ -21,25 +21,25 @@ export default function StudentManagement() {
   return (
     <div className="max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       <div className="flex justify-between">
-        <div className="text-title-md">Student Management</div>
+        <div className="text-title-md">Curriculum Management</div>
         <div className="flex gap-2">
         <button 
           className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90" 
-          onClick={() => router('/students/add')}>
+          onClick={() => router('/curriculum/add')}>
           <UserAddOutlined />
-          Register Student
+          Add Curriculum
         </button>
         <button
           onClick={() => setOpen(true)}
           className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
         >
           <UploadOutlined />
-          Register Multiple Students
+          Register Multiple Curriculums
         </button>
         </div>
 
       </div>
-      <StudentTable />
+      <CurriculumTalbe />
       <Modal
         centered
         open={open}
@@ -51,7 +51,7 @@ export default function StudentManagement() {
             Cancel
           </Button>,
           <Button key="submit" type="primary" onClick={() => setOpen(false)} className="bg-primary">
-            Register
+            Add
           </Button>,
         ]}
       >

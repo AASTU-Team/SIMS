@@ -1,4 +1,4 @@
-import StudentTable from "./table";
+import CourseTable from "./table";
 import { useState } from "react";
 import { UserAddOutlined, UploadOutlined, InboxOutlined } from "@ant-design/icons";
 import { Button, Modal, Form, Upload } from "antd";
@@ -39,7 +39,7 @@ export default function CourseManagement() {
         </div>
 
       </div>
-      <StudentTable />
+      <CourseTable />
       <Modal
         centered
         open={open}

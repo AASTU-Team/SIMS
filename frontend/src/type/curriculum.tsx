@@ -3,7 +3,7 @@ export type CurriculumFields = {
   department_id?: string;
   credits_required?: number;
   semester?: string;
-  year?: Date;
+  year?: string;
   courses?: string[];
   description?: string;
 };
