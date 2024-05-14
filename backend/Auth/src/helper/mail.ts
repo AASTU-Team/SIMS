@@ -19,67 +19,68 @@ const transporter = nodemailer.createTransport({
 const sendEmail = (data) => {
   return new Promise((resolve, reject) => {
     const message = {
-      from: `"Sera.net" <${"sera"}>`,
+      from: `"AASTU" <${"SIMS"}>`,
       to: data.email,
-      subject: "Interview Confirmation for [Position Name]",
+      subject: "Registration Confirmation",
       text: ``,
-      html: `
-        <!DOCTYPE html>
-        <html>
-        <head>
-        <title>Interview Confirmation</title>
+      html: `<!DOCTYPE html>
+      <html>
+      <head>
+        <title>Registration Confirmation</title>
         <style>
-        body {
-          font-family: Arial, sans-serif;
-          font-size: 16px;
-        }
-        
-        h3 {
-          margin-top: 0;
-        }
-        
-        p {
-          margin-bottom: 10px;
-        }
-        a {
-            color: #000;
-            text-decoration: none;
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
           }
-        
-        img {
-          max-width: 100%;
-        }
+      
+          .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+          }
+      
+          h1 {
+            text-align: center;
+            color: #333333;
+          }
+      
+          p {
+            color: #555555;
+            line-height: 1.5;
+          }
+      
+          .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 24px;
+            background-color: #4CAF50;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+          }
+      
+          .button:hover {
+            background-color: #45a049;
+          }
         </style>
-        </head>
-        <body>
-        
-        <p>
-        I hope this email finds you well.${data.invitations}
-        </p>
-        
-        <p>
-        We are excited to learn more about your qualifications for this position and to discuss how you can contribute to our team.
-        </p>
-        
-        <p>
-        To prepare for the interview, please review the job description and bring a copy of your resume and any other relevant materials.
-        </p>
-        
-        <p>
-        We will be interviewing several candidates for this position, so please arrive on time. If you have any questions, please do not hesitate to contact me.
-        </p>
-        
-        <p>
-        We look forward to meeting you!
-        </p>
-        
-        <h3>Sincerely,</h3>
-        <br>
-        
-        <a href="www.google.com">Learn more about our company</a>
-        </body>
-        </html>
-      `,
+      </head>
+      <body>
+        <div class="container">
+          <h1>Welcome to Our Community!</h1>
+          <p>Dear [Student Name],</p>
+          <p>Thank you for registering on our page. We're excited to have you as part of our community!</p>
+          <p>As a registered member, you'll have access to a wide range of resources and opportunities. We encourage you to explore the various features on our platform and make the most out of your membership.</p>
+          <p>If you have any questions or need assistance, please don't hesitate to reach out to our support team. We're here to help!</p>
+          <p>Once again, welcome aboard!</p>
+          <a href="http://localhost:5173/signup/${data.invitations}" class="button">Visit Our Website</a>
+        </div>
+      </body>
+      </html>`,
     };
 
     transporter.sendMail(message, (error, info) => {
@@ -92,6 +93,8 @@ const sendEmail = (data) => {
       }
     });
   });
-}
+};
 
 export { sendEmail };
+
+
