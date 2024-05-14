@@ -15,7 +15,7 @@ interface IAuth {
   tokens: string[];
   salt: string;
 }
-const bcrypt = require ('bcrypt');
+const bcrypt = require("bcrypt");
 
 async function register(req: Request, res: Response): Promise<any> {
   //  Validate user data
@@ -29,13 +29,40 @@ async function register(req: Request, res: Response): Promise<any> {
   // ]);
   const salt =await  bcrypt.genSalt(10)
  // const password = await bcrypt.hash(req.body.password, salt)
-  const user = await createUser({ ...req.body, salt: salt });
+  const user = await createUser({ ...req.body, salt: salt,role:req.body.role });
   //send email with link
   await sendEmail(user);
   console.log(user);
-  if (!user) return res.status(409).json({message:"Conflict"});
+  if (!user) return res.status(409).json({ message: "Conflict" });
   return res.status(201).send({ message: "success message" });
 }
+async function deleteUser(req: Request, res: Response): Promise<any> {
+  //  Validate user data
+  const { error } = validateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  try {
+    const deleteduser = await Auth.deleteOne({email: req.body.email})
+    if(!deleteduser)
+      {
+        return res.status(404).json({message:"Not found"})
+      }
+
+
+      return res.status(200).json({message:"success"})
+  
+    
+  } catch (error:any) {
+
+    return res.status(400).send(error.message);
+
+    
+  }
+ 
+  
+  
+}
+
 async function login(req: Request, res: Response): Promise<any> {
   const { error } = validateAuth(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -52,9 +79,9 @@ async function login(req: Request, res: Response): Promise<any> {
 }
 async function getUserProfile(req: any, res: Response) {
   try {
-    res.status(200).send("user profile");
-  } catch (e) {
-    // res.status(500).send(error.message)
+    res.status(200).send({ email: req.user.email, role: req.user.role });
+  } catch (e: any) {
+    res.status(500).send(e.message);
   }
 }
 async function getNewAccessToken(req: any, res: Response): Promise<void> {
@@ -72,37 +99,27 @@ async function changePassword(req: any, res: Response): Promise<void> {
     const user = req.user;  //database user object
 
     //const isMatch = await bcrypt.compare(password , req.user.password)
-   
-    const salt =await  bcrypt.genSalt(10)
-   const password = await bcrypt.hash(req.body.password, salt)
+
+    const salt = await bcrypt.genSalt(10);
+    const password = await bcrypt.hash(req.body.password, salt);
     console.log(req.body);
-   
-    if (req.isFirstTime)
-      {
-        user.invitations = "";
-        user.salt = salt
-        user.password = password;
-     
 
-      } 
-
-      else{
-        const isMatch = await bcrypt.compare(req.body.oldPassword , user.password)
-        if(isMatch)
-        {
-          user.password =await bcrypt.hash(req.body.password, salt)
-          user.salt = salt
-
-        }
-
-        else{
-         throw new Error(`Invalid password`)
-        }
+    if (req.isFirstTime) {
+      user.invitations = "";
+      user.salt = salt;
+      user.password = password;
+    } else {
+      const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
+      if (isMatch) {
+        user.password = await bcrypt.hash(req.body.password, salt);
+        user.salt = salt;
+      } else {
+        throw new Error(`Invalid password`);
       }
-      console.log(user);
-      await user.save();
-      res.status(200).send("password changed");
- 
+    }
+    console.log(user);
+    await user.save();
+    res.status(200).send("password changed");
   } catch (e: unknown) {
     console.log(e);
     res.status(400).send(e);
@@ -142,7 +159,7 @@ async function findByCredentials(
   if (!user) {
     throw new Error("invalid email or password");
   }
-   const isMatch = await bcrypt.compare(password , user.password)
+  const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     throw new Error(" invalid email or password");
   }
@@ -157,4 +174,5 @@ export {
   changePassword,
   logout,
   logoutAll,
+  deleteUser
 };

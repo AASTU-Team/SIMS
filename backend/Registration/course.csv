@@ -1,0 +1,3 @@
+name,department,instructors,credits,prerequisites,type,code,lec,lab,description
+SDS,Software,"mik@gmail.com,iman@gam.com",5,"math101,ph10",sigere,sds12,10,1-,"""hello"""
+DS,Software,"mik@gmail.com,iman@gam.com",5,"math101,ph10",sigere,sds1,10,1-,"""hello"""

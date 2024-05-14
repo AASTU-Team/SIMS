@@ -4,10 +4,10 @@ import { Request,Response } from "express";
 
 // Validation middleware
 const validateRegistration = [
-    body('id')
+   /*  body('id')
     
     .isString()
-    .withMessage(' ID must be a string'),
+    .withMessage(' ID must be a string'), */
  
   body('email').isEmail().withMessage('Invalid email address'),
   body('name')

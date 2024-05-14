@@ -1,0 +1,131 @@
+POST http://localhost:3000/course/create 
+Content-Type:  application/json
+
+{
+  "name": "FP2",
+  "department_id":"66339dd2caaf3b0b164e50e2",
+  "instructors":["6627f3543267383b7d6046e6"],
+  "credits":5,
+  "prerequisites":[],
+  "type":"Softwarecourse",
+  "code":"Fp201",
+  "lec":"5",
+  "lab":"5",
+  "description":""
+
+}
+### fetch based on dep 
+GET  http://localhost:3000/course 
+Content-Type:  application/json
+
+ 
+### find by id 
+GET  http://localhost:3000/course/66333884b2387b39d3a9bf0b 
+Content-Type:  application/json
+
+### update 
+PATCH  http://localhost:3000/course/6637392d883de948fc00f776 
+Content-Type:  application/json
+
+{
+  "name":"SDS"
+   "prerequisites":["66363f250dfeb00796223221"],
+}
+### delete 
+DELETE   http://localhost:3000/course/66333884b2387b39d3a9bf0b 
+Content-Type:  application/json
+
+### Department 
+
+### create dept 
+POST http://localhost:3000/department/create 
+Content-Type:  application/json
+
+{
+  "name": "Software"
+}
+### get dept
+GET  http://localhost:3000/department/6633446ee8182ca5eb01630e
+Content-Type:  application/json
+
+### fetch based on dep 
+GET  http://localhost:3000/department 
+Content-Type:  application/json
+
+### update 
+PATCH  http://localhost:3000/department/6633446ee8182ca5eb01630e  
+Content-Type:  application/json
+
+{
+  "name": "old dept"
+}
+### delete 
+DELETE   http://localhost:3000/department/6633465eb9f18a480d1802ae 
+Content-Type:  application/json
+
+
+
+### Curriculum 
+
+### create curr
+POST http://localhost:3000/curriculum/create 
+Content-Type:  application/json
+
+{
+  "name": "Software",
+  "department_id":"66339dd2caaf3b0b164e50e2",
+  "credits_required":10,
+  "year":3,
+   "courses" : [
+        {
+          "courseId": "66373921883de948fc00f774" , 
+        "semester" : 1
+        },
+        {
+          "courseId": "6637392d883de948fc00f776" , 
+        "semester" : 1
+        }
+       
+    ]
+}
+### get curr
+GET  http://localhost:3000/curriculum/66336dc4050d56f693de67d5
+Content-Type:  application/json
+
+### fetch based on dep 
+GET  http://localhost:3000/curriculum 
+Content-Type:  application/json
+
+### update 
+PATCH  http://localhost:3000/curriculum/6633548832ad25537ba63d13  
+Content-Type:  application/json
+
+{
+  "name": "old"
+}
+### delete 
+DELETE   http://localhost:3000/curriculum/66335af651f5b3865542d60e 
+Content-Type:  application/json
+### update cur course 
+PATCH  http://localhost:3000/curriculum/addcourse/66336dc4050d56f693de67d5  
+Content-Type:  application/json
+
+{
+    "courses" : [
+        {"courseId": "6633548832ad25537ba63d12" , 
+        "semester" : 2},
+         {"courseId": "6633548832ad25537ba63d15" , 
+        "semester" : 2}
+    ]
+  
+}
+### rmv crs crc
+DELETE http://localhost:3000/curriculum/deleteCourses/66336dc4050d56f693de67d5  
+Content-Type:  application/json
+
+{
+    "courses" : [
+         "6633548832ad25537ba63d15" 
+    ]
+  
+}

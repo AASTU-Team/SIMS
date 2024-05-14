@@ -35,10 +35,10 @@ let studentSchema = new mongoose.Schema({
     required: false,
     ref: "Department",
   },
-  status: {
-    type: String,
-    enum: ["Active", "Inactive", "Completed", "Withdrawn","Pending-Withdrawal"],
-    required: true,
+  status_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false,
+    ref: "Status",
   },
   year: {
     type: Number,
