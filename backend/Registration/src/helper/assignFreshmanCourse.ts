@@ -56,7 +56,7 @@ async function assignCourse(Ids: String[]): Promise<any> {
       courses: courses,
       registration_date: new Date(),
       total_credit: sum,
-       section_id:null,
+      section_id: null,
     });
 
     registration.save();
