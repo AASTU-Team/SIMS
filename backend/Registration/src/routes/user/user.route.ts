@@ -7,12 +7,14 @@ import {
   registerStudent,
   WithdrawalRequest
   
+  
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
 import { registerStudentCsv } from "./user.controller";
 import { uploadFile } from "./user.controller";
 import { getStudentProfile } from "./user.controller";
+import { getAllStaff } from "./user.controller";
 
 import { getAllStudent } from "./user.controller";
 import { getStudentByDepartment } from "./user.controller";
@@ -51,6 +53,7 @@ Studentrouter.post("/me", getStudentProfile);
 
 Studentrouter.post("/upload", upload.single("file"), uploadFile);
 Studentrouter.get("/student/all", getAllStudent);
+Studentrouter.get("/staff/all", getAllStaff);
 Studentrouter.get("/student/department", getStudentByDepartment);
 Studentrouter.delete("/student/delete", deleteStudent);
 Studentrouter.patch("/student/update", updateStudent);

@@ -38,7 +38,7 @@ let studentSchema = new mongoose.Schema({
   status: {
     type: String,
     enum: ["Active", "Inactive", "Completed", "Withdrawn","Pending-Withdrawal"],
-    required: true,
+    required: false,
   },
   year: {
     type: Number,

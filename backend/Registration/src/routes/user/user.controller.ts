@@ -428,6 +428,17 @@ export const getAllStudent = async (req: Request, res: Response) => {
   }
 };
 
+export const getAllStaff = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    const staff: any = await Staff.find();
+    res.status(200).json({ message: staff });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const getStudentByDepartment = async (req: Request, res: Response) => {
   const department = req.body.department_id;
 

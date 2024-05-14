@@ -96,11 +96,15 @@ export const createDep = async (req: Request, res: Response) => {
 };
 export const updateDep = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    //const { id } = req.params;
+     const { name } = req.params;
     const requestData = req.body;
-    const updates = await Department.findByIdAndUpdate(id, requestData, {
+  /*   const updates = await Department.findByIdAndUpdate(id, requestData, {
       new: true,
-    }).exec();
+    }).exec(); */
+      const updates = await Department.findOneAndUpdate({name:name}, requestData, {
+      new: true,
+    }).exec(); 
     if (!updates) {
       return res.status(500).json({ message: "An error happened" });
     } else {
