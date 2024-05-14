@@ -15,7 +15,6 @@ let curriculumSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-
   year: {
     type: Number,
     required: true,
@@ -32,10 +31,9 @@ let curriculumSchema = new mongoose.Schema({
         ref: "Course",
       },
       semester: {
-        type: Number,
+        type: Number
         required: true,
       },
-    },
   ],
   description: {
     type: String,
