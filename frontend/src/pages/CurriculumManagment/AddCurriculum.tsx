@@ -27,7 +27,10 @@ export default function AddCurriculum() {
             Add Curriculum
           </h3>
 
-          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90">
+          <button
+            onClick={() => form.submit()}
+            className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
+          >
             Add Curriculum
           </button>
         </div>
@@ -50,16 +53,18 @@ export default function AddCurriculum() {
                   },
                 ]}
               >
-                <label
-                  className="mb-3 block text-sm font-medium text-black dark:text-white"
-                  htmlFor="name"
-                >
-                  Curriculum Name
-                </label>
-                <Input
-                  placeholder="Enter the curriculum name"
-                  className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                />
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="name"
+                  >
+                    Curriculum Name
+                  </label>
+                  <Input
+                    placeholder="Enter the curriculum name"
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  />
+                </div>
               </Form.Item>
               <Form.Item<CurriculumFields>
                 name="department_id"

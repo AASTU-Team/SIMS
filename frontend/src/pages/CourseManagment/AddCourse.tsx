@@ -154,7 +154,7 @@ export default function AddCourse() {
                         label: "Software Engineering",
                       },
                       {
-                        value: "SWEG103",
+                      value: "SWEG103",
                         label: "Software Project Management",
                       },
                     ]}

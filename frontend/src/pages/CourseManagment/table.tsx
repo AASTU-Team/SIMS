@@ -57,13 +57,17 @@ const CourseTable: React.FC = () => {
       dataIndex: "prerequisites",
       key: "prerequisites",
       width: 150,
-      render: (prerequisites: string[]) => (
-        <ul>
-          {prerequisites.map((prerequisite) => (
-            <li key={prerequisite}>{prerequisite}</li>
-          ))}
-        </ul>
-      ),
+      render: (prerequisites: string[]) => 
+          {return prerequisites.length > 0 ? (
+            <ul>
+              {prerequisites.map((prerequisite) => (
+                <li key={prerequisite}>{prerequisite}</li>
+              ))}
+            </ul>
+          ) : (
+            <p>No Prerequisites</p>
+          )
+        }
     },
     {
       title: "Type",
