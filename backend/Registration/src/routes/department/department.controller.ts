@@ -81,6 +81,20 @@ export const getDepById = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const getDepByCode = async (req: Request, res: Response) => {
+  // fetch dep id from the auth
+  const { code } = req.params;
+  try {
+    // use find({dep_id : id from fetch })
+    const department: any = await Department.findOne({ code:code });
+    if (!department)
+      return res.status(404).json({ message: "Department not found." });
+    res.status(200).json({ data: department });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 export const createDep = async (req: Request, res: Response) => {
   const data = req.body;
   try {
@@ -97,12 +111,12 @@ export const createDep = async (req: Request, res: Response) => {
 export const updateDep = async (req: Request, res: Response) => {
   try {
     //const { id } = req.params;
-     const { name } = req.params;
+     const { code } = req.params;
     const requestData = req.body;
   /*   const updates = await Department.findByIdAndUpdate(id, requestData, {
       new: true,
     }).exec(); */
-      const updates = await Department.findOneAndUpdate({name:name}, requestData, {
+      const updates = await Department.findOneAndUpdate({code:code}, requestData, {
       new: true,
     }).exec(); 
     if (!updates) {
@@ -117,10 +131,10 @@ export const updateDep = async (req: Request, res: Response) => {
   }
 };
 export const deleteDep = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { code } = req.params;
 
   try {
-    const deletedDepartment = await Department.findByIdAndDelete({ _id: id });
+    const deletedDepartment = await Department.findOneAndDelete({ code:code });
     if (!deletedDepartment) {
       return res.status(404).json({ message: "Not found" });
     }

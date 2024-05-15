@@ -187,6 +187,18 @@ export const getCourseById = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const getCourseByCode = async (req: Request, res: Response) => {
+  // fetch dep id from the auth
+  const { code } = req.params;
+  try {
+    // use find({dep_id : id from fetch })
+    const course: any = await Course.findOne({ code:code });
+    res.status(200).json({ data: course });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 export const createCourse = async (req: Request, res: Response) => {
   const data = req.body;
   try {
@@ -200,9 +212,9 @@ export const createCourse = async (req: Request, res: Response) => {
 };
 export const updateCourse = async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const { code } = req.params;
     const requestData = req.body;
-    const updates = await Course.findByIdAndUpdate(id, requestData, {
+    const updates = await Course.findOneAndUpdate({code:code}, requestData, {
       new: true,
     }).exec();
     if (!updates) {
@@ -217,10 +229,10 @@ export const updateCourse = async (req: Request, res: Response) => {
   }
 };
 export const deleteCourse = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { code } = req.params;
 
   try {
-    const deletedCourse = await Course.findByIdAndDelete({ _id: id });
+    const deletedCourse = await Course.findOneAndDelete({ code:code });
     if (!deletedCourse) {
       return res.status(404).json({ message: "Not found" });
     }
