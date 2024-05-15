@@ -21,7 +21,6 @@ const assignmentSchema = Joi.object<AssignmentI>({
   Lab_Lec: Joi.string().optional(),
 });
 
-
 const Student = require("../../models/student.model");
 const Staff = require("../../models/staff.model");
 const Status = require("../../models/status.model");
@@ -31,8 +30,6 @@ const Curriculum = require("../../models/curriculum.model");
 const Assignment = require("../../models/Assignment.model");
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
-
-
 
 export const createSchedule = async (req: Request, res: Response) => {
   const assignments = req.body.data;
@@ -48,20 +45,15 @@ export const createSchedule = async (req: Request, res: Response) => {
   try {
     const newschedule = await Assignment.create(assignments);
 
-if (!newschedule) {
-  return res.status(400).json({ error: 'an error happened' });
-}
-  return res.status(201).json({"message":"created successfully"})
-  
-} catch (error) {
-  console.error(error);
-  return res.status(500).json({ error: 'an error happened' });
-  
-}
-   
-   
- 
- }
+    if (!newschedule) {
+      return res.status(400).json({ error: "an error happened" });
+    }
+    return res.status(201).json({ message: "created successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "an error happened" });
+  }
+};
 
 export const getAssignmentById = async (req: Request, res: Response) => {
   const { id } = req.params;
@@ -125,6 +117,20 @@ export const getAssignmentBySecId = async (req: Request, res: Response) => {
       return res.status(404).json({ error: "Assignment not found" });
     }
     return res.json(assignment);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "An error occurred" });
+  }
+};
+export const getAssignmentByInstId = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    const assignment = await Assignment.find({ instructor_id: id });
+    if (!assignment) {
+      return res.status(404).json({ error: "Assignment not found" });
+    }
+    return res.status(200).json(assignment);
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "An error occurred" });
@@ -194,4 +200,3 @@ async function roomConflict(room_id: any, start_time: any) {
     return false;
   }
 }
-
