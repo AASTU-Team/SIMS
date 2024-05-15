@@ -5,8 +5,8 @@ const server = http.createServer(app);
 
 async function startServer() {
   await mongocoonnect();
-  server.listen(4000, () => {
-    console.log("Server is running on http://localhost:4000");
+  server.listen(7000, () => {
+    console.log("Server is running on http://localhost:7000");
   });
 }
 startServer();

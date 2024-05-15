@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+
 import { date } from "joi";
 import mongoose, { Error } from "mongoose";
 const Staff = require("../../models/staff.model");
@@ -193,4 +194,5 @@ function calcAverge(parameter: any, evalLength: any, userParameter: any) {
   console.log("userParameter =", userParameter);
   console.log(avg, parameter, evalLength, userParameter);
   return avg;
+
 }

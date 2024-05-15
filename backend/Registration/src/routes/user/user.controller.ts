@@ -33,7 +33,7 @@ const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
 import path from "path";
 
-export const uploadFile = (req: Request, res: Response) => {
+export const UploadFile = (req: Request, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
@@ -215,14 +215,48 @@ export const registerStudent = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+export const uploadFile = (req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  const results: any = [];
+
+  const file: any = req.file;
+
+  // Process the uploaded CSV file
+  fs.createReadStream(req.file.path)
+    .pipe(csv())
+    .on("data", (data: any) => results.push(data))
+    .on("end", () => {
+      // Remove the temporary file
+      fs.unlinkSync(file.path);
+
+      // Do something with the parsed CSV data
+      console.log(results);
+
+      // Return a response
+      res.json({ message: "File uploaded and processed successfully" });
+    })
+    .on("error", (error: any) => {
+      // Handle any errors
+      console.error(error);
+      res.status(500).json({ error: "Internal server error" });
+    });
+};
 
 export const registerStudentCsv = async (req: Request, res: Response) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "No file uploaded" });
+  }
+
   const currentYear = new Date().getFullYear();
   const subtractedYear = currentYear - 8;
   const year = subtractedYear % 100;
 
   console.log(year);
   const insertedIds: String[] = [];
+  const errors: String[] = [];
 
   const department = await Department.findOne({ name: "Freshman" });
 
@@ -233,13 +267,14 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
     console.log("department_id:", department_id);
   } else {
     console.log("Department not found");
+    errors.push("Freshman department not found")
   }
 
   const count = await Student.countDocuments();
   console.log(`Total number of documents: ${count}`);
   let idPrefix = "ets";
 
-  fs.createReadStream("./students.csv")
+  fs.createReadStream(req.file.path)
     .pipe(csv())
     .on("data", (data: any) => {
       // Process each row of data
@@ -261,6 +296,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
           const { error } = validateStudent(student);
           if (error) {
             console.error("Validation error:", error);
+            errors.push(error.details[0].message + "for student " + student.name);
             continue; // Skip this student and move to the next one
           }
 
@@ -320,9 +356,11 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
               console.log(r.message);
               //return res.status(400).json({ message: "An error happend please try again" });
               console.log("unable to create student auth profile");
+              errors.push("unable to create student auth profile" + "for student" + student.name);
             }
           } catch (error: any) {
             console.log(error.message);
+            errors.push("unable to create student auth profile" + "for student" + student.name);
 
             //return res.status(500).json({ message: error.message });
             console.log("unable to create student auth profile");
@@ -337,7 +375,8 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
         const registration = await assignCourse(insertedIds);
         console.log(registration);
         //console.log(insertedIds);
-        res.status(200).json({ message: "Data inserted successfully" });
+       
+        res.status(200).json({ message: "Data inserted successfully",errors:errors });
         console.log("emails", emails);
       } catch (error: any) {
         console.error("Error inserting data:", error);
@@ -384,6 +423,17 @@ export const getAllStudent = async (req: Request, res: Response) => {
   try {
     const students: any = await Student.find();
     res.status(200).json({ message: students });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAllStaff = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    const staff: any = await Staff.find();
+    res.status(200).json({ message: staff });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -786,3 +836,123 @@ export const getTemplate = async (req: Request, res: Response) => {
   console.log(__dirname);
   res.download(file);
 };
+
+export const WithdrawalRequest = async (req: Request, res: Response) => {
+
+  const id  = req.body.id;
+
+  const student = await Student.findById(id);
+
+  if(!student)
+    {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const updated = await Student.findByIdAndUpdate(id,{"status":"Pending-Withdrawal"})
+
+    if(!updated)
+      {
+        return res.status(404).json({ message: "Unable to update" });
+      }
+
+      return res.status(200).json({ message: "success" });
+
+
+
+
+}
+
+
+
+export const getWithdrawalRequests = async (req: Request, res: Response) => {
+
+  const students = await Student.find({status:"Pending-Withdrawal"})
+
+  if(!students)
+    {
+      return res.status(404).json({ message: " No Student found" });
+    }
+
+    return res.status(200).json(students);
+
+
+
+
+}
+
+export const AcceptWithdrawalRequest = async (req: Request, res: Response) => {
+
+  const id  = req.body.stud_id;
+
+  const student = await Student.findById(id);
+  let status:Boolean = false
+
+  if(!student)
+    {
+      return res.status(404).json({ message: "Student not found" });
+    }
+    const highestCombination = await Registration.findOne({ stud_id: id })
+    .sort({ year: -1, semester: -1 })
+    .select("year semester")
+    .limit(1);
+
+  if (highestCombination) {
+    const highestYear = highestCombination.year;
+    const highestSemester = highestCombination.semester;
+
+    const currentRegistration = await Registration.findOne({year: highestYear, semester: highestSemester})
+    const courses:any[] = currentRegistration.courses;
+
+    for (const course of courses) {
+      if (course.status !== "Completed") {
+        status = true;
+        await Registration.deleteOne({ _id: currentRegistration._id });
+        break; // Stop further iteration
+      }
+    }
+
+
+
+  }
+
+
+  
+
+    const updated = await Student.findByIdAndUpdate(id,{"status":"Withdrawn"})
+
+    if(!updated)
+      {
+        return res.status(404).json({ message: "Unable to update" });
+      }
+
+      return res.status(200).json({ message: "success" });
+
+
+
+
+}
+
+export const activateStudent = async (req: Request, res: Response) => {
+
+  const id  = req.body.id;
+
+  const student = await Student.findById(id);
+
+  if(!student)
+    {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    const updated = await Student.findByIdAndUpdate(id,{"status":"Active"})
+
+    if(!updated)
+      {
+        return res.status(404).json({ message: "Unable to update" });
+      }
+
+      return res.status(200).json({ message: "success" });
+
+
+
+
+}

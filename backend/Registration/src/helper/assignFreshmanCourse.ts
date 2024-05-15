@@ -127,7 +127,6 @@ async function assignSection({
         }); // Get the newly created section
         await Registration.findOneAndUpdate(
           { stud_id: student._id, semester },
-
           { section_id: section._id }
         );
       }

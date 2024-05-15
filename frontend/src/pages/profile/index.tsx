@@ -1,12 +1,55 @@
 import Breadcrumb from "../../components/Breadcrumbs";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
-import { Button } from "antd";
+import { Form, notification,Button } from "antd";
 import { useState } from "react";
+import { ChangePasswordForm } from "../../type/user";
+import type { FormProps } from "antd";
+import { ChangePassword } from "../../api/userApi";
+import { useMutation } from "@tanstack/react-query";
+
 
 const Profile = () => {
+  const [form] = Form.useForm();
   const [changePass,setChangePass] = useState(false)
   const user = useSelector((state: RootState) => state.user);
+
+  const passwordMutation= useMutation({
+    mutationKey: ['password'],
+    mutationFn: (values:ChangePasswordForm)=>ChangePassword(values),
+    onError:()=>{
+      notification.error({message:"Invalid Password"})
+    },
+    onSuccess:()=>{
+      notification.success({message:"Password Changed Successfully"})
+      form.resetFields()
+    }
+  });
+
+  const OnFinish: FormProps<ChangePasswordForm>["onFinish"] = (values) => {
+    if(values.password !== values.confirm_password){
+      notification.error({message:"Password does not match"})
+      return
+    }
+    if(values.password.length < 8 ){
+      notification.error({message:"Password must be at least 8 characters"})
+      return
+    }
+    if(!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(values.password)){
+      notification.error({message:"Password must contain at least one lowercase letter, one uppercase letter, and one number"})
+      return
+    }
+    passwordMutation.mutate(values)
+    // console.log(loginMutation)
+
+  };
+
+  const onFinishFailed: FormProps<ChangePasswordForm>["onFinishFailed"] = (
+    errorInfo
+  ) => {
+    console.log("Failed:", errorInfo);
+  };
+
   return (
     <div className="mx-10 max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       <Breadcrumb pageName="Profile" />
@@ -18,7 +61,9 @@ const Profile = () => {
               <h3 className="font-medium text-black dark:text-white">
                 Personal Information
               </h3>
-              <Button danger onClick={()=>setChangePass(!changePass)}>Change Password</Button>
+              <Button danger onClick={() => setChangePass(!changePass)}>
+                Change Password
+              </Button>
             </div>
             <div className="p-7">
               <form action="#">
@@ -167,80 +212,116 @@ const Profile = () => {
             </div>
           </div>
         </div>
-{       changePass &&
-        <div className="col-span-5 xl:col-span-2">
-          <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
-            <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
-              <h3 className="font-medium text-black dark:text-white">
-                Change Password
-              </h3>
-            </div>
-            <div className="p-7">
-              <form action="#">
-                <div className="mb-5.5">
-                  <label
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="old_password"
-                  >
-                    Old Password
-                  </label>
-                  <input
-                    className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                    type="password"
+        {changePass && (
+          <div className="col-span-5 xl:col-span-2">
+            <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
+              <div className="border-b border-stroke px-7 py-4 dark:border-strokedark">
+                <h3 className="font-medium text-black dark:text-white">
+                  Change Password
+                </h3>
+              </div>
+              <div className="p-7">
+                <Form
+                  name="change_password_form"
+                  onFinish={OnFinish}
+                  onFinishFailed={onFinishFailed}
+                  form={form}
+                >
+                  <Form.Item<ChangePasswordForm>
                     name="old_password"
-                    id="old_password"
-                    placeholder="Enter your old password."
-                  />
-                </div>
-                <div className="mb-5.5">
-                  <label
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="new_password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your old password",
+                      },
+                    ]}
                   >
-                    New Password
-                  </label>
-                  <input
-                    className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                    type="password"
-                    name="new_password"
-                    id="new_password"
-                    placeholder="Enter your new password."
-                  />
-                </div>
-                <div className="mb-5.5">
-                  <label
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="confirm_password"
+                    <div className="mb-5.5">
+                      <label
+                        className="mb-3 block text-sm font-medium text-black dark:text-white"
+                        htmlFor="old_password"
+                      >
+                        Old Password
+                      </label>
+                      <input
+                        className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        type="password"
+                        name="old_password"
+                        id="old_password"
+                        placeholder="Enter your old password."
+                      />
+                    </div>
+                  </Form.Item>
+                  <Form.Item<ChangePasswordForm>
+                    name="password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your new password",
+                      },
+                    ]}
                   >
-                    Confirm Password
-                  </label>
-                  <input
-                    className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
-                    type="password"
+                    <div className="mb-5.5">
+                      <label
+                        className="mb-3 block text-sm font-medium text-black dark:text-white"
+                        htmlFor="new_password"
+                      >
+                        New Password
+                      </label>
+                      <input
+                        className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        type="password"
+                        name="new_password"
+                        id="new_password"
+                        placeholder="Enter your new password."
+                      />
+                    </div>
+                  </Form.Item>
+                  <Form.Item<ChangePasswordForm>
                     name="confirm_password"
-                    id="confirm_password"
-                    placeholder="Confirm your new password."
-                  />
-                </div>
-
-                <div className="flex justify-end gap-4.5">
-                  <button
-                    className="flex justify-center rounded border border-stroke px-6 py-2 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
-                    onClick={()=>setChangePass(false)}
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please confirm your new password",
+                      },
+                    ]}
                   >
-                    Cancel
-                  </button>
-                  <button
-                    className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
-                    type="submit"
-                  >
-                    Change Password
-                  </button>
-                </div>
-              </form>
+                    <div className="mb-5.5">
+                      <label
+                        className="mb-3 block text-sm font-medium text-black dark:text-white"
+                        htmlFor="confirm_password"
+                      >
+                        Confirm Password
+                      </label>
+                      <input
+                        className="w-full rounded border border-stroke bg-gray px-4.5 py-3 text-black focus:border-primary focus-visible:outline-none dark:border-strokedark dark:bg-meta-4 dark:text-white dark:focus:border-primary"
+                        type="password"
+                        name="confirm_password"
+                        id="confirm_password"
+                        placeholder="Confirm your new password."
+                      />
+                    </div>
+                  </Form.Item>
+                  <div className="flex justify-end gap-4.5">
+                    <button
+                      className="flex justify-center rounded border border-stroke px-6 py-2 font-medium text-black hover:shadow-1 dark:border-strokedark dark:text-white"
+                      onClick={() => setChangePass(false)}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="flex justify-center rounded bg-primary px-6 py-2 font-medium text-gray hover:bg-opacity-90"
+                      type="submit"
+                      disabled={passwordMutation.isPending}
+                    >
+                      Change Password
+                    </button>
+                  </div>
+                </Form>
+              </div>
             </div>
           </div>
-        </div>}
+        )}
       </div>
     </div>
   );

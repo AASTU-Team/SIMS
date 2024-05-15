@@ -27,6 +27,6 @@ departmentRoute.get("/:id", getDepById);
 departmentRoute.post("/create", createDep);
 departmentRoute.patch("/:id", updateDep);
 departmentRoute.delete("/:id", deleteDep);
-departmentRoute.post("/assignStudents", assignDepartmentCsv);
+departmentRoute.post("/assignStudents",upload.single("file"), assignDepartmentCsv);
 
 module.exports = departmentRoute;

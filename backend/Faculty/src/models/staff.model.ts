@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 
+ 
 let staffSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -39,3 +40,4 @@ let staffSchema = new mongoose.Schema({
 });
 
 module.exports = mongoose.models.Staff || mongoose.model("Staff", staffSchema);
+ 
