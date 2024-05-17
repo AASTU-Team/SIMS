@@ -554,7 +554,7 @@ export const getStudentProfile = async (req: Request, res: Response) => {
     if (response.status === 200) {
       const { email, role } = await response.json();
       let user;
-      if (role.includes("studnet")) {
+      if (role.includes("student")) {
         user = await Student.findOne({
           email,
         });

@@ -6,14 +6,16 @@ interface UserState {
     name: string,
     email: string,
     role: string,
+    roles:string[],
     id: string
 }
 
 const initialState: UserState = {
-    name: "Yabsera Haile",
-    email: "haileyabsera3@gmail.com",
-    role: "Admin",
-    id: "ETS0660/12"
+    name: "Loading",
+    email: "loading",
+    role: "loading",
+    roles:[],
+    id: "loading"
 }
 
 export const userSlice = createSlice({
@@ -22,10 +24,13 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<UserState>) => {
+      console.log(action.payload)
       state= action.payload
+      return state
     },
   },
 })
+
 
 export const { setUser } = userSlice.actions
 
