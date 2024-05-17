@@ -15,4 +15,5 @@ export interface StudentFields {
   emergencycontact_phone: string;
   emergencycontact_relation: string;
   status: string;
+  department_name?:string;
 }

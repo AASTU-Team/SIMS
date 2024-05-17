@@ -15,6 +15,7 @@ const StaffTable: React.FC = () =>
         queryKey: ["staff"],
         queryFn: getStaff,
       });
+    // console.log(query.data?.data)
     const columns: TableColumnsType<StaffFields> = [
       {
         title: "Full Name",
@@ -44,8 +45,8 @@ const StaffTable: React.FC = () =>
       },
       {
         title: "Department",
-        dataIndex: "department_id",
-        key: "department_id",
+        dataIndex: "department_name",
+        key: "department_name",
         width: 150,
       },
       {

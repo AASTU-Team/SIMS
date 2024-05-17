@@ -9,18 +9,6 @@ import Loader from '../../components/Loader';
 
 
 
-// const data: RoomFields[] = [
-//   {
-//     number: 101,
-//     block: "A",
-//     type: "Lecture",
-//   },
-//   {
-//     number: 102,
-//     block: "B",
-//     type: "Lab",
-//   },
-// ];
 
 const RoomTable: React.FC = () => {
   const navigate = useNavigate();
@@ -28,11 +16,12 @@ const RoomTable: React.FC = () => {
       queryKey: ["room"],
       queryFn: getRooms,
     });
+  // console.log(query.data);
   const columns: TableColumnsType<RoomFields> = [
     {
       title: "Number",
-      dataIndex: "number",
-      key: "number",
+      dataIndex: "room_number",
+      key: "room_number",
       width: 150,
       sorter: true,
     },
@@ -82,7 +71,7 @@ const RoomTable: React.FC = () => {
       ) : (
         <Table
           columns={columns}
-          dataSource={query?.data?.data?.data || []} // Fix: Access the 'data' property of the resolved data
+          dataSource={query?.data?.data?.rooms || []} // Fix: Access the 'data' property of the resolved data
           scroll={{ x: 450 }}
         />
       )}
