@@ -1,4 +1,5 @@
 export type StaffFields = {
+    _id?: string;
     name?: string;
     email?: string;
     department_id?: string;
