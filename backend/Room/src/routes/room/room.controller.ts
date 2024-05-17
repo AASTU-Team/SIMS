@@ -9,17 +9,18 @@ export const registerRoom = async (req: Request, res: Response) => {
 
 export const createRoom = async (req: Request, res: Response) => {
   try {
-    const rooms = req.body.data;
+    const rooms = [req.body];
+    console.log("ROOMS",rooms);
     if (!rooms) {
       return res.status(400).send({ message: "data cant be empty" });
     }
-    console.log(rooms);
 
     // Validate input data (using a library like Joi or Zod)
     const schema = Joi.array().items(
       Joi.object({
         room_number: Joi.number().optional(),
         block: Joi.string().optional(),
+        type: Joi.string().optional(),
       })
     );
 

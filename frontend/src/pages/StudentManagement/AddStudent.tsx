@@ -2,24 +2,33 @@ import type { FormProps } from "antd";
 import {UploadOutlined, UserAddOutlined } from "@ant-design/icons";
 import { Button, Form, Input, Select, Upload, DatePicker, notification } from "antd";
 import { StudentFields } from "../../type/student";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { registerStudent } from "../../api/student";
+import { getDepartment } from "../../api/departmentApi";
+import { DepartmentFields } from "../../type/department";
 
 export default function AddStudent() {
+  const departmentQuery=useQuery({
+    queryKey: ["department"],
+    queryFn: getDepartment
+  });
   const [form] = Form.useForm();
-     const AddStudentMutation = useMutation({
-       mutationKey: ["addStudent"],
-       mutationFn: (values: StudentFields) => registerStudent(values),
-       onError: () => {
-         notification.error({ message: "Department Not Created" });
-       },
-       onSuccess: () => {
-         notification.success({ message: "Department Created Successfully" });
-         form.resetFields();
-       },
-     });
+  const AddStudentMutation = useMutation({
+    mutationKey: ["addStudent"],
+    mutationFn: (values: StudentFields) => registerStudent(values),
+    onError: () => {
+      notification.error({ message: "Student Not Registered" });
+    },
+    onSuccess: () => {
+      notification.success({ message: "Student Registered Successfully" });
+      form.resetFields();
+    },
+  });
   const onFinish: FormProps<StudentFields>["onFinish"] = (values) => {
     console.log(values);
+    values.phone = values.contact;
+    values.grad_date = values.admission_date;
+    values.status = "Inactive";
     AddStudentMutation.mutate(values);
   };
 
@@ -41,10 +50,11 @@ export default function AddStudent() {
             Register Student
           </h3>
 
-          <button 
-          onClick={() => form.submit()}
-          disabled={AddStudentMutation.isPending}
-          className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90">
+          <button
+            onClick={() => form.submit()}
+            disabled={AddStudentMutation.isPending}
+            className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
+          >
             <UserAddOutlined />
             Register User
           </button>
@@ -119,6 +129,70 @@ export default function AddStudent() {
             </div>
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<StudentFields>
+                name="gender"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the gender!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="gender"
+                  >
+                    Gender
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder="Select gender"
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("gender", value);
+                      }}
+                      options={[
+                        {
+                          value: "FEMALE",
+                          label: "Female",
+                        },
+                        {
+                          value: "MALE",
+                          label: "Male",
+                        },
+                      ]}
+                    />
+                  </div>
+                </div>
+              </Form.Item>
+              <Form.Item<StudentFields>
+                name="birthday"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the Date of Birth!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="birthday"
+                  >
+                    Date of Birth
+                  </label>
+                  <DatePicker
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    onChange={(value) => {
+                      const date = value ? value.format("YYYY-MM-DD") : null;
+                      form.setFieldValue("birthday", date);
+                    }}
+                  />
+                </div>
+              </Form.Item>
+              <Form.Item<StudentFields>
                 name="contact"
                 rules={[
                   {
@@ -138,6 +212,24 @@ export default function AddStudent() {
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     placeholder="Enter the phone number"
                   />
+                </div>
+              </Form.Item>
+            </div>
+
+            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+              <Form.Item>
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="profile_pic"
+                  >
+                    Profile Picture
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Upload>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
+                  </div>
                 </div>
               </Form.Item>
               <Form.Item<StudentFields>
@@ -162,64 +254,6 @@ export default function AddStudent() {
                   />
                 </div>
               </Form.Item>
-              <Form.Item>
-                <div>
-                  <label
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="profile_pic"
-                  >
-                    Profile Picture
-                  </label>
-                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
-                    <Upload>
-                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
-                  </div>
-                </div>
-              </Form.Item>
-            </div>
-
-            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
-              <Form.Item<StudentFields>
-                name="department_id"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please select at least one role!",
-                  },
-                ]}
-              >
-                <div>
-                  <label
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="department_id"
-                  >
-                    Department
-                  </label>
-                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
-                    <Select
-                      showSearch
-                      placeholder="Select Department"
-                      optionFilterProp="children"
-                      filterOption={filterOption}
-                      options={[
-                        {
-                          value: "Seng",
-                          label: "Software Engineering",
-                        },
-                        {
-                          value: "Eeng",
-                          label: "Electrical Engineering",
-                        },
-                        {
-                          value: "Ceng",
-                          label: "Civil Engineering",
-                        },
-                      ]}
-                    />
-                  </div>
-                </div>
-              </Form.Item>
               <Form.Item<StudentFields>
                 name="year"
                 rules={[{ required: true, message: "Please input the Year!" }]}
@@ -236,26 +270,6 @@ export default function AddStudent() {
                     placeholder="Enter the address"
                     type="number"
                   />
-                </div>
-              </Form.Item>
-
-              <Form.Item<StudentFields>
-                name="admission_date"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the Admission Date!",
-                  },
-                ]}
-              >
-                <div>
-                  <label
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="admission_date"
-                  >
-                    Admission Date
-                  </label>
-                  <DatePicker className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
                 </div>
               </Form.Item>
             </div>
@@ -325,6 +339,86 @@ export default function AddStudent() {
                   />
                 </div>
               </Form.Item>
+            </div>
+            <div className="mb-5.5 flex flex-col items-center gap-5.5 sm:flex-row">
+              <Form.Item<StudentFields>
+                name="admission_date"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the Admission Date!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="admission_date"
+                  >
+                    Admission Date
+                  </label>
+                  <DatePicker
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    onChange={(value) => {
+                      const date = value ? value.format("YYYY-MM-DD") : null;
+                      form.setFieldValue("admission_date", date);
+                    }}
+                  />
+                </div>
+              </Form.Item>
+              <Form.Item<StudentFields>
+                name="department_id"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the department!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="department_id"
+                  >
+                    Department
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder={departmentQuery.isLoading?"Fetching Departments":"Select Department"}
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("department_id", value);
+                      }}
+                      disabled={departmentQuery.isLoading}
+                      options={departmentQuery.isFetched? departmentQuery.data?.data?.data?.map((value:DepartmentFields)=>{
+                        return {
+                          value:value._id,
+                          label:value.name
+                        }
+                      }):[]}
+                    />
+                  </div>
+                </div>
+              </Form.Item>
+            </div>
+            <div className="flex justify-end items-center gap-3 ">
+              <button
+                onClick={() => form.resetFields()}
+                disabled={AddStudentMutation.isPending}
+                className="flex justify-center items-center gap-2 rounded-lg h-12 bg-slate-500 px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
+              >
+                Reset
+              </button>
+              <button
+                onClick={() => {form.submit()}}
+                disabled={AddStudentMutation.isPending}
+                className="flex justify-center items-center gap-2 rounded-lg h-12 bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
+              >
+                <UserAddOutlined />
+                Register User
+              </button>
             </div>
           </Form>
         </div>

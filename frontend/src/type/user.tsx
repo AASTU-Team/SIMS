@@ -9,9 +9,10 @@ export interface LoginForm {
 }
 
 export interface ChangePasswordForm {
-  old_password: string;
+  old_password?: string;
   password: string;
   confirm_password:string;
+  invite_token?:string;
 }
 
 

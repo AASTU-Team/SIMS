@@ -36,7 +36,7 @@ const AllRoutes = () => {
     <>
       <Routes>
         <Route path="/signin" element={<SignIn />} />
-        <Route path="/setpass" element={<SetPassword />} />
+        <Route path="/setpass/:id" element={<SetPassword />} />
         <Route path="/loading" element={<Loader />} />
 
         <Route

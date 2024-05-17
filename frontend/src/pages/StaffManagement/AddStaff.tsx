@@ -2,25 +2,33 @@ import type { FormProps } from "antd";
 import { UserAddOutlined } from "@ant-design/icons";
 import {  Form, Input, Select, DatePicker, notification } from "antd";
 import { StaffFields } from "../../type/staff";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { registerStaff } from "../../api/staff";
+import { getDepartment } from "../../api/departmentApi";
+import { DepartmentFields } from "../../type/department";
 
 export default function AddStaff() {
   const [form] = Form.useForm();
+
+    const departmentQuery = useQuery({
+      queryKey: ["department"],
+      queryFn: getDepartment,
+    });
 
   const AddStaffMutation = useMutation({
        mutationKey: ["addStaff"],
        mutationFn: (values: StaffFields) => registerStaff(values),
        onError: () => {
-         notification.error({ message: "Department Not Created" });
+         notification.error({ message: "Staff Not Registered" });
        },
        onSuccess: () => {
-         notification.success({ message: "Department Created Successfully" });
+         notification.success({ message: "Staff Registered Successfully" });
          form.resetFields();
        },
      });
   
   const onFinish: FormProps<StaffFields>["onFinish"] = (values) => {
+    console.log(values)
     AddStaffMutation.mutate(values);
   };
 
@@ -42,10 +50,11 @@ export default function AddStaff() {
             Register Staff
           </h3>
 
-          <button 
+          <button
             onClick={() => form.submit()}
             disabled={AddStaffMutation.isPending}
-          className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90">
+            className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
+          >
             <UserAddOutlined />
             Register Staff
           </button>
@@ -125,6 +134,70 @@ export default function AddStaff() {
             </div>
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<StaffFields>
+                name="gender"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the gender!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="gender"
+                  >
+                    Gender
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder="Select gender"
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("gender", value);
+                      }}
+                      options={[
+                        {
+                          value: "FEMALE",
+                          label: "Female",
+                        },
+                        {
+                          value: "MALE",
+                          label: "Male",
+                        },
+                      ]}
+                    />
+                  </div>
+                </div>
+              </Form.Item>
+              <Form.Item<StaffFields>
+                name="birthday"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the Date of Birth!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="birthday"
+                  >
+                    Date of Birth
+                  </label>
+                  <DatePicker
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    onChange={(value) => {
+                      const date = value ? value.format("YYYY-MM-DD") : null;
+                      form.setFieldValue("birthday", date);
+                    }}
+                  />
+                </div>
+              </Form.Item>
+              <Form.Item<StaffFields>
                 name="address"
                 rules={[
                   {
@@ -146,12 +219,14 @@ export default function AddStaff() {
                   />
                 </div>
               </Form.Item>
+            </div>
+            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<StaffFields>
                 name="department_id"
                 rules={[
                   {
                     required: true,
-                    message: "Please select at least one role!",
+                    message: "Please select the department!",
                   },
                 ]}
               >
@@ -165,48 +240,33 @@ export default function AddStaff() {
                   <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
                     <Select
                       showSearch
-                      placeholder="Select Department"
+                      placeholder={
+                        departmentQuery.isLoading
+                          ? "Fetching Departments"
+                          : "Select Department"
+                      }
                       optionFilterProp="children"
                       filterOption={filterOption}
-                      options={[
-                        {
-                          value: "Seng",
-                          label: "Software Engineering",
-                        },
-                        {
-                          value: "Eeng",
-                          label: "Electrical Engineering",
-                        },
-                        {
-                          value: "Ceng",
-                          label: "Civil Engineering",
-                        },
-                      ]}
+                      onChange={(value) => {
+                        form.setFieldValue("department_id", value);
+                      }}
+                      disabled={departmentQuery.isLoading}
+                      options={
+                        departmentQuery.isFetched
+                          ? departmentQuery.data?.data?.data?.map(
+                              (value: DepartmentFields) => {
+                                return {
+                                  value: value._id,
+                                  label: value.name,
+                                };
+                              }
+                            )
+                          : []
+                      }
                     />
                   </div>
                 </div>
               </Form.Item>
-              <Form.Item<StaffFields>
-                name="birthday"
-                rules={[
-                  {
-                    required: true,
-                    message: "Please input the Date of Birth!",
-                  },
-                ]}
-              >
-                <div>
-                  <label
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="admission_date"
-                  >
-                    Date of Birth
-                  </label>
-                  <DatePicker className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary" />
-                </div>
-              </Form.Item>
-            </div>
-            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<StaffFields>
                 name="role"
                 rules={[
@@ -219,7 +279,7 @@ export default function AddStaff() {
                 <div>
                   <label
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="department_id"
+                    htmlFor="role"
                   >
                     Staff Role
                   </label>
@@ -230,26 +290,33 @@ export default function AddStaff() {
                       mode="multiple"
                       optionFilterProp="children"
                       filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("role", value);
+                      }}
                       options={[
                         {
-                          value: "student",
+                          value: "studentMan",
                           label: "Student Management",
                         },
                         {
-                          value: "staff",
+                          value: "staffMan",
                           label: "Staff Management",
                         },
                         {
-                          value: "course",
+                          value: "courseMan",
                           label: "Course Management",
                         },
                         {
-                          value: "room",
+                          value: "roomMan",
                           label: "Room Management",
                         },
                         {
-                          value: "curriculum",
+                          value: "curriculumMan",
                           label: "Curriculum Management",
+                        },
+                        {
+                          value: "departmentMan",
+                          label: "Department Management",
                         },
                       ]}
                     />

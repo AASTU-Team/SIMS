@@ -1,11 +1,12 @@
 export type StaffFields = {
+    _id?: string;
     name?: string;
     email?: string;
     department_id?: string;
     phone?: string;
     address?: string;
     birthday?: Date | string;
-    gender?: 'Male' | 'Female';
+    gender?: 'MALE' | 'FEMALE';
     id?: number;
     role?: Array<string>;
     salary?: number;

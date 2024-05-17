@@ -48,5 +48,5 @@ export const getRooms = async () => {
 export const addRooms = async (data: RoomFields) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.post("/createRooms", data);
+  return await client.post("/", data);
 }

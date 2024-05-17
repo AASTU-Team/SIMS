@@ -1,5 +1,5 @@
 export type RoomFields = {
-    number?: number,
+    room_number?: number,
     block?: string,
     type?: string,
 }

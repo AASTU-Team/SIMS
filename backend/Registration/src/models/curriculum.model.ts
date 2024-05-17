@@ -23,18 +23,15 @@ let curriculumSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-  courses: [
-    {
-      courseId: {
-        type: mongoose.Schema.Types.ObjectId,
-        required: true,
-        ref: "Course",
+  semester: {
+   type: Number,
+    required: true,
       },
-      semester: {
-        type: Number,
-        required: true,
-      },}
-  ],
+  courses: {
+    type: Array<mongoose.Schema.Types.ObjectId>,
+    required: true,
+    ref: "Course",
+  },
   description: {
     type: String,
     required: false,
