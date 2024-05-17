@@ -1,3 +1,4 @@
+import { patch } from "app";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 const fs = require("fs");
@@ -40,113 +41,102 @@ const Staff = require("../../models/staff.model");
 //       res.status(500).json({ error: "Internal server error" });
 //     });
 // };
-export const createCourseCsv = async(req: Request, res: Response) => {
+export const createCourseCsv = async (req: Request, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
-
-  let errors:String[] = [""] 
-
-  
-  
-     
+  let errors: String[] = [""];
 
   fs.createReadStream(req.file.path)
-.pipe(csv())
-.on('data', (data:any) => {
-  // Process each row of data
-  results.push(data);
-})
-.on('end', async() => {
-  try {
-    // The parsing is complete
-    console.log(results);
-    async function getEmailObjectIds(emails:any) {
-      const staffIds = [];
-      const emailList = emails.split(',');
-      for (const email of emailList) {
-        const staff = await Staff.findOne({ email: email.trim() });
-        if (staff) {
-          staffIds.push(staff._id);
+    .pipe(csv())
+    .on("data", (data: any) => {
+      // Process each row of data
+      results.push(data);
+    })
+    .on("end", async () => {
+      try {
+        // The parsing is complete
+        console.log(results);
+        async function getEmailObjectIds(emails: any) {
+          const staffIds = [];
+          const emailList = emails.split(",");
+          for (const email of emailList) {
+            const staff = await Staff.findOne({ email: email.trim() });
+            if (staff) {
+              staffIds.push(staff._id);
+            } else {
+              errors.push("couldn't find staff" + " with email " + email);
+            }
+          }
+          return staffIds;
         }
-        else{
-          errors.push("couldn't find staff" + " with email " + email)
+
+        async function getPrerequisiteObjectIds(prerequisites: any) {
+          const courseIds = [];
+          const prerequisiteList = prerequisites.split(",");
+          for (const prerequisite of prerequisiteList) {
+            const course = await Course.findOne({ code: prerequisite.trim() });
+            if (course) {
+              courseIds.push(course._id);
+            } else {
+              errors.push(
+                "couldn't find course" + " with code " + prerequisite
+              );
+            }
+          }
+          return courseIds;
         }
+
+        async function getDeparmentId(name: any) {
+          const id = await Department.findOne({ name: name });
+          if (id) {
+            return id._id;
+          } else {
+            errors.push("couldn't find department" + " with name " + name);
+          }
+        }
+
+        const transformedData = await Promise.all(
+          results.map(async (item: any) => {
+            const instructorIds = await getEmailObjectIds(item.instructors);
+            const prerequisiteIds = await getPrerequisiteObjectIds(
+              item.prerequisites
+            );
+            const departmentId = await getDeparmentId(item.department);
+
+            const course = {
+              name: item.name,
+              department_id: departmentId,
+              instructors: instructorIds,
+              credits: item.credits,
+              prerequisites: prerequisiteIds,
+              type: item.type,
+              code: item.code,
+              lec: item.lec,
+              lab: item.lab,
+              description: item.description,
+            };
+            const validatedData = course;
+
+            return validatedData;
+          })
+        );
+
+        await Course.create(transformedData);
+
+        console.log("Data inserted successfully");
+        res.status(200).json({ message: "successful", errors: errors });
+      } catch (error: any) {
+        console.error("Error inserting data:", error);
+        res.status(500).json({ message: error.message });
       }
-      return staffIds;
-    }
-    
-    async function getPrerequisiteObjectIds(prerequisites:any) {
-      const courseIds = [];
-      const prerequisiteList = prerequisites.split(',');
-      for (const prerequisite of prerequisiteList) {
-        const course = await Course.findOne({ code: prerequisite.trim() });
-        if (course) {
-          courseIds.push(course._id);
-        }
-        else{
-          errors.push("couldn't find course" + " with code " + prerequisite)
-        }
-      }
-      return courseIds;
-    }
-
-    async function getDeparmentId(name:any) {
-   
-    
-        const id = await Department.findOne({name:name})
-        if (id) {
-          return id._id;
-        }
-        else{
-          errors.push("couldn't find department" + " with name " + name)
-        }
-      
-    
-    }
-    
-    const transformedData = await Promise.all(results.map(async (item:any) => {
-      const instructorIds = await getEmailObjectIds(item.instructors);
-      const prerequisiteIds = await getPrerequisiteObjectIds(item.prerequisites);
-      const departmentId = await getDeparmentId(item.department);
-    
-     const  course  = {
-        name: item.name,
-        department_id:departmentId ,
-        instructors: instructorIds,
-        credits: item.credits,
-        prerequisites: prerequisiteIds,
-        type: item.type,
-        code: item.code,
-        lec: item.lec,
-        lab: item.lab,
-        description: item.description
-      };
-      const validatedData = course;
-    
-
-      return validatedData;
-    }
-  ));
-
-  
-      await Course.create(transformedData);
-
-    console.log('Data inserted successfully');
-    res.status(200).json({ message: "successful",errors:errors });
-  
-  } catch (error:any) {
-    console.error('Error inserting data:', error);
-    res.status(500).json({ message: error.message });
-  }
-})
-.on('error', (error:any) => {
-  // Handle any errors that occur during the parsing
-  console.error(error);
-  res.status(500).json({ message: error.message });
-});
-  
+    })
+    .on("error", (error: any) => {
+      // Handle any errors that occur during the parsing
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    });
 };
 function validateCourse(course: any) {
   const courseSchema = Joi.object({
@@ -170,7 +160,16 @@ export const getCourses = async (req: Request, res: Response) => {
 
   try {
     // use find({dep_id : id from fetch })
-    const course: any = await Course.find();
+    const course: any = await Course.find()
+      .populate({
+        path: "prerequisites",
+        select: "name code",
+      })
+      .populate({
+        path: "instructors",
+        select: "name email",
+      });
+
     res.status(200).json({ data: course });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
@@ -193,7 +192,7 @@ export const getCourseByCode = async (req: Request, res: Response) => {
   const { code } = req.params;
   try {
     // use find({dep_id : id from fetch })
-    const course: any = await Course.findOne({ code:code });
+    const course: any = await Course.findOne({ code: code });
     res.status(200).json({ data: course });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
@@ -214,7 +213,7 @@ export const updateCourse = async (req: Request, res: Response) => {
   try {
     const { code } = req.params;
     const requestData = req.body;
-    const updates = await Course.findOneAndUpdate({code:code}, requestData, {
+    const updates = await Course.findOneAndUpdate({ code: code }, requestData, {
       new: true,
     }).exec();
     if (!updates) {
@@ -232,7 +231,7 @@ export const deleteCourse = async (req: Request, res: Response) => {
   const { code } = req.params;
 
   try {
-    const deletedCourse = await Course.findOneAndDelete({ code:code });
+    const deletedCourse = await Course.findOneAndDelete({ code: code });
     if (!deletedCourse) {
       return res.status(404).json({ message: "Not found" });
     }

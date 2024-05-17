@@ -64,8 +64,25 @@ export const getDep = async (req: Request, res: Response) => {
     if (!department) {
       return res.status(400).json("departmetnt not found");
     }
+    const departmentData = await Promise.all(
+      department.map(async (dept: any) => {
+        let dept_head: any;
+        if (dept?.dep_head) {
+          const dhead = dept.dep_head?.toString();
 
-    res.status(200).json({ data: department });
+          dept_head = await Staff.findById(dhead);
+          return {
+            _id: dept._id,
+            name: dept.name,
+            dep_head: { email: dept_head.email, name: dept_head.name },
+          };
+        } else {
+          return dept;
+        }
+      })
+    );
+    // console.log(deparmtent);
+    res.status(200).json({ data: departmentData });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -78,12 +95,10 @@ export const getDepById = async (req: Request, res: Response) => {
     const department: any = await Department.findById({ _id: id });
     if (!department.dep_head) {
       const dept_head = await Staff.findById(department.dep_head);
-      res
-        .status(200)
-        .json({
-          data: department,
-          dept_head: { email: dept_head.email, name: dept_head.name },
-        });
+      res.status(200).json({
+        data: department,
+        dept_head: { email: dept_head.email, name: dept_head.name },
+      });
     }
     if (!department)
       return res.status(404).json({ message: "Department not found." });

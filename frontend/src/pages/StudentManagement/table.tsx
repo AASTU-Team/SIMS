@@ -16,7 +16,6 @@ const StudentTable: React.FC = () =>
         queryKey: ["student"],
         queryFn: getStudent,
       });
-    console.log(query)
     const columns: TableColumnsType<StudentFields> = [
       {
         title: "Full Name",
@@ -60,8 +59,8 @@ const StudentTable: React.FC = () =>
       },
       {
         title: "Department",
-        dataIndex: "department_id",
-        key: "department_id",
+        dataIndex: "department_name",
+        key: "department_name",
         width: 150,
       },
       {
