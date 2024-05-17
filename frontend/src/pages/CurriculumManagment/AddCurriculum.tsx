@@ -1,25 +1,42 @@
 import type { FormProps } from "antd";
 import { Form, Input, Select, notification } from "antd";
 import { CurriculumFields } from "../../type/curriculum";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { addCurriculum } from "../../api/curriculum";
+import { useState } from "react";
+import { getDepartment } from "../../api/departmentApi";
 
 export default function AddCurriculum() {
   const [form] = Form.useForm();
+  const [department_id, setDepartment_id] = useState<string>("");
+  const [courses, setCourses] = useState<string[]>([]);
+  // const departmentQuery=useQuery({
+  //   queryKey: ["department"],
+  //   queryFn: getDepartment
+  // });
+
+  const onDepartmentChange = (value: string) => {
+    setDepartment_id(value);
+  }
+  const onCoursesChange = (value: string[]) => {
+    setCourses(value);
+  }
 
   const AddCurriculumMutaiton = useMutation({
        mutationKey: ["addCurriculum"],
        mutationFn: (values: CurriculumFields) => addCurriculum(values),
        onError: () => {
-         notification.error({ message: "Department Not Created" });
+         notification.error({ message: "Curriculum Not Created" });
        },
        onSuccess: () => {
-         notification.success({ message: "Department Created Successfully" });
+         notification.success({ message: "Curriculum Created Successfully" });
          form.resetFields();
        },
      });
   
   const onFinish: FormProps<CurriculumFields>["onFinish"] = (values) => {
+    values.department_id = department_id;
+    values.courses = courses;
     AddCurriculumMutaiton.mutate(values);
   };
 
@@ -87,7 +104,7 @@ export default function AddCurriculum() {
                 name="department_id"
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Please select the department!",
                   },
                 ]}
@@ -106,6 +123,7 @@ export default function AddCurriculum() {
                       placeholder="Select Department"
                       optionFilterProp="children"
                       filterOption={filterOption}
+                      onChange={(value) => onDepartmentChange(value as string)}
                       options={[
                         {
                           value: "Seng",
@@ -197,7 +215,7 @@ export default function AddCurriculum() {
                 name="courses"
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Please input the courses!",
                   },
                 ]}
@@ -214,6 +232,7 @@ export default function AddCurriculum() {
                     <Select
                       mode="multiple"
                       placeholder="Select Courses"
+                      onChange={(value) => onCoursesChange(value as string[])}
                       options={[
                         {
                           value: "course1",

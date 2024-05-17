@@ -3,23 +3,19 @@ require("dotenv").config();
 
 // Create a transporter object using Gmail SMTP server
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  service: "gmail",
+  host: "smtp.ethereal.email",
   port: 587,
-  secure: false,
-  tls: {
-    rejectUnauthorized: false,
-  },
   auth: {
-    user: process.env.USER,
-    pass: process.env.PASS,
+    user: 'zachary.goldner@ethereal.email',
+    pass: '7hgsvTvpMPsZHUEQq5'
   },
 });
 
 const sendEmail = (data) => {
+  console.log(data)
   return new Promise((resolve, reject) => {
     const message = {
-      from: `"AASTU" <${"SIMS"}>`,
+      from: "haileyabsera3@gmail.com",
       to: data.email,
       subject: "Registration Confirmation",
       text: ``,
@@ -71,13 +67,13 @@ const sendEmail = (data) => {
       </head>
       <body>
         <div class="container">
-          <h1>Welcome to Our Community!</h1>
-          <p>Dear [Student Name],</p>
-          <p>Thank you for registering on our page. We're excited to have you as part of our community!</p>
-          <p>As a registered member, you'll have access to a wide range of resources and opportunities. We encourage you to explore the various features on our platform and make the most out of your membership.</p>
+          <h1>Welcome to Our Platform!</h1>
+          <p>Hello,</p>
+          <p>You have been invited to use the Student Information Management System!</p>
+          <p>As a registered member, you'll have access to a wide range of resources and opportunities. We encourage you to explore the various features on our platform. First you must activate your account by clicking the button bellow, then setting your credentails.</p>
           <p>If you have any questions or need assistance, please don't hesitate to reach out to our support team. We're here to help!</p>
           <p>Once again, welcome aboard!</p>
-          <a href="http://localhost:5173/signup/${data.invitations}" class="button">Visit Our Website</a>
+          <a href="http://localhost:5173/setpass/${data.invitations}" class="button">Activate Your Account</a>
         </div>
       </body>
       </html>`,
