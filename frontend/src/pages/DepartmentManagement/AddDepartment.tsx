@@ -106,7 +106,7 @@ export default function AddDepartment() {
                 </div>
               </Form.Item>
               <Form.Item<DepartmentFields>
-                name="head"
+                name="dep_head"
                 rules={[
                   {
                     required: true,
@@ -131,7 +131,7 @@ export default function AddDepartment() {
                       }
                       optionFilterProp="children"
                       onChange={(value) => {
-                        form.setFieldValue("head", value);
+                        form.setFieldValue("dep_head", value);
                       }}
                       disabled={staffQuery.isLoading}
                       options={

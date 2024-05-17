@@ -7,8 +7,6 @@ export type StaffFields = {
     address?: string;
     birthday?: Date | string;
     gender?: 'MALE' | 'FEMALE';
-    id?: number;
     role?: Array<string>;
-    salary?: number;
     hireDate?: Date;
 };

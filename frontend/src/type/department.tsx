@@ -3,5 +3,5 @@ export type DepartmentFields = {
     name?: string,
     code?: string,
     description?: string,
-    head?: string,
+    dep_head?: string,
 }

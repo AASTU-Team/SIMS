@@ -8,29 +8,6 @@ import { getStaff } from '../../api/staff';
 import Loader from '../../components/Loader';
 
 
-// const data: StaffFields[] = [
-//   {
-//     id: 1,
-//     name: "John Doe",
-//     email: "john.doe@example.com",
-//     phone: "1234567890",
-//     address: "123 Main St",
-//     department_id: "Eeng",
-//     birthday: "1990-01-01",
-//     gender: "Male",
-//   },
-//   {
-//     id: 2,
-//     name: "Jane Smith",
-//     email: "jane.smith@example.com",
-//     phone: "9876543210",
-//     address: "456 Elm St",
-//     department_id: "Seng",
-//     birthday: "1995-05-05",
-//     gender: "Female",
-//   },
-// ];
-
 const StaffTable: React.FC = () =>
   {
     const navigate = useNavigate();
@@ -75,6 +52,10 @@ const StaffTable: React.FC = () =>
         title: "Date of Birth",
         dataIndex: "birthday",
         key: "birthday",
+        render: (date: string) => {
+          const formattedDate = new Date(date).toISOString().split("T")[0];
+          return <span>{formattedDate}</span>;
+        },
         width: 150,
       },
       {
@@ -114,7 +95,7 @@ const StaffTable: React.FC = () =>
         ) : (
           <Table
             columns={columns}
-            dataSource={query?.data?.data?.data || []} // Fix: Access the 'data' property of the resolved data
+            dataSource={query?.data?.data?.message || []} // Fix: Access the 'data' property of the resolved data
             scroll={{ x: 1300 }}
           />
         )}

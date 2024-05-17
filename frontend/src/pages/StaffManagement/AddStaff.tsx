@@ -55,7 +55,13 @@ export default function AddStaff() {
             disabled={AddStaffMutation.isPending}
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
           >
-            <UserAddOutlined />
+            {AddStaffMutation.isPending ? (
+              <div className="flex items-center justify-center bg-transparent">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-solid border-white border-t-transparent"></div>
+              </div>
+            ) : (
+              <UserAddOutlined />
+            )}
             Register Staff
           </button>
         </div>

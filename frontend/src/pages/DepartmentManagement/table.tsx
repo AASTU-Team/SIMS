@@ -17,11 +17,20 @@ const DepartmentTable: React.FC = () => {
     queryKey: ["department"],
     queryFn: getDepartment
   });
+  
+    // console.log(query.data);
   const columns: TableColumnsType<DepartmentFields> = [
     {
       title: "Name",
       dataIndex: "name",
       key: "name",
+      width: 150,
+      sorter: true,
+    },
+    {
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
       width: 150,
       sorter: true,
     },
@@ -34,8 +43,8 @@ const DepartmentTable: React.FC = () => {
     },
     {
       title: "Head",
-      dataIndex: "head",
-      key: "head",
+      dataIndex: "dep_head",
+      key: "dep_head",
       width: 150,
       sorter: true,
     },
