@@ -439,8 +439,8 @@ export const getAllStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
-    const staff: any = await Staff.find();
-    const myStaff = staff.map((staff:any) => {
+    const staffs: any = await Staff.find();
+    const myStaff = staffs.map((staff:any) => {
       return {
         ...staff.toObject(),
         department_name: staff.department_id?.name,
