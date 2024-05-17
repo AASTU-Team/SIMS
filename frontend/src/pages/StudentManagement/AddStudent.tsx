@@ -55,7 +55,14 @@ export default function AddStudent() {
             disabled={AddStudentMutation.isPending}
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
           >
-            <UserAddOutlined />
+            {" "}
+            {AddStudentMutation.isPending ? (
+              <div className="flex items-center justify-center bg-transparent">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-solid border-white border-t-transparent"></div>
+              </div>
+            ) : (
+              <UserAddOutlined />
+            )}
             Register User
           </button>
         </div>
@@ -385,19 +392,29 @@ export default function AddStudent() {
                   <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
                     <Select
                       showSearch
-                      placeholder={departmentQuery.isLoading?"Fetching Departments":"Select Department"}
+                      placeholder={
+                        departmentQuery.isLoading
+                          ? "Fetching Departments"
+                          : "Select Department"
+                      }
                       optionFilterProp="children"
                       filterOption={filterOption}
                       onChange={(value) => {
                         form.setFieldValue("department_id", value);
                       }}
                       disabled={departmentQuery.isLoading}
-                      options={departmentQuery.isFetched? departmentQuery.data?.data?.data?.map((value:DepartmentFields)=>{
-                        return {
-                          value:value._id,
-                          label:value.name
-                        }
-                      }):[]}
+                      options={
+                        departmentQuery.isFetched
+                          ? departmentQuery.data?.data?.data?.map(
+                              (value: DepartmentFields) => {
+                                return {
+                                  value: value._id,
+                                  label: value.name,
+                                };
+                              }
+                            )
+                          : []
+                      }
                     />
                   </div>
                 </div>
@@ -412,7 +429,9 @@ export default function AddStudent() {
                 Reset
               </button>
               <button
-                onClick={() => {form.submit()}}
+                onClick={() => {
+                  form.submit();
+                }}
                 disabled={AddStudentMutation.isPending}
                 className="flex justify-center items-center gap-2 rounded-lg h-12 bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
               >

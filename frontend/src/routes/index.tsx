@@ -1,13 +1,13 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoutes from "../hooks/protectedRoutes";
-import SignIn from "../pages/login";
+import SignIn from "../pages/Login";
 import NotFoundPage from "../pages/NotFound";
 import Sidebar from "../components/SideBar";
 import Header from "../components/Header";
 import Dashboard from "../pages/Dashboard";
 import RegisterUser from "../pages/RegisterUser";
-import Profile from "../pages/profile";
+import Profile from "../pages/Profile";
 import SetPassword from "../pages/SetPassword";
 import Loader from "../components/Loader";
 import StudentManagement from "../pages/StudentManagement";
