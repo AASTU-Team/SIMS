@@ -54,14 +54,6 @@ export const getCurriculum = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Department not found." });
     }
 
-    console.log(curriculum);
-
-    // const curriculumData = curriculums.map((curr: any) => {
-    //   return {
-    //     ...curr.toObject(),
-    //     department_name: curr.department_id?.name,
-    //   };
-    // });
     res.status(200).json({ data: curriculum });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
