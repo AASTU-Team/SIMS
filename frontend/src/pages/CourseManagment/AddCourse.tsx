@@ -158,8 +158,9 @@ export default function AddCourse() {
                   <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
                     <Select
                       showSearch
+                      mode="multiple"
                       placeholder={
-                        departmentQuery.isLoading
+                        courseQuery.isLoading
                           ? "Fetching Courses"
                           : "Select Perquisites"
                       }
