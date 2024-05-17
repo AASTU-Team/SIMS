@@ -446,7 +446,7 @@ export const getAllStaff = async (req: Request, res: Response) => {
         department_name: staff.department_id?.name,
       };
     });
-    res.status(200).json({ message: staff });
+    res.status(200).json({ message: myStaff });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
