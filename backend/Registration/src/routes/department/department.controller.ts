@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const fs = require("fs");
 const csv = require("csv-parser");
 const Joi = require("joi");
-const checkPrerequisite= require("../../helper/checkPrerequisite")
+const checkPrerequisite = require("../../helper/checkPrerequisite");
 
 let results: any = [];
 
@@ -11,21 +11,19 @@ const Department = require("../../models/department.model");
 const Student = require("../../models/student.model");
 const Registration = require("../../models/registration.model");
 const Curriculum = require("../../models/curriculum.model");
+const Staff = require("../../models/staff.model");
 
 const Course = require("../../models/course.model");
 async function getCredit(Id: String): Promise<any> {
-
   const course = await Course.findById(Id);
   if (!course) {
     //console.error("Course not found");
     return 0;
   }
- // console.log(parseInt(course.credits));
+  // console.log(parseInt(course.credits));
 
   return parseInt(course.credits);
-
 }
-
 
 // export const uploadFile = (req: Request, res: Response) => {
 //   if (!req.file) {
@@ -63,6 +61,10 @@ export const getDep = async (req: Request, res: Response) => {
   try {
     // use find({dep_id : id from fetch })
     const department: any = await Department.find();
+    if (!department) {
+      return res.status(400).json("departmetnt not found");
+    }
+
     res.status(200).json({ data: department });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
@@ -74,6 +76,15 @@ export const getDepById = async (req: Request, res: Response) => {
   try {
     // use find({dep_id : id from fetch })
     const department: any = await Department.findById({ _id: id });
+    if (!department.dep_head) {
+      const dept_head = await Staff.findById(department.dep_head);
+      res
+        .status(200)
+        .json({
+          data: department,
+          dept_head: { email: dept_head.email, name: dept_head.name },
+        });
+    }
     if (!department)
       return res.status(404).json({ message: "Department not found." });
     res.status(200).json({ data: department });
@@ -87,7 +98,7 @@ export const getDepByCode = async (req: Request, res: Response) => {
   const { code } = req.params;
   try {
     // use find({dep_id : id from fetch })
-    const department: any = await Department.findOne({ code:code });
+    const department: any = await Department.findOne({ code: code });
     if (!department)
       return res.status(404).json({ message: "Department not found." });
     res.status(200).json({ data: department });
@@ -111,14 +122,18 @@ export const createDep = async (req: Request, res: Response) => {
 export const updateDep = async (req: Request, res: Response) => {
   try {
     //const { id } = req.params;
-     const { code } = req.params;
+    const { code } = req.params;
     const requestData = req.body;
-  /*   const updates = await Department.findByIdAndUpdate(id, requestData, {
+    /*   const updates = await Department.findByIdAndUpdate(id, requestData, {
       new: true,
     }).exec(); */
-      const updates = await Department.findOneAndUpdate({code:code}, requestData, {
-      new: true,
-    }).exec(); 
+    const updates = await Department.findOneAndUpdate(
+      { code: code },
+      requestData,
+      {
+        new: true,
+      }
+    ).exec();
     if (!updates) {
       return res.status(500).json({ message: "An error happened" });
     } else {
@@ -134,7 +149,7 @@ export const deleteDep = async (req: Request, res: Response) => {
   const { code } = req.params;
 
   try {
-    const deletedDepartment = await Department.findOneAndDelete({ code:code });
+    const deletedDepartment = await Department.findOneAndDelete({ code: code });
     if (!deletedDepartment) {
       return res.status(404).json({ message: "Not found" });
     }
@@ -191,7 +206,9 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
         department_id = department._id;
         theStudent.department_id = department_id;
         await theStudent.save();
-        console.log(`Student with id ${data.id} assigned to department ${data.department}`);
+        console.log(
+          `Student with id ${data.id} assigned to department ${data.department}`
+        );
       }
 
       const curriculum = await Curriculum.findOne({
@@ -212,23 +229,23 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
           console.log(status + " FOR STUDENT " + student_id);
           if (status === true) {
             console.log("here");
-      
+
             courses.push({
               courseID: course.courseId,
               grade: "",
               status: "Active",
               isRetake: false,
             });
-      
+
             const value = await getCredit(course.courseId);
             total_credit.push(value);
           }
         }
       });
-      
+
       await Promise.all(promises);
-      let sum:number = 0
-      total_credit.map((credit:any) => {
+      let sum: number = 0;
+      total_credit.map((credit: any) => {
         sum += credit;
       });
 
@@ -238,7 +255,7 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
         semester: semester,
         courses: courses,
         registration_date: new Date(),
-        total_credit:sum
+        total_credit: sum,
       });
 
       try {

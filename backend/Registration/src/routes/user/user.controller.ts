@@ -421,8 +421,15 @@ export const getAllStudent = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
-    const students: any = await Student.find();
-    res.status(200).json({ message: students });
+    const students = await Student.find().populate('department_id');
+const myStudents = students.map((student:any) => {
+  return {
+    ...student.toObject(),
+    department_name: student.department_id?.name,
+  };
+});
+    
+    res.status(200).json({ message: myStudents });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -433,7 +440,13 @@ export const getAllStaff = async (req: Request, res: Response) => {
 
   try {
     const staff: any = await Staff.find();
-    res.status(200).json({ message: staff });
+    const myStaff = staff.map((staff:any) => {
+      return {
+        ...staff.toObject(),
+        department_name: staff.department_id?.name,
+      };
+    });
+    res.status(200).json({ message: myStaff });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
