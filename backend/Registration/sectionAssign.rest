@@ -1,0 +1,6 @@
+POST  http://localhost:3000/user/student/dropcourse/6636186a6664a0c0488e0a97
+Content-Type:  application/json
+
+{
+  "course_id":"663a03d879c454a6075ec31d"
+}
