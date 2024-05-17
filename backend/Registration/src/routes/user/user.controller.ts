@@ -124,8 +124,8 @@ export const registerDependency = async (req: Request, res: Response) => {
   try {
     const data = req.body;
 
-    const newValue = new RegistrationStatus(data);
-    newValue.save();
+    await Registration.deleteMany({});
+
 
     res.status(200).json({ message: data });
   } catch (error: any) {
