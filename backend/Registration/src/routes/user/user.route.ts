@@ -8,6 +8,7 @@ import {
   WithdrawalRequest
   
   
+  
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
@@ -15,6 +16,7 @@ import { registerStudentCsv } from "./user.controller";
 import { uploadFile } from "./user.controller";
 import { getStudentProfile } from "./user.controller";
 import { getAllStaff } from "./user.controller";
+import { getstudentRegistrationCourses } from "./user.controller";
 
 import { getAllStudent } from "./user.controller";
 import { getStudentByDepartment } from "./user.controller";
@@ -60,6 +62,7 @@ Studentrouter.patch("/student/update", updateStudent);
 
 Studentrouter.get("/student/courses", getStudentCourses);
 Studentrouter.post("/student/register", studentRegistration);
+Studentrouter.get("/student/registrationCourses", getstudentRegistrationCourses);
 Studentrouter.get("/student/addcourses", ListAddCourses);
 
 Studentrouter.post("/student/dropcourse/:id", dropCourse);
