@@ -9,6 +9,10 @@ let roomSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  type: {
+    type: String,
+    required: false,
+  },
 });
 
 module.exports = mongoose.models.Room || mongoose.model("Room", roomSchema);

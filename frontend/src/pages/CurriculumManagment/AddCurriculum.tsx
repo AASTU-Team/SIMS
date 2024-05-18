@@ -1,20 +1,33 @@
 import type { FormProps } from "antd";
 import { Form, Input, Select, notification } from "antd";
 import { CurriculumFields } from "../../type/curriculum";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { addCurriculum } from "../../api/curriculum";
+import { getDepartment } from "../../api/departmentApi";
+import { getCourse } from "../../api/course";
+import { CourseFields } from "../../type/course";
+import { DepartmentFields } from "../../type/department";
 
 export default function AddCurriculum() {
   const [form] = Form.useForm();
+  const departmentQuery = useQuery({
+    queryKey: ["department"],
+    queryFn: getDepartment,
+  });
+  const courseQuery = useQuery({
+    queryKey: ["course"],
+    queryFn: getCourse,
+  });
+
 
   const AddCurriculumMutaiton = useMutation({
        mutationKey: ["addCurriculum"],
        mutationFn: (values: CurriculumFields) => addCurriculum(values),
        onError: () => {
-         notification.error({ message: "Department Not Created" });
+         notification.error({ message: "Curriculum Not Created" });
        },
        onSuccess: () => {
-         notification.success({ message: "Department Created Successfully" });
+         notification.success({ message: "Curriculum Created Successfully" });
          form.resetFields();
        },
      });
@@ -99,27 +112,32 @@ export default function AddCurriculum() {
                   >
                     Department
                   </label>
-
                   <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
                     <Select
                       showSearch
-                      placeholder="Select Department"
+                      placeholder={
+                        departmentQuery.isLoading
+                          ? "Fetching Departments"
+                          : "Select Department"
+                      }
                       optionFilterProp="children"
                       filterOption={filterOption}
-                      options={[
-                        {
-                          value: "Seng",
-                          label: "Software Engineering",
-                        },
-                        {
-                          value: "Eeng",
-                          label: "Electrical Engineering",
-                        },
-                        {
-                          value: "Ceng",
-                          label: "Civil Engineering",
-                        },
-                      ]}
+                      onChange={(value) => {
+                        form.setFieldValue("department_id", value);
+                      }}
+                      disabled={departmentQuery.isLoading}
+                      options={
+                        departmentQuery.isFetched
+                          ? departmentQuery.data?.data?.data?.map(
+                              (value: DepartmentFields) => {
+                                return {
+                                  value: value._id,
+                                  label: value.name,
+                                };
+                              }
+                            )
+                          : []
+                      }
                     />
                   </div>
                 </div>
@@ -193,11 +211,13 @@ export default function AddCurriculum() {
                   />
                 </div>
               </Form.Item>
+            </div>
+            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<CurriculumFields>
                 name="courses"
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Please input the courses!",
                   },
                 ]}
@@ -209,36 +229,42 @@ export default function AddCurriculum() {
                   >
                     Courses
                   </label>
-
                   <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
                     <Select
+                      showSearch
                       mode="multiple"
-                      placeholder="Select Courses"
-                      options={[
-                        {
-                          value: "course1",
-                          label: "Course 1",
-                        },
-                        {
-                          value: "course2",
-                          label: "Course 2",
-                        },
-                        {
-                          value: "course3",
-                          label: "Course 3",
-                        },
-                      ]}
+                      placeholder={
+                        courseQuery.isLoading
+                          ? "Fetching Courses"
+                          : "Select Courses"
+                      }
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("courses", value);
+                      }}
+                      disabled={courseQuery.isLoading}
+                      options={
+                        courseQuery.isFetched
+                          ? courseQuery.data?.data?.data?.map(
+                              (value: CourseFields) => {
+                                return {
+                                  value: value._id,
+                                  label: value.name,
+                                };
+                              }
+                            )
+                          : []
+                      }
                     />
                   </div>
                 </div>
               </Form.Item>
-            </div>
-            <div className="mb-5.5 ">
               <Form.Item<CurriculumFields>
                 name="description"
                 rules={[
                   {
-                    required: true,
+                    required: false,
                     message: "Please input the description!",
                   },
                 ]}

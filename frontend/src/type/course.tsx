@@ -1,4 +1,5 @@
 export type CourseFields = {
+    _id?: string;
     name?: string;
     department_id?: string;
     instructors?: string[];

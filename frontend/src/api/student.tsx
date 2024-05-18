@@ -50,3 +50,9 @@ export const registerStudent = async (data: StudentFields) => {
   setHeaderToken(access_token);
   return await client.post("/register/student", data);
 }
+
+export const aboutMe = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post("/me");
+}

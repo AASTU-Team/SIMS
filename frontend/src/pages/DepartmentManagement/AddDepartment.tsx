@@ -1,11 +1,17 @@
 import type { FormProps } from "antd";
-import {Form, Input, notification} from "antd";
+import {Form, Input, notification, Select} from "antd";
 import { DepartmentFields } from "../../type/department";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createDepartment } from "../../api/departmentApi";
+import { getStaff } from "../../api/staff";
+import { StaffFields } from "../../type/staff";
 
 export default function AddDepartment() {
   const [form] = Form.useForm();
+
+  const staffQuery = useQuery({
+    queryKey: ["staff"],
+    queryFn: () => getStaff(),})
   
    const AddDepartmentMutation = useMutation({
      mutationKey: ["addDepartment"],
@@ -78,7 +84,29 @@ export default function AddDepartment() {
                 </div>
               </Form.Item>
               <Form.Item<DepartmentFields>
-                name="head"
+                name="code"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the department code!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="code"
+                  >
+                    Department Code
+                  </label>
+                  <Input
+                    placeholder="Enter the department Code"
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  />
+                </div>
+              </Form.Item>
+              <Form.Item<DepartmentFields>
+                name="dep_head"
                 rules={[
                   {
                     required: true,
@@ -93,12 +121,37 @@ export default function AddDepartment() {
                   >
                     Department Head
                   </label>
-                  <Input
-                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    placeholder="Enter the department head"
-                  />
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder={
+                        staffQuery.isLoading
+                          ? "Fetching Staff Members"
+                          : "Select Department Head"
+                      }
+                      optionFilterProp="children"
+                      onChange={(value) => {
+                        form.setFieldValue("dep_head", value);
+                      }}
+                      disabled={staffQuery.isLoading}
+                      options={
+                        staffQuery.isFetched
+                          ? staffQuery.data?.data?.message?.map(
+                              (value: StaffFields) => {
+                                return {
+                                  value: value._id,
+                                  label: value.name,
+                                };
+                              }
+                            )
+                          : []
+                      }
+                    />
+                  </div>
                 </div>
               </Form.Item>
+            </div>
+             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<DepartmentFields>
                 name="description"
                 rules={[
@@ -121,7 +174,8 @@ export default function AddDepartment() {
                   />
                 </div>
               </Form.Item>
-            </div>
+
+             </div>
           </Form>
         </div>
       </div>

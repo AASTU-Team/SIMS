@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import mongoose from "mongoose";
 
 const assignCourse = require("../../helper/assignFreshmanCourse");
+const assignMastersCourse = require("../../helper/assignMastersCourse");
 const checkPrerequisite = require("../../helper/checkPrerequisite");
 const isCourseTaken = require("../../helper/isCourseTaken");
 const getPossibleAddCourses = require("../../helper/getPossibleAddCourses");
@@ -124,8 +125,7 @@ export const registerDependency = async (req: Request, res: Response) => {
   try {
     const data = req.body;
 
-    const newValue = new RegistrationStatus(data);
-    newValue.save();
+    await Student.deleteMany({});
 
     res.status(200).json({ message: data });
   } catch (error: any) {
@@ -185,15 +185,40 @@ export const registerStudent = async (req: Request, res: Response) => {
       });
 
       if (response.status === 201) {
+        const department = await Department.findOne({ name: data.department });
+
+        let department_id = "";
+
+        if (department) {
+          department_id = department._id;
+          console.log("department_id:", department_id);
+        } else {
+          console.log("Department not found");
+        }
         const r = await response.json();
         console.log(r.message);
-        const newStudent = await new Student({ ...data, id: id });
+        const newStudent = await new Student({
+          ...data,
+          id: id,
+          department_id: department_id,
+        });
         await newStudent.save();
         const insertedIds: String[] = [];
+        const insertedStudents: any[] = [];
         insertedIds.push(newStudent._id);
+        insertedStudents.push({
+          id: newStudent._id,
+          department: data.department,
+        });
+        console.log(data.type);
 
-        const registration = await assignCourse(insertedIds);
-        console.log("registration", registration);
+        if (data.type == "Undergraduate") {
+          const registration = await assignCourse(insertedIds);
+          console.log("registration", registration);
+        } else if (data.type == "Masters") {
+          const registration = await assignMastersCourse(insertedStudents);
+          console.log("registration", registration);
+        }
 
         return res
           .status(201)
@@ -256,9 +281,10 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
 
   console.log(year);
   const insertedIds: String[] = [];
+  const insertedStudents: any[] = [];
   const errors: String[] = [];
 
-  const department = await Department.findOne({ name: "Freshman" });
+  /*  const department = await Department.findOne({ name: "Freshman" });
 
   let department_id = "";
 
@@ -268,7 +294,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
   } else {
     console.log("Department not found");
     errors.push("Freshman department not found");
-  }
+  } */
 
   const count = await Student.countDocuments();
   console.log(`Total number of documents: ${count}`);
@@ -314,15 +340,50 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
           } else {
             id = `${idPrefix}${count + 1}` + `/${year}`;
           }
+          const department = await Department.findOne({
+            name: student.department,
+          });
+
+          let department_id = "";
+
+          if (department) {
+            department_id = department._id;
+            console.log("department_id:", department_id);
+          } else {
+            console.log("Department not found");
+            errors.push(" department not found");
+          }
 
           // Insert the student into the database
+          // delete student.department
           const newstudent = await Student.create({
             ...student,
             id,
             department_id,
           });
           if (newstudent) {
-            insertedIds.push(newstudent._id);
+            if (student.type === "Undergraduate") {
+              insertedIds.push(newstudent._id);
+              const registration = await assignCourse(insertedIds);
+              if (!registration) {
+                errors.push(
+                  "Registration failed for student " + newstudent.name
+                );
+              }
+            } else if (student.type === "Masters") {
+              insertedStudents.push({
+                id: newstudent._id,
+                department: student.department,
+              });
+              // const theStudent =
+              const registration = await assignMastersCourse(insertedStudents);
+              if (!registration) {
+                errors.push(
+                  "Registration failed for student " + newstudent.name
+                );
+              }
+              console.log("registration master", registration);
+            }
           } else {
             console.log("error");
           }
@@ -376,14 +437,15 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
             console.log("unable to create student auth profile");
           }
 
-          ////////////////////////////////////////////////////////////////////
+          ////////////////////////////////////////////////////////////////////'
+          insertedIds.splice(0, insertedIds.length);
 
           count++; // Increment the count for the next student
         }
 
         console.log("Data inserted successfully");
-        const registration = await assignCourse(insertedIds);
-        console.log(registration);
+        // const registration = await assignCourse(insertedIds);
+        // console.log(registration);
         //console.log(insertedIds);
 
         res
@@ -409,7 +471,8 @@ function validateStudent(student: any) {
     //birthday: Joi.date().format('YYYY-MM-DD'),
     // phone: Joi.string().regex(/^\+\d{12}$/).withMessage('Phone number must start with "+" and be followed by 12 digits'),
     gender: Joi.string().valid("MALE", "FEMALE"),
-    department_id: Joi.string().optional(),
+    department: Joi.string().optional(),
+    type: Joi.string().optional(),
     status_id: Joi.string().optional(),
     year: Joi.number().integer(),
     //admission_date: Joi.date().format('YYYY-MM-DD').withMessage('Admission date must be in the format YYYY-MM-DD'),
@@ -433,8 +496,15 @@ export const getAllStudent = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
-    const students: any = await Student.find();
-    res.status(200).json({ message: students });
+    const students = await Student.find().populate("department_id");
+    const myStudents = students.map((student: any) => {
+      return {
+        ...student.toObject(),
+        department_name: student.department_id?.name,
+      };
+    });
+
+    res.status(200).json({ message: myStudents });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -444,8 +514,14 @@ export const getAllStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
-    const staff: any = await Staff.find();
-    res.status(200).json({ message: staff });
+    const staffs: any = await Staff.find().populate("department_id");
+    const myStaff = staffs.map((staff: any) => {
+      return {
+        ...staff.toObject(),
+        department_name: staff.department_id?.name,
+      };
+    });
+    res.status(200).json({ message: myStaff });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -540,12 +616,18 @@ export const getStudentProfile = async (req: Request, res: Response) => {
 
     if (response.status === 200) {
       const { email, role } = await response.json();
-      const student = await Student.findOne({
-        email,
-      });
+      let user;
+      if (role.includes("student")) {
+        user = await Student.findOne({
+          email,
+        });
+      } else {
+        user = await Staff.findOne({
+          email,
+        });
+      }
       return res.status(200).json({
-        student: student,
-
+        user: user,
         role: role,
       });
     } else {
@@ -588,6 +670,7 @@ export const studentRegistration = async (req: Request, res: Response) => {
   const student_id = req.body.student_id;
 
   let department_id = "";
+  let type = "";
   let newyear = 0;
   let newsemester = 0;
 
@@ -602,6 +685,7 @@ export const studentRegistration = async (req: Request, res: Response) => {
     return res.status(404).json({ message: "student not found" });
   }
   department_id = student.department_id;
+  type = student.type;
 
   const highestCombination = await Registration.findOne({ stud_id: student_id })
     .sort({ year: -1, semester: -1 })

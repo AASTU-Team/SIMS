@@ -52,9 +52,10 @@ let studentSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  contact: {
+  type: {
     type: String,
-    required: true,
+    enum: ["Undergraduate", "Masters"],
+    required: false,
   },
   address: {
     type: String,

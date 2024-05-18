@@ -1,4 +1,3 @@
-POST http://localhost:3000/course/create 
 Content-Type:  application/json
 
 {
@@ -74,19 +73,14 @@ Content-Type:  application/json
 {
   "name": "Software",
   "department_id":"66339dd2caaf3b0b164e50e2",
-  "credits_required":10,
-  "year":3,
-   "courses" : [
-        {
-          "courseId": "66373921883de948fc00f774" , 
-        "semester" : 1
-        },
-        {
-          "courseId": "6637392d883de948fc00f776" , 
-        "semester" : 1
-        }
+  "credits_required":15,
+  "year":1,
+  "type":"Masters",
+  "semester":1,
+   "courses" : ["6637392d883de948fc00f776","66373921883de948fc00f774"]
        
-    ]
+       
+    
 }
 ### get curr
 GET  http://localhost:3000/curriculum/66336dc4050d56f693de67d5
@@ -129,3 +123,7 @@ Content-Type:  application/json
     ]
   
 }
+
+### fetch based on dep 
+GET  http://localhost:3000/user/student/all 
+Content-Type:  application/json

@@ -11,15 +11,16 @@ export default function AddRooms() {
        mutationKey: ["addRoom"],
        mutationFn: (values: RoomFields) => addRooms(values),
        onError: () => {
-         notification.error({ message: "Department Not Created" });
+         notification.error({ message: "Room Not Created" });
        },
        onSuccess: () => {
-         notification.success({ message: "Department Created Successfully" });
+         notification.success({ message: "Room Created Successfully" });
          form.resetFields();
        },
      });
   
   const onFinish: FormProps<RoomFields>["onFinish"] = (values) => {
+    console.log(values);
     AddRoomMutaion.mutate(values);
   };
 
@@ -55,7 +56,7 @@ export default function AddRooms() {
           >
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<RoomFields>
-                name="number"
+                name="room_number"
                 rules={[
                   {
                     required: true,
@@ -72,6 +73,7 @@ export default function AddRooms() {
                   </label>
                   <Input
                     placeholder="Enter the room number"
+                    type="number"
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   />
                 </div>
@@ -117,6 +119,9 @@ export default function AddRooms() {
                   <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
                     <Select
                       placeholder="Select Type"
+                      onChange={(value) => {
+                        form.setFieldValue("type", value)
+                      }}
                       options={[
                         {
                           value: "lecture",

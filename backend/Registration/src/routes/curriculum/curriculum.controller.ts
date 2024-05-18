@@ -46,7 +46,14 @@ export const getCurriculum = async (req: Request, res: Response) => {
   // and courses should have name
   try {
     // use find({dep_id : id from fetch })
-    const curriculum: any = await Curriculum.find();
+    const curriculum: any = await Curriculum.find().populate({
+      path: "courses.courseId",
+      select: "_id name",
+    });
+    if (!curriculum) {
+      return res.status(404).json({ message: "Department not found." });
+    }
+
     res.status(200).json({ data: curriculum });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
@@ -79,84 +86,74 @@ export const createCurriculum = async (req: Request, res: Response) => {
   }
 };
 
-export const createCurriculumCsv = async(req: Request, res: Response) => {
+export const createCurriculumCsv = async (req: Request, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
-
-  let errors:String[] = [""] 
-
-  
-  
-     
+  let errors: String[] = [""];
 
   fs.createReadStream(req.file.path)
-.pipe(csv())
-.on('data', (data:any) => {
-  // Process each row of data
-  results.push(data);
-})
-.on('end', async() => {
-  try {
-    // The parsing is complete
-    console.log(results);
+    .pipe(csv())
+    .on("data", (data: any) => {
+      // Process each row of data
+      results.push(data);
+    })
+    .on("end", async () => {
+      try {
+        // The parsing is complete
+        console.log(results);
 
-    let  i = 0
+        let i = 0;
 
-   
+        async function courseNameToObjectId(name: string): Promise<string> {
+          const course = await Course.findOne({ code: name });
+          console.log("course", course);
+          if (!course) {
+            errors.push("Could not find course: " + name);
+            // Handle the error case accordingly
+          }
+          return course._id;
+        }
+        async function getDeparmentId(name: string): Promise<string> {
+          const department_id = await Department.findOne({ name: name });
 
-    async function courseNameToObjectId(name: string): Promise<string> {
-      const course = await Course.findOne({ code: name });
-      console.log("course", course);
-      if (!course) {
-        errors.push("Could not find course: " + name);
-        // Handle the error case accordingly
-      }
-      return course._id;
-    }
-    async function getDeparmentId(name: string): Promise<string> {
-      const department_id = await Department.findOne({name:name});
-      
-      if(!department_id)
-        {
-          errors.push("could not find department" + results[0].department)
-          
+          if (!department_id) {
+            errors.push("could not find department" + results[0].department);
+          }
+
+          return department_id._id;
         }
 
-        return  department_id._id
+        const transformedData = await Promise.all(
+          results.map(async (item: any, index: number) => {
+            const courseNames = item.course.split(",");
+            const semesters = item.semester
+              .split(",")
+              .map((semester: any) => parseInt(semester));
 
-    }
+            const courses = await Promise.all(
+              courseNames.map(async (courseName: any, index: any) => ({
+                courseId: await courseNameToObjectId(courseName),
+                semester: semesters[index],
+              }))
+            );
 
-  
- 
-      const transformedData = await Promise.all(results.map(async (item: any, index: number) => {
-        const courseNames = item.course.split(',');
-        const semesters = item.semester.split(',').map((semester: any) => parseInt(semester));
-      
-        const courses = await Promise.all(courseNames.map(async (courseName: any, index: any) => ({
-          courseId: await courseNameToObjectId(courseName),
-          semester: semesters[index]
-        })));
-      
-        const departmentId = await getDeparmentId(results[index].department); // Await the Promise
-      
-        return {
-          name: results[index].name,
-          department_id: departmentId, // Use the resolved value
-          credits_required: results[index].credits_required,
-          year: results[index].year,
-          courses: courses
-        };
-      }));
-    
-    
+            const departmentId = await getDeparmentId(
+              results[index].department
+            ); // Await the Promise
 
-   
+            return {
+              name: results[index].name,
+              department_id: departmentId, // Use the resolved value
+              credits_required: results[index].credits_required,
+              year: results[index].year,
+              courses: courses,
+            };
+          })
+        );
 
-   
-
-  /*   for (const curriculum of results) {
+        /*   for (const curriculum of results) {
 
       const department_id = await Department.findOne({name:curriculum.department});
       did = department_id
@@ -182,34 +179,29 @@ export const createCurriculumCsv = async(req: Request, res: Response) => {
       i++
     
     } */
-      await Curriculum.create(transformedData);
+        await Curriculum.create(transformedData);
 
-    console.log('Data inserted successfully');
-    res.status(200).json({ message: transformedData,errors: errors });
-  
-  } catch (error:any) {
-    console.error('Error inserting data:', error);
-    res.status(500).json({ message: error.message });
-  }
-})
-.on('error', (error:any) => {
-  // Handle any errors that occur during the parsing
-  console.error(error);
-  res.status(500).json({ message: error.message });
-});
-  
+        console.log("Data inserted successfully");
+        res.status(200).json({ message: transformedData, errors: errors });
+      } catch (error: any) {
+        console.error("Error inserting data:", error);
+        res.status(500).json({ message: error.message });
+      }
+    })
+    .on("error", (error: any) => {
+      // Handle any errors that occur during the parsing
+      console.error(error);
+      res.status(500).json({ message: error.message });
+    });
 };
 function validateCurriculum(curriculum: any) {
   const schema = Joi.object({
-   
     name: Joi.string(),
     department: Joi.string().optional(),
     credits_required: Joi.number().integer(),
-    year:Joi.date(),  
-    course:Joi.string(),
+    year: Joi.date(),
+    course: Joi.string(),
     semester: Joi.string(),
- 
-
   });
 
   return schema.validate(curriculum);
