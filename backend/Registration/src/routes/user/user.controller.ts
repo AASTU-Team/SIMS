@@ -267,7 +267,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
     console.log("department_id:", department_id);
   } else {
     console.log("Department not found");
-    errors.push("Freshman department not found")
+    errors.push("Freshman department not found");
   }
 
   const count = await Student.countDocuments();
@@ -296,7 +296,9 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
           const { error } = validateStudent(student);
           if (error) {
             console.error("Validation error:", error);
-            errors.push(error.details[0].message + "for student " + student.name);
+            errors.push(
+              error.details[0].message + "for student " + student.name
+            );
             continue; // Skip this student and move to the next one
           }
 
@@ -356,11 +358,19 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
               console.log(r.message);
               //return res.status(400).json({ message: "An error happend please try again" });
               console.log("unable to create student auth profile");
-              errors.push("unable to create student auth profile" + "for student" + student.name);
+              errors.push(
+                "unable to create student auth profile" +
+                  "for student" +
+                  student.name
+              );
             }
           } catch (error: any) {
             console.log(error.message);
-            errors.push("unable to create student auth profile" + "for student" + student.name);
+            errors.push(
+              "unable to create student auth profile" +
+                "for student" +
+                student.name
+            );
 
             //return res.status(500).json({ message: error.message });
             console.log("unable to create student auth profile");
@@ -375,8 +385,10 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
         const registration = await assignCourse(insertedIds);
         console.log(registration);
         //console.log(insertedIds);
-       
-        res.status(200).json({ message: "Data inserted successfully",errors:errors });
+
+        res
+          .status(200)
+          .json({ message: "Data inserted successfully", errors: errors });
         console.log("emails", emails);
       } catch (error: any) {
         console.error("Error inserting data:", error);
@@ -838,60 +850,45 @@ export const getTemplate = async (req: Request, res: Response) => {
 };
 
 export const WithdrawalRequest = async (req: Request, res: Response) => {
-
-  const id  = req.body.id;
+  const id = req.body.id;
 
   const student = await Student.findById(id);
 
-  if(!student)
-    {
-      return res.status(404).json({ message: "Student not found" });
-    }
+  if (!student) {
+    return res.status(404).json({ message: "Student not found" });
+  }
 
-    const updated = await Student.findByIdAndUpdate(id,{"status":"Pending-Withdrawal"})
+  const updated = await Student.findByIdAndUpdate(id, {
+    status: "Pending-Withdrawal",
+  });
 
-    if(!updated)
-      {
-        return res.status(404).json({ message: "Unable to update" });
-      }
+  if (!updated) {
+    return res.status(404).json({ message: "Unable to update" });
+  }
 
-      return res.status(200).json({ message: "success" });
-
-
-
-
-}
-
-
+  return res.status(200).json({ message: "success" });
+};
 
 export const getWithdrawalRequests = async (req: Request, res: Response) => {
+  const students = await Student.find({ status: "Pending-Withdrawal" });
 
-  const students = await Student.find({status:"Pending-Withdrawal"})
+  if (!students) {
+    return res.status(404).json({ message: " No Student found" });
+  }
 
-  if(!students)
-    {
-      return res.status(404).json({ message: " No Student found" });
-    }
-
-    return res.status(200).json(students);
-
-
-
-
-}
+  return res.status(200).json(students);
+};
 
 export const AcceptWithdrawalRequest = async (req: Request, res: Response) => {
-
-  const id  = req.body.stud_id;
+  const id = req.body.stud_id;
 
   const student = await Student.findById(id);
-  let status:Boolean = false
+  let status: Boolean = false;
 
-  if(!student)
-    {
-      return res.status(404).json({ message: "Student not found" });
-    }
-    const highestCombination = await Registration.findOne({ stud_id: id })
+  if (!student) {
+    return res.status(404).json({ message: "Student not found" });
+  }
+  const highestCombination = await Registration.findOne({ stud_id: id })
     .sort({ year: -1, semester: -1 })
     .select("year semester")
     .limit(1);
@@ -900,8 +897,11 @@ export const AcceptWithdrawalRequest = async (req: Request, res: Response) => {
     const highestYear = highestCombination.year;
     const highestSemester = highestCombination.semester;
 
-    const currentRegistration = await Registration.findOne({year: highestYear, semester: highestSemester})
-    const courses:any[] = currentRegistration.courses;
+    const currentRegistration = await Registration.findOne({
+      year: highestYear,
+      semester: highestSemester,
+    });
+    const courses: any[] = currentRegistration.courses;
 
     for (const course of courses) {
       if (course.status !== "Completed") {
@@ -910,49 +910,31 @@ export const AcceptWithdrawalRequest = async (req: Request, res: Response) => {
         break; // Stop further iteration
       }
     }
-
-
-
   }
 
+  const updated = await Student.findByIdAndUpdate(id, { status: "Withdrawn" });
 
-  
+  if (!updated) {
+    return res.status(404).json({ message: "Unable to update" });
+  }
 
-    const updated = await Student.findByIdAndUpdate(id,{"status":"Withdrawn"})
-
-    if(!updated)
-      {
-        return res.status(404).json({ message: "Unable to update" });
-      }
-
-      return res.status(200).json({ message: "success" });
-
-
-
-
-}
+  return res.status(200).json({ message: "success" });
+};
 
 export const activateStudent = async (req: Request, res: Response) => {
-
-  const id  = req.body.id;
+  const id = req.body.id;
 
   const student = await Student.findById(id);
 
-  if(!student)
-    {
-      return res.status(404).json({ message: "Student not found" });
-    }
+  if (!student) {
+    return res.status(404).json({ message: "Student not found" });
+  }
 
-    const updated = await Student.findByIdAndUpdate(id,{"status":"Active"})
+  const updated = await Student.findByIdAndUpdate(id, { status: "Active" });
 
-    if(!updated)
-      {
-        return res.status(404).json({ message: "Unable to update" });
-      }
+  if (!updated) {
+    return res.status(404).json({ message: "Unable to update" });
+  }
 
-      return res.status(200).json({ message: "success" });
-
-
-
-
-}
+  return res.status(200).json({ message: "success" });
+};

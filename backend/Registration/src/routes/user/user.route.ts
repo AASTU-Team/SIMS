@@ -77,13 +77,19 @@ Studentrouter.post("/students/activateStudent", activateStudent);
 
 Studentrouter.get("/template", getTemplate);
 
-Studentrouter.get("/student/test", async (req: Request, res: Response) => {
+Studentrouter.post("/student/test", async (req: Request, res: Response) => {
+  const { department, year, semester, max } = req.body;
   const a = await assignSection({
-    department: "Freshman",
-    year: 1,
-    semester: 1,
+    department,
+    year,
+    semester,
+    max,
   });
-  console.log(a);
+  if (a.success) {
+    res.status(200).json(a);
+  } else {
+    res.status(400).json(a);
+  }
 });
 
 module.exports = Studentrouter;
