@@ -17,6 +17,8 @@ import { uploadFile } from "./user.controller";
 import { getStudentProfile } from "./user.controller";
 import { getAllStaff } from "./user.controller";
 import { getstudentRegistrationCourses } from "./user.controller";
+import { getStudentRegistrationStatus } from "./user.controller";
+import { confirmStudentRegistration } from "./user.controller";
 
 import { getAllStudent } from "./user.controller";
 import { getStudentByDepartment } from "./user.controller";
@@ -72,6 +74,9 @@ Studentrouter.post("/student/withdrawalRequest",WithdrawalRequest);
 Studentrouter.get("/students/withdrawalRequests",getWithdrawalRequests);
 Studentrouter.post("/students/acceptWithdrawalRequests",AcceptWithdrawalRequest);
 Studentrouter.post("/students/activateStudent",activateStudent);
+
+Studentrouter.get("/students/getStudentStatus",getStudentRegistrationStatus);
+Studentrouter.post("/students/confirmStatus",confirmStudentRegistration);
 
 
 
