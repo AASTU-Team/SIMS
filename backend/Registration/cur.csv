@@ -1,3 +1,3 @@
-name,department,credits_required,year,course,semester
-freshman,Freshman,10,10/10/2024,"ph10,m10","1,2"
-software,Software,10,10/10/2024,"ph10,m10","2,1"
+name,department,credits_required,course,semester,year
+freshman,Software,10,"ph10,m101",1,4
+software,Software,10,"ph10,m101",1,4

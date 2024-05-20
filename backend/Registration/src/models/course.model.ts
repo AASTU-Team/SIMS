@@ -35,11 +35,11 @@ let courseSchema = new mongoose.Schema({
     unique: true,
   },
   lec: {
-    type: String,
+    type: Number,
     required: true,
   },
   lab: {
-    type: String,
+    type: Number,
     required: true,
   },
   description: {

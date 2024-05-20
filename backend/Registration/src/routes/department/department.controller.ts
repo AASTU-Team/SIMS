@@ -229,6 +229,7 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
       const curriculum = await Curriculum.findOne({
         department_id: department_id,
         year: data.year,
+        semester:semester
       });
 
       if (!curriculum) {
@@ -239,23 +240,23 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
       const departmentCourses: any[] = curriculum.courses;
 
       const promises = departmentCourses.map(async (course) => {
-        if (course.semester === semester) {
-          const status = await checkPrerequisite(course.courseId, student_id);
+       // if (course.semester === semester) {
+          const status = await checkPrerequisite(course, student_id);
           console.log(status + " FOR STUDENT " + student_id);
           if (status === true) {
             console.log("here");
 
             courses.push({
-              courseID: course.courseId,
+              courseID: course,
               grade: "",
               status: "Active",
               isRetake: false,
             });
 
-            const value = await getCredit(course.courseId);
+            const value = await getCredit(course);
             total_credit.push(value);
           }
-        }
+        //}
       });
 
       await Promise.all(promises);

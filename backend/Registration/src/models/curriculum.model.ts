@@ -36,6 +36,11 @@ let curriculumSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  type: {
+    type: String,
+    enum: ["Undergraduate", "Masters"],
+    required: false,
+  },
 });
 
 module.exports =

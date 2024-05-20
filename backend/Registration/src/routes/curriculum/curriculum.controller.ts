@@ -132,15 +132,18 @@ export const createCurriculumCsv = async (req: Request, res: Response) => {
         const transformedData = await Promise.all(
           results.map(async (item: any, index: number) => {
             const courseNames = item.course.split(",");
-            const semesters = item.semester
+          /*   const semesters = item.semester
               .split(",")
-              .map((semester: any) => parseInt(semester));
+              .map((semester: any) => parseInt(semester)); */
 
             const courses = await Promise.all(
-              courseNames.map(async (courseName: any, index: any) => ({
-                courseId: await courseNameToObjectId(courseName),
-                semester: semesters[index],
-              }))
+              courseNames.map(async (courseName: any, index: any) => (
+               // {
+               // courseId: await courseNameToObjectId(courseName),
+               // semester: semesters[index],
+             // }
+             await courseNameToObjectId(courseName)
+            ))
             );
 
             const departmentId = await getDeparmentId(
@@ -152,7 +155,9 @@ export const createCurriculumCsv = async (req: Request, res: Response) => {
               department_id: departmentId, // Use the resolved value
               credits_required: results[index].credits_required,
               year: results[index].year,
+              semester:results[index].semester,
               courses: courses,
+
             };
           })
         );
@@ -184,12 +189,13 @@ export const createCurriculumCsv = async (req: Request, res: Response) => {
     
     } */
         await Curriculum.create(transformedData);
+        results = []
 
         console.log("Data inserted successfully");
-        res.status(200).json({ message: transformedData, errors: errors });
+       return res.status(200).json({ message: transformedData, errors: errors });
       } catch (error: any) {
         console.error("Error inserting data:", error);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({ message: error.message,errors });
       }
     })
     .on("error", (error: any) => {

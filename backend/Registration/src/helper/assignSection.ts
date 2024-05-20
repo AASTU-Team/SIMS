@@ -1,99 +1,33 @@
 const Student = require("../models/student.model");
-const Curriculum = require("../models/curriculum.model");
 const Registration = require("../models/registration.model");
 const Department = require("../models/department.model");
 const Section = require("../models/section.model");
-const Course = require("../models/course.model");
 
-async function getCredit(Id: String): Promise<any> {
-  const course = await Course.findById(Id);
-  if (!course) {
-    //console.error("Course not found");
-    return 0;
-  }
-  // console.log(parseInt(course.credits));
-
-  return parseInt(course.credits);
-}
-
-async function assignCourse(Ids: any): Promise<any> {
-  const courses: any[] = [];
-  const success: any = [];
-
-  const freshmancurriculum = await Curriculum.findOne({ name: "Freshman",year:1,semester:1 });
-
-  if (!freshmancurriculum) {
-    return [];
-  }
-
-  const freshmanCourses: any[] = freshmancurriculum.courses;
-  const total_credit: Number[] = [];
-
-  await Promise.all(
-    freshmanCourses.map(async (course) => {
-     // if (course.semester === 1) {
-        courses.push({
-          courseID: course,
-          grade: "",
-          status: "Active",
-          isRetake: false,
-        });
-        const value = await getCredit(course);
-        total_credit.push(value);
-     // }
-    })
-  );
-
-  Ids.map((studentId:any) => {
-    let sum: number = 0;
-    total_credit.map((credit: any) => {
-      sum += credit;
-    });
-    const registration = new Registration({
-      stud_id: studentId,
-      year: 1,
-      semester: 1,
-      courses: courses,
-      registration_date: new Date(),
-      total_credit: sum,
-      section_id: null,
-    });
-
-    registration.save();
-
-    if (registration) {
-      success.push(studentId);
-    }
-  });
-  await assignSection({
-    department: "Freshman",
-    year: 1,
-    semester: 1,
-  });
-
-  return success;
-}
 interface AssignSection {
   department: string;
   year: Number;
   semester: Number;
+  max: number;
 }
 async function assignSection({
   department,
   year,
   semester,
-}: AssignSection): Promise<void> {
+  max,
+}: AssignSection): Promise<{ success: boolean; message: any }> {
   try {
     // Get students based on department, year, and semester
     const dept = await Department.findOne({ name: department });
-
+    console.log(dept);
     if (!dept) {
       throw new Error("Department not found");
     }
     const students = await Student.find({ department_id: dept._id, year });
-
+    console.log(students);
     // Calculate the number of sections (rounded up)
-    const numSections = Math.ceil(students.length / 30);
+    const numSections = Math.ceil(students.length / max);
+    const studentPerSec = Math.ceil(students.length / numSections);
+    console.log(numSections, studentPerSec);
 
     // Loop through students and assign section IDs
     let sectionId = "A";
@@ -134,19 +68,20 @@ async function assignSection({
       await student.save();
 
       count++;
-      if (count % 30 === 0) {
+      if (count % studentPerSec === 0) {
         sectionId = String.fromCharCode(sectionId.charCodeAt(0) + 1); // Increment section letter
         count = 0; // Reset count for the next section
       }
     }
-
-    console.log(
-      "Section IDs assigned successfully for department:",
-      department
-    );
-  } catch (err) {
+    return {
+      success: true,
+      message: ` "Section IDs assigned successfully for department:",
+    ${department}`,
+    };
+  } catch (err: any) {
+    return { success: false, message: err.message };
     console.error("Error assigning section IDs:", err);
   }
 }
 
-module.exports = assignCourse;
+module.exports = assignSection;
