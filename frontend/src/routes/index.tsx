@@ -6,7 +6,6 @@ import NotFoundPage from "../pages/NotFound";
 import Sidebar from "../components/SideBar";
 import Header from "../components/Header";
 import Dashboard from "../pages/Dashboard";
-import RegisterUser from "../pages/RegisterUser";
 import Profile from "../pages/Profile";
 import SetPassword from "../pages/SetPassword";
 import Loader from "../components/Loader";
@@ -74,7 +73,6 @@ const AllRoutes = () => {
                     <Route path="/room/add" element={<AddRooms />} />
                     <Route path="/rooms/edit" element={<EditRoom />} />
                     <Route path="/calendar" element={<Calendar />} />
-                    <Route path="/registration" element={<RegisterUser />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>

@@ -9,39 +9,41 @@ import { ChangePassword } from "../../api/userApi";
 import { useMutation } from "@tanstack/react-query";
 
 
-const Profile = () => {
+export default function Profile(){
   const [form] = Form.useForm();
-  const [changePass,setChangePass] = useState(false)
+  const [changePass, setChangePass] = useState(false);
   const user = useSelector((state: RootState) => state.user);
 
-  const passwordMutation= useMutation({
-    mutationKey: ['password'],
-    mutationFn: (values:ChangePasswordForm)=>ChangePassword(values),
-    onError:()=>{
-      notification.error({message:"Invalid Password"})
+  const passwordMutation = useMutation({
+    mutationKey: ["password"],
+    mutationFn: (values: ChangePasswordForm) => ChangePassword(values),
+    onError: () => {
+      notification.error({ message: "Invalid Password" });
     },
-    onSuccess:()=>{
-      notification.success({message:"Password Changed Successfully"})
-      form.resetFields()
-    }
+    onSuccess: () => {
+      notification.success({ message: "Password Changed Successfully" });
+      form.resetFields();
+    },
   });
 
   const OnFinish: FormProps<ChangePasswordForm>["onFinish"] = (values) => {
-    if(values.password !== values.confirm_password){
-      notification.error({message:"Password does not match"})
-      return
+    if (values.password !== values.confirm_password) {
+      notification.error({ message: "Password does not match" });
+      return;
     }
-    if(values.password.length < 8 ){
-      notification.error({message:"Password must be at least 8 characters"})
-      return
+    if (values.password.length < 8) {
+      notification.error({ message: "Password must be at least 8 characters" });
+      return;
     }
-    if(!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(values.password)){
-      notification.error({message:"Password must contain at least one lowercase letter, one uppercase letter, and one number"})
-      return
+    if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(values.password)) {
+      notification.error({
+        message:
+          "Password must contain at least one lowercase letter, one uppercase letter, and one number",
+      });
+      return;
     }
-    passwordMutation.mutate(values)
+    passwordMutation.mutate(values);
     // console.log(loginMutation)
-
   };
 
   const onFinishFailed: FormProps<ChangePasswordForm>["onFinishFailed"] = (
@@ -325,6 +327,4 @@ const Profile = () => {
       </div>
     </div>
   );
-};
-
-export default Profile;
+}
