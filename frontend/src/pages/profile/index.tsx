@@ -9,7 +9,7 @@ import { ChangePassword } from "../../api/userApi";
 import { useMutation } from "@tanstack/react-query";
 
 
-export default function Profile(){
+export default function Profile() {
   const [form] = Form.useForm();
   const [changePass, setChangePass] = useState(false);
   const user = useSelector((state: RootState) => state.user);

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoutes from "../hooks/protectedRoutes";
-import SignIn from "../pages/Login/index"
+import SignIn from "../pages/Login/index";
 import NotFoundPage from "../pages/NotFound";
 import Sidebar from "../components/SideBar";
 import Header from "../components/Header";
