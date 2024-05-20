@@ -127,7 +127,6 @@ export const registerDependency = async (req: Request, res: Response) => {
 
     await Registration.deleteMany({});
 
-
     res.status(200).json({ message: data });
   } catch (error: any) {
     res.status(500).json({ message: error.message });
@@ -186,26 +185,30 @@ export const registerStudent = async (req: Request, res: Response) => {
       });
 
       if (response.status === 201) {
-           const department = await Department.findOne({ name: data.department });
+        const department = await Department.findOne({ name: data.department });
 
-  let department_id = "";
+        let department_id = "";
 
-  if (department) {
-    department_id = department._id;
-    console.log("department_id:", department_id);
-  } else {
-    console.log("Department not found");
-
-  } 
+        if (department) {
+          department_id = department._id;
+          console.log("department_id:", department_id);
+        } else {
+          console.log("Department not found");
+        }
         const r = await response.json();
         console.log(r.message);
-        const newStudent = await new Student({ ...data, id: id,department_id:department_id });
+        const newStudent = await new Student({
+          ...data,
+          id: id,
+          department_id: department_id,
+        });
         await newStudent.save();
         const insertedIds: String[] = [];
         const insertedStudents: any[] = [];
         insertedIds.push(newStudent._id);
         insertedStudents.push({
           id: newStudent._id,
+ 
           department:data.department,
           type:data.type
          
@@ -226,6 +229,7 @@ export const registerStudent = async (req: Request, res: Response) => {
            // } 
 
      
+ 
 
         return res
           .status(201)
@@ -291,7 +295,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
   const insertedStudents: any[] = [];
   const errors: String[] = [];
 
- /*  const department = await Department.findOne({ name: "Freshman" });
+  /*  const department = await Department.findOne({ name: "Freshman" });
 
   let department_id = "";
 
@@ -347,10 +351,12 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
           } else {
             id = `${idPrefix}${count + 1}` + `/${year}`;
           }
-          const department = await Department.findOne({ name: student.department });
+          const department = await Department.findOne({
+            name: student.department,
+          });
 
           let department_id = "";
-        
+
           if (department) {
             department_id = department._id;
             console.log("department_id:", department_id);
@@ -360,13 +366,37 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
           }
 
           // Insert the student into the database
-         // delete student.department
+          // delete student.department
           const newstudent = await Student.create({
             ...student,
             id,
             department_id,
           });
           if (newstudent) {
+// <<<<<<< Refacto_Reg_sec
+//             if (student.type === "Undergraduate") {
+//               insertedIds.push(newstudent._id);
+//               const registration = await assignCourse(insertedIds);
+//               if (!registration) {
+//                 errors.push(
+//                   "Registration failed for student " + newstudent.name
+//                 );
+//               }
+//             } else if (student.type === "Masters") {
+//               insertedStudents.push({
+//                 id: newstudent._id,
+//                 department: student.department,
+//               });
+//               // const theStudent =
+//               const registration = await assignMastersCourse(insertedStudents);
+//               if (!registration) {
+//                 errors.push(
+//                   "Registration failed for student " + newstudent.name
+//                 );
+//               }
+//               console.log("registration master", registration);
+//             }
+// =======
            
              
                 
@@ -383,6 +413,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
 
                 
             
+// >>>>>>> main
           } else {
             console.log("error");
           }
@@ -437,15 +468,17 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
           }
 
           ////////////////////////////////////////////////////////////////////'
+ 
           insertedIds.splice(0, insertedIds.length)
           insertedStudents.splice(0, insertedStudents.length)
+ 
 
           count++; // Increment the count for the next student
         }
 
         console.log("Data inserted successfully");
-       // const registration = await assignCourse(insertedIds);
-       // console.log(registration);
+        // const registration = await assignCourse(insertedIds);
+        // console.log(registration);
         //console.log(insertedIds);
 
         res
@@ -514,8 +547,8 @@ export const getAllStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
-    const staffs: any = await Staff.find().populate('department_id');
-    const myStaff = staffs.map((staff:any) => {
+    const staffs: any = await Staff.find().populate("department_id");
+    const myStaff = staffs.map((staff: any) => {
       return {
         ...staff.toObject(),
         department_name: staff.department_id?.name,
