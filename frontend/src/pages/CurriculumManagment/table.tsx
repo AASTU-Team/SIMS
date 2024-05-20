@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { useQuery } from '@tanstack/react-query';
 import { getCurriculum } from '../../api/curriculum';
+import { CourseFields } from '../../type/course';
 
 // const data: CurriculumFields[] = [
 //   {
@@ -33,7 +34,7 @@ const CurriculumTable: React.FC = () => {
     const query=useQuery({
     queryKey: ["curriculum"],
     queryFn: getCurriculum
-  });
+  })
   const columns: TableColumnsType<CurriculumFields> = [
     {
       title: "Name",
@@ -43,8 +44,8 @@ const CurriculumTable: React.FC = () => {
     },
     {
       title: "Department",
-      dataIndex: "department_id",
-      key: "department_id",
+      dataIndex: "department_name",
+      key: "department_name",
       sorter: true,
     },
     {
@@ -69,10 +70,10 @@ const CurriculumTable: React.FC = () => {
       title: "Courses",
       dataIndex: "courses",
       key: "courses",
-      render: (courses: string[]) => (
+      render: (courses: CourseFields[]) => (
         <ul>
           {courses.map((course) => (
-            <li key={course}>{course}</li>
+            <li key={course.code}>{course.name}</li>
           ))}
         </ul>
       ),

@@ -7,30 +7,6 @@ import { useQuery } from '@tanstack/react-query';
 import { getCourse } from '../../api/course';
 import Loader from '../../components/Loader';
 
-// const data: CourseFields[] = [
-//   {
-//     name: "Course 1",
-//     department_id: "Dept 1",
-//     credits: 3,
-//     prerequisites: ["SWEG103", "SWEG102"],
-//     type: "Type 1",
-//     code: "Code 1",
-//     lec: "Lecture 1",
-//     lab: "Lab 1",
-//     description: "Description 1",
-//   },
-//   {
-//     name: "Course 2",
-//     department_id: "Dept 2",
-//     credits: 4,
-//     prerequisites: ["SWEG101", "SWEG102"],
-//     type: "Type 2",
-//     code: "Code 2",
-//     lec: "Lecture 2",
-//     lab: "Lab 2",
-//     description: "Description 2",
-//   },
-// ];
 
 const CourseTable: React.FC = () => {
   const navigate = useNavigate();
@@ -38,6 +14,7 @@ const CourseTable: React.FC = () => {
       queryKey: ["course"],
       queryFn: getCourse,
     });
+  // console.log(query)
   const columns: TableColumnsType<CourseFields> = [
     {
       title: "Course Name",
@@ -49,8 +26,8 @@ const CourseTable: React.FC = () => {
     },
     {
       title: "Department",
-      dataIndex: "department_id",
-      key: "department_id",
+      dataIndex: "department_name",
+      key: "department_name",
       width: 150,
     },
     {
@@ -64,11 +41,11 @@ const CourseTable: React.FC = () => {
       dataIndex: "prerequisites",
       key: "prerequisites",
       width: 150,
-      render: (prerequisites: string[]) => 
+      render: (prerequisites: CourseFields[]) => 
           {return prerequisites.length > 0 ? (
             <ul>
               {prerequisites.map((prerequisite) => (
-                <li key={prerequisite}>{prerequisite}</li>
+                <li key={prerequisite?.code}>{prerequisite?.name}</li>
               ))}
             </ul>
           ) : (

@@ -46,15 +46,19 @@ export const getCurriculum = async (req: Request, res: Response) => {
   // and courses should have name
   try {
     // use find({dep_id : id from fetch })
-    const curriculum: any = await Curriculum.find().populate({
-      path: "courses.courseId",
-      select: "_id name",
+    const curriculums: any = await Curriculum.find().populate("courses").populate("department_id");
+
+    const curriculumView = curriculums.map((curriculum: any) => {
+      return {
+        ...curriculum.toObject(),
+        department_name: curriculum.department_id?.name,
+      };
     });
-    if (!curriculum) {
+    if (!curriculums) {
       return res.status(404).json({ message: "Department not found." });
     }
-
-    res.status(200).json({ data: curriculum });
+    console.log(curriculumView);
+    res.status(200).json({ data: curriculumView });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

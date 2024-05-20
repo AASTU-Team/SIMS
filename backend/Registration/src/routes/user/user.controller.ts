@@ -438,6 +438,7 @@ export const getAllStudent = async (req: Request, res: Response) => {
       return {
         ...student.toObject(),
         department_name: student.department_id?.name,
+        department_id: student.department_id?._id,
       };
     });
 
