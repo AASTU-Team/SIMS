@@ -137,13 +137,13 @@ export const createDep = async (req: Request, res: Response) => {
 export const updateDep = async (req: Request, res: Response) => {
   try {
     //const { id } = req.params;
-    const { code } = req.params;
+    const { id } = req.params;
     const requestData = req.body;
     /*   const updates = await Department.findByIdAndUpdate(id, requestData, {
       new: true,
     }).exec(); */
-    const updates = await Department.findOneAndUpdate(
-      { code: code },
+    const updates = await Department.findByIdAndUpdate(
+      id,
       requestData,
       {
         new: true,
@@ -161,10 +161,10 @@ export const updateDep = async (req: Request, res: Response) => {
   }
 };
 export const deleteDep = async (req: Request, res: Response) => {
-  const { code } = req.params;
+  const { id } = req.params;
 
   try {
-    const deletedDepartment = await Department.findOneAndDelete({ code: code });
+    const deletedDepartment = await Department.findByIdAndDelete(id);
     if (!deletedDepartment) {
       return res.status(404).json({ message: "Not found" });
     }
