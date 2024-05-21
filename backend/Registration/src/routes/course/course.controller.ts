@@ -160,7 +160,7 @@ export const getCourses = async (req: Request, res: Response) => {
 
   try {
     // use find({dep_id : id from fetch })
-    const course: any = await Course.find()
+    const courses: any = await Course.find()
       .populate({
         path: "prerequisites",
         select: "name code",
@@ -168,9 +168,16 @@ export const getCourses = async (req: Request, res: Response) => {
       .populate({
         path: "instructors",
         select: "name email",
-      });
+      }).populate("department_id");;
+    
+    const courseView = courses.map((course: any) => {
+      return {
+        ...course.toObject(),
+        department_name: course.department_id?.name,
+      };
+    });
 
-    res.status(200).json({ data: course });
+    res.status(200).json({ data: courseView });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

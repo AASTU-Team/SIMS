@@ -56,3 +56,10 @@ export const aboutMe = async () => {
   setHeaderToken(access_token);
   return await client.post("/me");
 }
+
+export const updateStudent = async (data: StudentFields) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  const id = data._id;
+  return await client.patch(`/student/update/${id}`, data);
+}

@@ -47,7 +47,7 @@ export default function EditRoom() {
           >
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<RoomFields>
-                name="number"
+                name="room_number"
                 rules={[
                   {
                     required: true,
@@ -63,7 +63,7 @@ export default function EditRoom() {
                 </label>
                 <Input
                   placeholder="Enter the room number"
-                  defaultValue={state?.number}
+                  defaultValue={state?.room_number}
                   className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </Form.Item>

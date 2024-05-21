@@ -81,7 +81,7 @@ export default function EditDepartment() {
                 </div>
               </Form.Item>
               <Form.Item<DepartmentFields>
-                name="head"
+                name="dep_head"
                 rules={[
                   {
                     required: true,
@@ -99,7 +99,7 @@ export default function EditDepartment() {
                   <Input
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     placeholder="Enter the department head"
-                    defaultValue={state?.head}
+                    defaultValue={state?.dep_head}
                   />
                 </div>
               </Form.Item>
