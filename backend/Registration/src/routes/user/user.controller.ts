@@ -572,6 +572,18 @@ export const getStudentByDepartment = async (req: Request, res: Response) => {
   }
 };
 
+export const getStaffByDepartment = async (req: Request, res: Response) => {
+  const department = req.body.department_id;
+
+  try {
+    const staffs: any = await Staff.find({ department_id: department });
+    res.status(200).json({ message: staffs });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
 export const deleteStudent = async (req: Request, res: Response) => {
   const student = req.body.student_id;
   const email = req.body.email;
@@ -706,6 +718,29 @@ export const updateStudent = async (req: Request, res: Response) => {
     console.log(documentId);
 
     const updates = await Student.findByIdAndUpdate(documentId, requestData, {
+      new: true,
+    }).exec();
+    if (!updates) {
+      return res.status(500).json({ message: "An error happened" });
+    } else {
+      console.log("Document updated successfully!");
+      return res.status(200).json({ message: updates });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred" });
+  }
+};
+
+export const updateStaff = async (req: Request, res: Response) => {
+  try {
+    const documentId = req.query.id;
+    const requestData = req.body;
+
+    console.log(requestData);
+    console.log(documentId);
+
+    const updates = await Staff.findByIdAndUpdate(documentId, requestData, {
       new: true,
     }).exec();
     if (!updates) {
