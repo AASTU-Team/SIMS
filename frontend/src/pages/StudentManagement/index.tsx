@@ -4,9 +4,11 @@ import { UserAddOutlined, UploadOutlined, InboxOutlined } from "@ant-design/icon
 import { Button, Modal, Form, Upload } from "antd";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
+import { downloadTemplate } from "../../api/student";
 
 
 export default function StudentManagement() {
+  const { Dragger } = Upload;
   const [open, setOpen] = useState(false);
   const router = useNavigate()
   const onFinish: FormProps["onFinish"] = (values) => {
@@ -18,26 +20,28 @@ export default function StudentManagement() {
   ) => {
     console.log("Failed:", errorInfo);
   };
+
+
   return (
     <div className="max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       <div className="flex justify-between">
         <div className="text-title-md">Student Management</div>
         <div className="flex gap-2">
-        <button 
-          className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90" 
-          onClick={() => router('/students/add')}>
-          <UserAddOutlined />
-          Register Student
-        </button>
-        <button
-          onClick={() => setOpen(true)}
-          className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
-        >
-          <UploadOutlined />
-          Register Multiple Students
-        </button>
+          <button
+            className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+            onClick={() => router("/students/add")}
+          >
+            <UserAddOutlined />
+            Register Student
+          </button>
+          <button
+            onClick={() => setOpen(true)}
+            className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+          >
+            <UploadOutlined />
+            Register Multiple Students
+          </button>
         </div>
-
       </div>
       <StudentTable />
       <Modal
@@ -50,7 +54,27 @@ export default function StudentManagement() {
           <Button key="back" onClick={() => setOpen(false)}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={() => setOpen(false)} className="bg-primary">
+          <Button key="download" onClick={() => downloadTemplate()}>
+            Download Template
+          </Button>,
+          // <Button
+          //   type="primary"
+          //   onClick={handleUpload}
+          //   disabled={fileList.length === 0}
+          //   className="bg-primary hover:bg-primary bg-opacity-90"
+          //   loading={uploading}
+          //   style={{
+          //     marginTop: 16,
+          //   }}
+          // >
+          //   {uploading ? "Uploading" : "Register"}
+          // </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => setOpen(false)}
+            className="bg-primary hover:bg-primary bg-opacity-90"
+          >
             Register
           </Button>,
         ]}
@@ -63,15 +87,18 @@ export default function StudentManagement() {
         >
           <Form.Item>
             <Form.Item name="user_list" valuePropName="fileList" noStyle>
-              <Upload.Dragger name="files" action="/upload.do" >
+              <Dragger>
                 <p className="ant-upload-drag-icon">
-                  <InboxOutlined/>
+                  <InboxOutlined />
                 </p>
                 <p className="ant-upload-text">
-                  Click or drag csv files to this area to upload
+                  Click or drag file to this area to upload
                 </p>
-                <p className="ant-upload-hint">Support for a csv files only</p>
-              </Upload.Dragger>
+                <p className="ant-upload-hint">
+                  Support for a single or bulk upload. Strictly prohibited from
+                  uploading company data or other banned files.
+                </p>
+              </Dragger>
             </Form.Item>
           </Form.Item>
         </Form>

@@ -63,6 +63,7 @@ export const ChangePassword = async ({old_password, password}: ChangePasswordFor
 
 export const setPassword = async ({invite_token,password}:ChangePasswordForm) => {
   setHeaderToken(invite_token || "");
+  console.log(invite_token)
   return await client.patch("/invitePass", { password });
 };
 

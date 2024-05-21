@@ -3,11 +3,12 @@ import { Button, Form, Input, Select, Upload, DatePicker, notification } from "a
 import { UploadOutlined, UserOutlined } from "@ant-design/icons";
 import { StudentFields } from "../../type/student";
 import { useLocation } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getDepartment } from "../../api/departmentApi";
 import { DepartmentFields } from "../../type/department";
 import { updateStudent } from "../../api/student";
+import dayjs from "dayjs";
 
 export default function EditStudent() {
   const [form] = Form.useForm();
@@ -17,6 +18,7 @@ export default function EditStudent() {
   });
 
   const {state}: {state: StudentFields} = useLocation();
+  const [formValue, setFormValue] = useState<StudentFields>(state);
   // console.log(state)
   useEffect(() => {
     if (state) {
@@ -25,20 +27,20 @@ export default function EditStudent() {
   }, [form, state]);
 
   const EditStudentMutation = useMutation({
-      mutationKey: ["addStudent"],
+      mutationKey: ["editStudent"],
       mutationFn: (values: StudentFields) => updateStudent(values),
       onError: () => {
         notification.error({ message: "Student Not Updated" });
       },
       onSuccess: () => {
         notification.success({ message: "Student Updated Successfully" });
-        form.resetFields();
       },
     });
   
   const onFinish: FormProps<StudentFields>["onFinish"] = (values) => {
-    console.log("Success:", values);
     values._id=state._id;
+    setFormValue(values);
+    console.log("Success:", values);
     EditStudentMutation.mutate(values);
   };
 
@@ -100,7 +102,7 @@ export default function EditStudent() {
                   <Input
                     placeholder="Enter the full name"
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    defaultValue={state?.name}
+                    defaultValue={formValue?.name}
                   />
                 </div>
               </Form.Item>
@@ -119,7 +121,7 @@ export default function EditStudent() {
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     type="email"
                     placeholder="Enter the email"
-                    defaultValue={state?.email}
+                    defaultValue={formValue?.email}
                   />
                 </div>
               </Form.Item>
@@ -137,7 +139,7 @@ export default function EditStudent() {
                   <Input
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     placeholder="Enter the ID"
-                    defaultValue={state?.id}
+                    defaultValue={formValue?.id}
                   />
                 </div>
               </Form.Item>
@@ -168,7 +170,7 @@ export default function EditStudent() {
                       onChange={(value) => {
                         form.setFieldValue("gender", value);
                       }}
-                      defaultValue={state.gender}
+                      defaultValue={formValue.gender}
                       options={[
                         {
                           value: "FEMALE",
@@ -200,8 +202,8 @@ export default function EditStudent() {
                     Date of Birth
                   </label>
                   <DatePicker
+                    defaultValue={dayjs(formValue.birthday)}
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    // defaultValue={new Date(state.birthday)}
                     onChange={(value) => {
                       const date = value ? value.format("YYYY-MM-DD") : null;
                       form.setFieldValue("birthday", date);
@@ -210,7 +212,7 @@ export default function EditStudent() {
                 </div>
               </Form.Item>
               <Form.Item<StudentFields>
-                name="contact"
+                name="phone"
                 rules={[
                   {
                     required: true,
@@ -221,13 +223,13 @@ export default function EditStudent() {
                 <div>
                   <label
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="contact"
+                    htmlFor="phone"
                   >
                     Phone Number
                   </label>
                   <Input
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    defaultValue={state.phone}
+                    defaultValue={formValue.phone}
                     placeholder="Enter the phone number"
                   />
                 </div>
@@ -268,7 +270,7 @@ export default function EditStudent() {
                   </label>
                   <Input
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    defaultValue={state.address}
+                    defaultValue={formValue.address}
                     placeholder="Enter the address"
                   />
                 </div>
@@ -286,7 +288,7 @@ export default function EditStudent() {
                   </label>
                   <Input
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    defaultValue={state.year}
+                    defaultValue={formValue.year}
                     placeholder="Enter the address"
                     type="number"
                   />
@@ -314,7 +316,7 @@ export default function EditStudent() {
 
                   <Input
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    defaultValue={state.emergencycontact_name}
+                    defaultValue={formValue.emergencycontact_name}
                     placeholder="Enter the full name"
                   />
                 </div>
@@ -337,7 +339,7 @@ export default function EditStudent() {
                   </label>
                   <Input
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    defaultValue={state.emergencycontact_phone}
+                    defaultValue={formValue.emergencycontact_phone}
                     placeholder="Enter the phone number"
                   />
                 </div>
@@ -357,7 +359,7 @@ export default function EditStudent() {
                   </label>
                   <Input
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    defaultValue={state.emergencycontact_relation}
+                    defaultValue={formValue.emergencycontact_relation}
                     placeholder="Enter the relation"
                   />
                 </div>
@@ -381,8 +383,8 @@ export default function EditStudent() {
                     Admission Date
                   </label>
                   <DatePicker
+                    defaultValue={dayjs(formValue.admission_date)}
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    // defaultValue={state.admission_date}
                     onChange={(value) => {
                       const date = value ? value.format("YYYY-MM-DD") : null;
                       form.setFieldValue("admission_date", date);
@@ -416,7 +418,7 @@ export default function EditStudent() {
                       }
                       optionFilterProp="children"
                       filterOption={filterOption}
-                      defaultValue={state.department_id}
+                      defaultValue={formValue.department_id}
                       onChange={(value) => {
                         form.setFieldValue("department_id", value);
                       }}

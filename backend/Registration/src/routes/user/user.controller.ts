@@ -150,11 +150,12 @@ export const registerStudent = async (req: Request, res: Response) => {
 
     /*    const newStatus = await new Status({status:"Active"})
         await newStatus.save() */
+    // console.log(data)
     const currentYear = new Date().getFullYear();
     const subtractedYear = currentYear - 8;
     const year = subtractedYear % 100;
 
-    console.log(year);
+    // console.log(year);
 
     const count = await Student.countDocuments();
     console.log(`Total number of documents: ${count}`);
@@ -185,22 +186,22 @@ export const registerStudent = async (req: Request, res: Response) => {
       });
 
       if (response.status === 201) {
-        const department = await Department.findOne({ name: data.department });
+        // const department = await Department.findOne({ name: data.department });
 
-        let department_id = "";
+        // let department_id = "";
 
-        if (department) {
-          department_id = department._id;
-          console.log("department_id:", department_id);
-        } else {
-          console.log("Department not found");
-        }
+        // if (department) {
+        //   department_id = department._id;
+        //   console.log("department_id:", department_id);
+        // } else {
+        //   console.log("Department not found");
+        // }
         const r = await response.json();
         console.log(r.message);
         const newStudent = await new Student({
           ...data,
           id: id,
-          department_id: department_id,
+          // department_id: department_id,
         });
         await newStudent.save();
         const insertedIds: String[] = [];
@@ -537,6 +538,7 @@ export const getAllStudent = async (req: Request, res: Response) => {
         department_id: student.department_id?._id,
       };
     });
+    // console.log(myStudents);
 
     res.status(200).json({ message: myStudents });
   } catch (error: any) {

@@ -1,12 +1,12 @@
 import React from 'react';
-import { Table, Space } from 'antd';
+import { Table, notification, Popconfirm } from 'antd';
 import type { TableColumnsType } from 'antd';
-import {StudentFields} from "../../type/student";
+import {StudentFields, StudentDeleteFields} from "../../type/student";
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getStudent } from '../../api/student';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { deleteStudent, getStudent } from '../../api/student';
 import Loader from '../../components/Loader';
-
+import { QuestionCircleOutlined } from '@ant-design/icons';
 
 
 const StudentTable: React.FC = () =>
@@ -16,6 +16,24 @@ const StudentTable: React.FC = () =>
         queryKey: ["student"],
         queryFn: getStudent,
       });
+    console.log(query);
+    const DeleteStudentMutation = useMutation({
+        mutationKey: ["addStudent"],
+        mutationFn: (value: StudentDeleteFields) => deleteStudent(value),
+        onError: () => {
+          notification.error({ message: "Student Not Deleted" });
+        },
+        onSuccess: () => {
+          notification.success({ message: "Student Deleted Successfully" });
+          query.refetch();
+        },
+      });
+    
+    const ConfirmDelete = (student_id:string, email: string) => {
+        DeleteStudentMutation.mutate({student_id,email});
+      }
+      
+  
     const columns: TableColumnsType<StudentFields> = [
       {
         title: "Full Name",
@@ -41,8 +59,8 @@ const StudentTable: React.FC = () =>
       },
       {
         title: "Phone",
-        dataIndex: "contact",
-        key: "contact",
+        dataIndex: "phone",
+        key: "phone",
         width: 150,
       },
       {
@@ -114,7 +132,7 @@ const StudentTable: React.FC = () =>
         fixed: "right",
         width: 180,
         render: (text, record) => (
-          <Space size="middle" className="px-4 font-semibold">
+          <div className="flex gap-2 px-4 font-semibold">
             <a
               onClick={() => {
                 navigate(`/students/edit/`, { state: record });
@@ -122,8 +140,17 @@ const StudentTable: React.FC = () =>
             >
               Edit
             </a>
-            <a className=" hover:text-red">Delete</a>
-          </Space>
+            <Popconfirm
+              title="Delete the student"
+              description="Are you sure to delete this student?"
+              onConfirm={() => ConfirmDelete(record._id, record.email)}
+              okText="Yes"
+              cancelText="No"
+              icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+            >
+              <a className=" hover:text-red">Delete</a>
+            </Popconfirm>
+          </div>
         ),
       },
     ];

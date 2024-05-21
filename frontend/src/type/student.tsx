@@ -18,3 +18,8 @@ export interface StudentFields {
   status: string;
   department_name?:string;
 }
+
+export interface StudentDeleteFields {
+  student_id: string;
+  email:string;
+}
