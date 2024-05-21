@@ -15,11 +15,13 @@ import { accessAuth } from "../../middleware/auth";
 import { role } from "../../middleware/role";
 import { refAuth } from "../../middleware/refAuth";
 import { inviteAuth } from "../../middleware/inviteAuth";
+import { deactivateUser } from "./auth.controller";
 
 const auth = Router();
 
 auth.post("/register", register);
 auth.delete("/delete", deleteUser);
+auth.patch("/deactivate", deactivateUser)
 auth.post("/login", login);
 // auth.get("/me", [accessAuth, role], getUserProfile);
 auth.get("/me", [accessAuth], getUserProfile);

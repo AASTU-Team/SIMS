@@ -16,7 +16,8 @@ interface IAuth {
   tokens: string[];
   salt: string;
   invitations: string;
-  role:string[]
+  role:string[],
+  status:string
 }
 const bcrypt = require ('bcrypt');
 
@@ -44,6 +45,12 @@ const AuthSchema: Schema = new Schema<IAuth, AuthModel, IAuthMethods>({
   salt: { type: String, required: true },
   invitations: { type: String },
   role: { type: [String], default: [] },
+  status: {
+    type: String,
+    enum: ['Active', 'Inactive', 'Pending'],
+    required: true,
+   // default: 'active'
+  }
 });
 function validateUser(user: Document) {
   const schema = Joi.object({
@@ -52,7 +59,7 @@ function validateUser(user: Document) {
       minDomainSegments: 2,
       tlds: { allow: ["com", "net"] },
     }),
-    role: Joi.array().items(Joi.string()),
+    role: Joi.array().optional().items(Joi.string()),
   });
   return schema.validate(user);
 }

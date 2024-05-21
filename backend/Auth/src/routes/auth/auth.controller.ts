@@ -29,7 +29,7 @@ async function register(req: Request, res: Response): Promise<any> {
   // ]);
   const salt =await  bcrypt.genSalt(10)
  // const password = await bcrypt.hash(req.body.password, salt)
-  const user = await createUser({ ...req.body, salt: salt,role:req.body.role });
+  const user = await createUser({ ...req.body, salt: salt,role:req.body.role,status:"Pending" });
   //send email with link
 
     try {
@@ -58,6 +58,33 @@ async function deleteUser(req: Request, res: Response): Promise<any> {
     if(!deleteduser)
       {
         return res.status(404).json({message:"Not found"})
+      }
+
+
+      return res.status(200).json({message:"success"})
+  
+    
+  } catch (error:any) {
+
+    return res.status(400).send(error.message);
+
+    
+  }
+ 
+  
+  
+}
+
+async function deactivateUser(req: Request, res: Response): Promise<any> {
+  //  Validate user data
+  const { error } = validateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  try {
+    const updateduser = await Auth.findOneAndUpdate({email: req.body.email},{status: 'Inactive'})
+    if(!updateduser)
+      {
+        return res.status(404).json({message:"Not Updated"})
       }
 
 
@@ -120,6 +147,7 @@ async function changePassword(req: any, res: Response): Promise<void> {
       user.invitations = "";
       user.salt = salt;
       user.password = password;
+      user.status = "Active";
     } else {
       const isMatch = await bcrypt.compare(req.body.oldPassword, user.password);
       if (isMatch) {
@@ -186,5 +214,6 @@ export {
   changePassword,
   logout,
   logoutAll,
-  deleteUser
+  deleteUser,
+  deactivateUser
 };

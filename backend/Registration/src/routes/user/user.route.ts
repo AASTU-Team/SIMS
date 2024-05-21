@@ -33,6 +33,8 @@ import { Request, Response } from "express";
 import { getWithdrawalRequests } from "./user.controller";
 import { AcceptWithdrawalRequest } from "./user.controller";
 import { activateStudent } from "./user.controller";
+import { deactivateUser } from "./user.controller";
+import { deleteStaff } from "./user.controller";
 
 const assignSection = require("../../helper/assignSection");
 
@@ -66,7 +68,10 @@ Studentrouter.get("/student/all", getAllStudent);
 Studentrouter.get("/staff/all", getAllStaff);
 Studentrouter.get("/student/department", getStudentByDepartment);
 Studentrouter.delete("/student/delete", deleteStudent);
+Studentrouter.delete("/staff/delete", deleteStaff);
+Studentrouter.patch("/deactivate", deactivateUser);
 Studentrouter.patch("/student/update", updateStudent);
+
 
 Studentrouter.get("/student/courses", getStudentCourses);
 Studentrouter.post("/student/register", studentRegistration);
