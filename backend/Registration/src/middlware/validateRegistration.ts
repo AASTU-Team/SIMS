@@ -27,7 +27,7 @@ const validateRegistration = [
     .isString()
     .withMessage('Department ID must be a string'),
 
- body('status_id')
+ body('status')
     .optional()
     .isString()
     .withMessage('Starus ID must be a string'),

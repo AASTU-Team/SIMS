@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 
 //const assignCourse = require("../../helper/assignFreshmanCourse");
 const assignCourse = require("../../helper/assignCourse");
+const deleteCsv = require("../../helper/deleteCsv");
 const checkPrerequisite = require("../../helper/checkPrerequisite");
 const isCourseTaken = require("../../helper/isCourseTaken");
 const getPossibleAddCourses = require("../../helper/getPossibleAddCourses");
@@ -281,10 +282,22 @@ export const uploadFile = (req: Request, res: Response) => {
       res.status(500).json({ error: "Internal server error" });
     });
 };
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export const registerStudentCsv = async (req: Request, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  if (path.extname(req.file.filename).toLowerCase() !== '.csv') {
+    await deleteCsv(req.file.path);
+    return res.status(400).json({ error: "The uploaded file is not a CSV file" });
+  }
+
+  // Check the file size
+  if (req.file.size > MAX_FILE_SIZE) {
+    await deleteCsv(req.file.path);
+    return res.status(400).json({ error: `The uploaded file exceeds the maximum size of ${MAX_FILE_SIZE / (1024 * 1024)} MB` });
   }
 
   const currentYear = new Date().getFullYear();
