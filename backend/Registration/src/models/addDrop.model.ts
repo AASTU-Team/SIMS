@@ -28,8 +28,9 @@ let addDropSchema = new mongoose.Schema({
   reason: {
     type: String,
     required: false,
-    default: "pending",
+    default: "",
   },
+  createdAt: { type: Date, default: Date.now },
 });
 
 module.exports =
