@@ -1,9 +1,9 @@
-POST http://localhost:3000/user/student/addDrop/6646788517b2c61fd5e52d84 
+POST http://localhost:3000/user/student/addDrop/6648ec022101c6cda3c57d0b
 Content-Type:  application/json
 
 {
-   "add" : ["662802ac728d90164b677588" ,"664b13d72fa1ab9ef543688c"  ]  ,
-   "drop" : ["663a03d879c454a6075ec31d"]
+   "add" : ["6633753421c6431fbbd36514" ,"663382e7a0411f84d80671f6"  ]  ,
+   "drop" : ["66363f250dfeb00796223221"]
 }
 ### to accept or reject 
 POST http://localhost:3000/user/student/stausUpdate

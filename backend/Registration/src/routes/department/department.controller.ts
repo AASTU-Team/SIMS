@@ -181,6 +181,7 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "No file uploaded" });
   }
   let errors: string[] = [""];
+  let success: string[] = [""];
 
   const results: any[] = [];
   const total_credit: Number[] = [];
@@ -229,7 +230,8 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
       const curriculum = await Curriculum.findOne({
         department_id: department_id,
         year: data.year,
-        semester:semester
+        semester:semester,
+        type:"Undergraduate"
       });
 
       if (!curriculum) {
@@ -272,11 +274,14 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
         courses: courses,
         registration_date: new Date(),
         total_credit: sum,
+        status: "Confirmed",
       });
-
       try {
         const savedRegistration = await registration.save();
         console.log("Registration saved successfully:", savedRegistration);
+        success.push(
+          `Registration saved successfully for student ${data.id}`
+        );
       } catch (error) {
         console.error("Error saving registration:", error);
         errors.push(`Unable to save registration of student ${data.id}`);
@@ -285,7 +290,13 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
     .on("end", () => {
       // Send the response after the parsing and processing is complete
       console.log("Total results:", results.length);
-      res.status(200).json({ message: errors });
+      if(success.length > 0) {
+        res.status(200).json({ message: "successfully Registered students",errors:errors });
+      }
+      else{
+        res.status(400).json({ errors: errors });
+      }
+     
     })
     .on("error", (error: any) => {
       // Handle any errors that occur during the parsing
