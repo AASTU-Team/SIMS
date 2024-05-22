@@ -17,3 +17,8 @@ Content-Type:  application/json
     {"course_id" : "664b13d72fa1ab9ef543688c" , "section_id" : "66486b2d16fac6e8375feab0"}
   ]
 }
+###
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&status=pending
+Content-Type:  application/json
+
+ 

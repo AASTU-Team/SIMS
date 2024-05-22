@@ -8,6 +8,7 @@ import {
   WithdrawalRequest,
   addDropCourse,
   acceptReject,
+  getAddDrop,
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
@@ -78,6 +79,7 @@ Studentrouter.get("/student/addcourses", ListAddCourses);
 
 Studentrouter.post("/student/addDrop/:student_id", addDropCourse);
 Studentrouter.post("/student/stausUpdate", acceptReject);
+Studentrouter.get("/student/addDrop", getAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
 Studentrouter.get("/students/withdrawalRequests", getWithdrawalRequests);

@@ -1146,6 +1146,29 @@ export const acceptReject = async (req: Request, res: Response) => {
     return res.status(200).send({ message: "success" });
   }
 };
+
+export const getAddDrop = async (req: Request, res: Response) => {
+  const { skip, limit, status } = req.query;
+  let st = {};
+  if (status) {
+    st = { status: status };
+  }
+  console.log(skip, limit);
+  const addDrop = await AddDrop.find(st)
+    .sort({ status: -1, createdAt: 1 })
+    .skip(skip)
+    .limit(limit)
+    .populate("courseToAdd", "_id name code")
+    .populate("courseToDrop", "_id name code");
+  console.log(addDrop);
+  if (!addDrop) {
+    return res.status(400).send({ message: "not found" });
+  }
+  res.status(200).send({ message: "success", data: addDrop });
+
+  // end
+};
+
 export const addDropCourse = async (req: Request, res: Response) => {
   const { student_id } = req.params;
   const { add, drop } = req.body;
