@@ -1,16 +1,42 @@
 import StudentTable from "./table";
 import { useState } from "react";
 import { UserAddOutlined, UploadOutlined, InboxOutlined } from "@ant-design/icons";
-import { Button, Modal, Form, Upload } from "antd";
+import { Button, Modal, Form, Upload, message } from "antd";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
 import { downloadTemplate } from "../../api/student";
+import type { UploadProps } from "antd";
 
 
 export default function StudentManagement() {
   const { Dragger } = Upload;
   const [open, setOpen] = useState(false);
   const router = useNavigate()
+  const [fileList, setFileList] = useState<File[]>([]);
+  const [uploading, setUploading] = useState(false);
+  const handleUpload = () => {
+    const formData = new FormData();
+    fileList.forEach((file) => {
+      formData.append("file", file);
+    });
+    setUploading(true);
+    fetch("http://localhost:3000/user/register/studentCsv", {
+      method: "POST",
+      body: formData,
+    })
+      .then((res) => res.json())
+      .then(() => {
+        setFileList([]);
+        message.success("upload successfully.");
+      })
+      .catch(() => {
+        message.error("upload failed.");
+      })
+      .finally(() => {
+        setUploading(false);
+      });
+  };
+
   const onFinish: FormProps["onFinish"] = (values) => {
     console.log("Success:", values);
   };
@@ -21,6 +47,35 @@ export default function StudentManagement() {
     console.log("Failed:", errorInfo);
   };
 
+  const props: UploadProps = {
+    name: "file",
+    multiple: false,
+    // onRemove: (file) => {
+    //   const index = fileList.indexOf(file);
+    //   const newFileList = fileList.slice();
+    //   newFileList.splice(index, 1);
+    //   setFileList(newFileList);
+    // },
+    // beforeUpload: (file) => {
+    //   setFileList([...fileList, file]);
+    //   return false;
+    // },
+    // fileList,
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (status === "done") {
+        message.success(`${info.file.name} file uploaded successfully.`);
+      } else if (status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
 
   return (
     <div className="max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -57,37 +112,36 @@ export default function StudentManagement() {
           <Button key="download" onClick={() => downloadTemplate()}>
             Download Template
           </Button>,
-          // <Button
-          //   type="primary"
-          //   onClick={handleUpload}
-          //   disabled={fileList.length === 0}
-          //   className="bg-primary hover:bg-primary bg-opacity-90"
-          //   loading={uploading}
-          //   style={{
-          //     marginTop: 16,
-          //   }}
-          // >
-          //   {uploading ? "Uploading" : "Register"}
-          // </Button>,
           <Button
-            key="submit"
             type="primary"
-            onClick={() => setOpen(false)}
-            className="bg-primary hover:bg-primary bg-opacity-90"
+            onClick={handleUpload}
+            disabled={fileList.length === 0}
+            className="bg-primary hover:bg-primary hover:text-white hover:bg-opacity-90"
+            loading={uploading}
+            style={{
+              marginTop: 16,
+            }}
           >
-            Register
+            {uploading ? "Uploading" : "Register"}
           </Button>,
+          // <Button
+          //   key="submit"
+          //   type="primary"
+          //   onClick={() => setOpen(false)}
+          //   className="bg-primary hover:bg-primary bg-opacity-90"
+          // >
+          //   Register
+          // </Button>,
         ]}
       >
-        {/* <div className="flex justify-center items-center rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"> */}
+        {/* <div className="flex justify-center items-center rounded-sm b</Form.Item>order border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"> */}
         <Form
           name="multiple registration"
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
-          <Form.Item>
-            <Form.Item name="user_list" valuePropName="fileList" noStyle>
-              <Dragger>
+            <Form.Item name="user_list" >
+              <Dragger {...props}>
                 <p className="ant-upload-drag-icon">
                   <InboxOutlined />
                 </p>
@@ -95,12 +149,10 @@ export default function StudentManagement() {
                   Click or drag file to this area to upload
                 </p>
                 <p className="ant-upload-hint">
-                  Support for a single or bulk upload. Strictly prohibited from
-                  uploading company data or other banned files.
+                  Support for a single csv file upload. Strictly follow the template provided.
                 </p>
               </Dragger>
             </Form.Item>
-          </Form.Item>
         </Form>
         {/* </div> */}
       </Modal>

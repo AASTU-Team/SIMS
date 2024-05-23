@@ -1,11 +1,12 @@
 import type { FormProps } from "antd";
 import {UploadOutlined, UserAddOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Select, Upload, DatePicker, notification } from "antd";
+import { Button, Form, Input, Select, Upload, DatePicker, notification, message } from "antd";
 import { StudentFields } from "../../type/student";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { registerStudent } from "../../api/student";
 import { getDepartment } from "../../api/departmentApi";
 import { DepartmentFields } from "../../type/department";
+import type { UploadProps } from "antd";
 
 export default function AddStudent() {
   const departmentQuery=useQuery({
@@ -42,6 +43,21 @@ export default function AddStudent() {
     input: string,
     option?: { label: string; value: string }
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
+
+  const props: UploadProps = {
+    name: "file",
+    onChange(info) {
+      if (info.file.status !== "uploading") {
+        console.log(info.file, info.fileList);
+      }
+      if (info.file.status === "done") {
+        message.success(`${info.file.name} file uploaded successfully`);
+      } else if (info.file.status === "error") {
+        message.error(`${info.file.name} file upload failed.`);
+      }
+    },
+  };
+
   return (
     <div className="max-w-screen-2xl p-4 md:p-6 2xl:p-10">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
@@ -232,7 +248,7 @@ export default function AddStudent() {
                     Profile Picture
                   </label>
                   <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
-                    <Upload>
+                    <Upload {...props}>
                       <Button icon={<UploadOutlined />}>Click to Upload</Button>
                     </Upload>
                   </div>
