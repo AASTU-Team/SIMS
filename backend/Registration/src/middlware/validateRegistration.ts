@@ -17,8 +17,8 @@ const validateRegistration = [
   .isDate({ format: 'YYYY-MM-DD' })
   .withMessage('Birthday must be in the format YYYY-MM-DD'),
   body('phone')
-  .matches(/^\+\d{12}$/)
-  .withMessage('Phone number must start with "+" and be followed by 12 digits'),
+  .matches(/^(\+\d{12}|\d{10})$/)
+  .withMessage('Phone number must be 10 digits or start with "+" and be followed by 12 digits'),
   body('gender')
   .isIn(['MALE', 'FEMALE'])
   .withMessage('Gender must be either "male" or "female"'),
@@ -27,7 +27,7 @@ const validateRegistration = [
     .isString()
     .withMessage('Department ID must be a string'),
 
- body('status_id')
+ body('status')
     .optional()
     .isString()
     .withMessage('Starus ID must be a string'),
