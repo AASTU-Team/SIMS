@@ -60,8 +60,8 @@ client.interceptors.response.use(
         return client(originalRequest);
       } catch (error) {
         removeHeaderToken();
-        if (window.location.pathname !== "/login") {
-          window.location.href = "/login";
+        if (window.location.pathname !== "/signin") {
+          window.location.href = "/signin";
       }
     }
 
