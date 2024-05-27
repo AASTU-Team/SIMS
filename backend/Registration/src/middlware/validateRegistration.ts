@@ -22,15 +22,20 @@ const validateRegistration = [
   body('gender')
   .isIn(['MALE', 'FEMALE'])
   .withMessage('Gender must be either "male" or "female"'),
-  body('department_id')
+  body('department')
     .optional()
     .isString()
-    .withMessage('Department ID must be a string'),
+    .withMessage('Department  must be a string'),
+
+    body('type')
+    .optional()
+    .isString()
+    .withMessage('type must be a string'),
 
  body('status')
     .optional()
     .isString()
-    .withMessage('Starus ID must be a string'),
+    .withMessage('Status must be a string'),
 
  body('year')
     .isNumeric()
@@ -64,9 +69,8 @@ const validateRegistration = [
     .withMessage(' must be a string'),
 
     body('emergencycontact_phone')
-  .matches(/^\+\d{12}$/)
-  .withMessage('Phone number must start with "+" and be followed by 12 digits'),
-
+    .matches(/^(\+\d{12}|\d{10})$/)
+    .withMessage('Phone number must be 10 digits or start with "+" and be followed by 12 digits'),
     
 
 

@@ -520,7 +520,7 @@ function validateStudent(student: any) {
     gender: Joi.string().valid("MALE", "FEMALE"),
     department: Joi.string().optional(),
     type: Joi.string().optional(),
-    status_id: Joi.string().optional(),
+    status: Joi.string().optional(),
     year: Joi.number().integer(),
     //admission_date: Joi.date().format('YYYY-MM-DD').withMessage('Admission date must be in the format YYYY-MM-DD'),
     //grad_date: Joi.date().format('YYYY-MM-DD').withMessage('Graduation date must be in the format YYYY-MM-DD'),
@@ -528,12 +528,12 @@ function validateStudent(student: any) {
     address: Joi.string(),
     emergencycontact_name: Joi.string().regex(/^[A-Za-z\s]+$/),
     emergencycontact_relation: Joi.string(),
-    phone: Joi.string(),
+    phone: Joi.string().regex(/^(\+\d{12}|\d{10})$/),
     birthday: Joi.date(),
     admission_date: Joi.date(),
     grad_date: Joi.date(),
     //emergencycontact_phone: Joi.string().regex(/^\+\d{12}$/).withMessage('Emergency contact phone number must start with "+" and be followed by 12 digits'),
-    emergencycontact_phone: Joi.string(),
+    emergencycontact_phone: Joi.string().regex(/^(\+\d{12}|\d{10})$/),
   });
 
   return schema.validate(student);
