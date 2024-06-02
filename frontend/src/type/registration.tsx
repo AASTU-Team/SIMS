@@ -5,4 +5,6 @@ export interface SlipDetails {
   ac_year?: string;
   year?: string;
   sem?: string;
+  name?:string;
+  student_id?:string;
 }
