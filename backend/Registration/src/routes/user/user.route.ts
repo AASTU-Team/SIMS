@@ -37,6 +37,8 @@ import { deactivateUser } from "./user.controller";
 import { deleteStaff } from "./user.controller";
 import { updateStaff } from "./user.controller";
 import { getStaffByDepartment } from "./user.controller";
+import { exportAllStudent,exportAllStaff } from "./user.controller";
+
 
 const assignSection = require("../../helper/assignSection");
 
@@ -67,7 +69,9 @@ Studentrouter.post("/me", getStudentProfile);
 
 Studentrouter.post("/upload", upload.single("file"), uploadFile);
 Studentrouter.get("/student/all", getAllStudent);
+Studentrouter.get("/student/all/export", exportAllStudent);
 Studentrouter.get("/staff/all", getAllStaff);
+Studentrouter.get("/staff/all/export", exportAllStaff);
 Studentrouter.get("/student/department", getStudentByDepartment);
 Studentrouter.get("/staff/department", getStaffByDepartment);
 Studentrouter.delete("/student/delete", deleteStudent);
