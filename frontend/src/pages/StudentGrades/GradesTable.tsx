@@ -1,4 +1,4 @@
-import { Table } from "antd";
+import { Input, Table } from "antd";
 import type { TableColumnsType } from "antd";
 
 const data = [
@@ -19,18 +19,16 @@ export default function GradesTable() {
       sorter: true,
     },
     {
-      title: "Marks",
+      title: "Marks /20",
       dataIndex: "mark",
       key: "mark",
-      width: 70,
+      width: 100,
       render: (text, record) => (
         <div className="flex gap-1">
-          <span>{record.mark}</span>
-          <span>/</span>
-          <span>{record.max}</span>
+          <Input defaultValue={record.mark} />
         </div>
       ),
-    },
+    }
   ];
   return (
     <div className="flex flex-col gap-5">

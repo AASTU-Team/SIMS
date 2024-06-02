@@ -34,6 +34,7 @@ import DepartmentStudentRegistration from "../pages/DepartmentStudentRegistratio
 import AddDropRequests from "../pages/DepartmentStudentRegistration/AddDropRequests";
 import RegistrarRegistration from "../pages/RegistrarRegistration";
 import RegistrarAddDropRequests from "../pages/RegistrarRegistration/AddDropRequests";
+import StudentGrades from "../pages/StudentGrades";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -65,7 +66,7 @@ const AllRoutes = () => {
                     <Route path="/students/edit/" element={<EditStudent />} />
                     <Route
                       path="/studentGrades"
-                      element={<StudentManagement />}
+                      element={<StudentGrades />}
                     />
                     <Route
                       path="/studentDepReg"
