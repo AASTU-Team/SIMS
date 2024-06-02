@@ -30,7 +30,7 @@ const validateRegistration = [
  body('status')
     .optional()
     .isString()
-    .withMessage('Starus ID must be a string'),
+    .withMessage('Status ID must be a string'),
 
  body('year')
     .isNumeric()
