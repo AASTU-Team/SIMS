@@ -4,6 +4,13 @@ import mongoose from "mongoose";
 const fs = require("fs");
 const csv = require("csv-parser");
 const Joi = require("joi");
+import path from "path";
+
+
+const https = require('https'); 
+
+
+const Json2csvParser = require("json2csv").Parser;
 
 let results: any = [];
 
@@ -178,6 +185,65 @@ export const getCourses = async (req: Request, res: Response) => {
     });
 
     res.status(200).json({ data: courseView });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const exportCourses = async (req: Request, res: Response) => {
+  // fetch dep id from the auth
+
+  try {
+    // use find({dep_id : id from fetch })
+    const courses: any = await Course.find()
+      .populate({
+        path: "prerequisites",
+        select: "name code",
+      })
+      .populate({
+        path: "instructors",
+        select: "name email",
+      }).populate("department_id");;
+    
+    const courseView = courses.map((course: any) => {
+      return {
+        ...course.toObject(),
+        department_name: course.department_id?.name,
+      };
+    });
+
+    const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(courseView);
+    const filePath = path.join('./exports', 'courses.csv');
+
+        fs.writeFile(filePath, csvData, function(error:any) {
+          if (error) throw error;
+          console.log("Write to csv was successfull!");
+       
+        });
+// Get the path to the CSV file on the server
+const csvFilePath = path.join( './exports', 'courses.csv');
+
+// Set the path to the downloads folder
+const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'courses.csv');
+
+// Create a read stream for the CSV file
+const readStream = fs.createReadStream(csvFilePath);
+
+// Create a write stream to the downloads folder
+const writeStream = fs.createWriteStream(downloadsPath);
+
+// Pipe the read stream to the write stream
+readStream.pipe(writeStream);
+
+// Set the necessary headers to trigger a download
+await writeStream.on('open', () => {
+  res.setHeader('Content-Disposition', 'attachment; filename=courses.csv');
+  res.setHeader('Content-Type', 'text/csv');
+  res.status(200).json({ message: "successfully exported" });
+});
+      
+    console.log('Data exported to courses.csv');
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

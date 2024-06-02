@@ -19,7 +19,12 @@ async function getCredit(Id: String): Promise<any> {
 }
 
 const fs = require("fs");
+const https = require('https'); 
 const csv = require("csv-parser");
+const Csv = require('csv-stringify');
+const Json2csvParser = require("json2csv").Parser;
+
+
 const Joi = require("joi");
 
 let results: any = [];
@@ -559,6 +564,59 @@ export const getAllStudent = async (req: Request, res: Response) => {
   }
 };
 
+export const exportAllStudent = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    const students = await Student.find().populate("department_id");
+    const myStudents = students.map((student: any) => {
+      return {
+        ...student.toObject(),
+        department_name: student.department_id?.name,
+        department_id: student.department_id?._id,
+      };
+    });
+    const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(myStudents);
+    const filePath = path.join('./exports', 'students.csv');
+
+        fs.writeFile(filePath, csvData, function(error:any) {
+          if (error) throw error;
+          console.log("Write to csv was successfull!");
+       
+        });
+// Get the path to the CSV file on the server
+const csvFilePath = path.join( './exports', 'students.csv');
+
+// Set the path to the downloads folder
+const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'students.csv');
+
+// Create a read stream for the CSV file
+const readStream = fs.createReadStream(csvFilePath);
+
+// Create a write stream to the downloads folder
+const writeStream = fs.createWriteStream(downloadsPath);
+
+// Pipe the read stream to the write stream
+readStream.pipe(writeStream);
+
+// Set the necessary headers to trigger a download
+await writeStream.on('open', () => {
+  res.setHeader('Content-Disposition', 'attachment; filename=students.csv');
+  res.setHeader('Content-Type', 'text/csv');
+  res.status(200).json({ message: "successfully exported" });
+});
+      
+    console.log('Data exported to students.csv');
+
+    // console.log(myStudents);
+
+
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const getAllStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
@@ -571,6 +629,54 @@ export const getAllStaff = async (req: Request, res: Response) => {
       };
     });
     res.status(200).json({ message: myStaff });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const exportAllStaff = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    const staffs: any = await Staff.find().populate("department_id");
+    const myStaff = staffs.map((staff: any) => {
+      return {
+        ...staff.toObject(),
+        department_name: staff.department_id?.name,
+      };
+    });
+    const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(myStaff);
+    const filePath = path.join('./exports', 'staffs.csv');
+
+        fs.writeFile(filePath, csvData, function(error:any) {
+          if (error) throw error;
+          console.log("Write to csv was successfull!");
+       
+        });
+// Get the path to the CSV file on the server
+const csvFilePath = path.join( './exports', 'staffs.csv');
+
+// Set the path to the downloads folder
+const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'staffs.csv');
+
+// Create a read stream for the CSV file
+const readStream = fs.createReadStream(csvFilePath);
+
+// Create a write stream to the downloads folder
+const writeStream = fs.createWriteStream(downloadsPath);
+
+// Pipe the read stream to the write stream
+readStream.pipe(writeStream);
+
+// Set the necessary headers to trigger a download
+await writeStream.on('open', () => {
+  res.setHeader('Content-Disposition', 'attachment; filename=staffs.csv');
+  res.setHeader('Content-Type', 'text/csv');
+  res.status(200).json({ message: "successfully exported" });
+});
+      
+    console.log('Data exported to staffs.csv');
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

@@ -6,6 +6,8 @@ const csv = require("csv-parser");
 const Joi = require("joi");
 
 let results: any = [];
+const Json2csvParser = require("json2csv").Parser;
+import path from "path";
 
 const Curriculum = require("../../models/curriculum.model");
 const Department = require("../../models/department.model");
@@ -55,10 +57,64 @@ export const getCurriculum = async (req: Request, res: Response) => {
       };
     });
     if (!curriculums) {
-      return res.status(404).json({ message: "Department not found." });
+      return res.status(404).json({ message: "curriculums not found." });
     }
     console.log(curriculumView);
     res.status(200).json({ data: curriculumView });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const exportCurriculums = async (req: Request, res: Response) => {
+  // fetch curriculum based on id from the auth
+  // and courses should have name
+  try {
+    // use find({dep_id : id from fetch })
+    const curriculums: any = await Curriculum.find().populate("courses").populate("department_id");
+
+    const curriculumView = curriculums.map((curriculum: any) => {
+      return {
+        ...curriculum.toObject(),
+        department_name: curriculum.department_id?.name,
+      };
+    });
+    if (!curriculums) {
+      return res.status(404).json({ message: "curriculums not found." });
+    }
+    const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(curriculumView);
+    const filePath = path.join('./exports', 'curriculums.csv');
+
+        fs.writeFile(filePath, csvData, function(error:any) {
+          if (error) throw error;
+          console.log("Write to csv was successfull!");
+       
+        });
+// Get the path to the CSV file on the server
+const csvFilePath = path.join( './exports', 'curriculums.csv');
+
+// Set the path to the downloads folder
+const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'curriculums.csv');
+
+// Create a read stream for the CSV file
+const readStream = fs.createReadStream(csvFilePath);
+
+// Create a write stream to the downloads folder
+const writeStream = fs.createWriteStream(downloadsPath);
+
+// Pipe the read stream to the write stream
+readStream.pipe(writeStream);
+
+// Set the necessary headers to trigger a download
+await writeStream.on('open', () => {
+  res.setHeader('Content-Disposition', 'attachment; filename=curriculums.csv');
+  res.setHeader('Content-Type', 'text/csv');
+  res.status(200).json({ message: "successfully exported" });
+});
+      
+    console.log('Data exported to curriculums.csv');
+
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

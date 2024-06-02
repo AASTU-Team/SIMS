@@ -6,7 +6,8 @@ import {
   createDep,
   updateDep,
   deleteDep,
-  assignDepartmentCsv
+  assignDepartmentCsv,
+  exportDeps
 } from "./department.controller";
 
 import { Request, Response } from "express";
@@ -23,6 +24,7 @@ const departmentRoute = express.Router();
 
 // get course based on dept
 departmentRoute.get("/", getDep);
+departmentRoute.get("/export", exportDeps);
 departmentRoute.get("/:id", getDepById);
 departmentRoute.post("/create", createDep);
 departmentRoute.patch("/:id", updateDep);
