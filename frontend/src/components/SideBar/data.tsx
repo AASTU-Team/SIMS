@@ -39,6 +39,24 @@ export const staffSideBarData = [
     role: "studentMan",
   },
   {
+    label: "Student Grades",
+    icon: "student",
+    link: "/studentGrades",
+    role: "studentGrade",
+  },
+  {
+    label: "Student Registration",
+    icon: "student",
+    link: "/studentDepReg",
+    role: "studentDepReg",
+  },
+  {
+    label: "Student Registrations",
+    icon: "student",
+    link: "/studentReg",
+    role: "studentReg",
+  },
+  {
     label: "Staff Management",
     icon: "staff",
     link: "/staff",
@@ -67,6 +85,12 @@ export const staffSideBarData = [
     icon: "room",
     link: "/room",
     role: "roomMan",
+  },
+  {
+    label: "Semester Management",
+    icon: "semester",
+    link: "/semester",
+    role: "semesterMan",
   },
   {
     label: "Calendar",
