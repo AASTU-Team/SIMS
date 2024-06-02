@@ -4,6 +4,13 @@ import mongoose from "mongoose";
 const fs = require("fs");
 const csv = require("csv-parser");
 const Joi = require("joi");
+import path from "path";
+
+
+const https = require('https'); 
+
+
+const Json2csvParser = require("json2csv").Parser;
 
 let results: any = [];
 
@@ -160,7 +167,7 @@ export const getCourses = async (req: Request, res: Response) => {
 
   try {
     // use find({dep_id : id from fetch })
-    const course: any = await Course.find()
+    const courses: any = await Course.find()
       .populate({
         path: "prerequisites",
         select: "name code",
@@ -168,9 +175,75 @@ export const getCourses = async (req: Request, res: Response) => {
       .populate({
         path: "instructors",
         select: "name email",
-      });
+      }).populate("department_id");;
+    
+    const courseView = courses.map((course: any) => {
+      return {
+        ...course.toObject(),
+        department_name: course.department_id?.name,
+      };
+    });
 
-    res.status(200).json({ data: course });
+    res.status(200).json({ data: courseView });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const exportCourses = async (req: Request, res: Response) => {
+  // fetch dep id from the auth
+
+  try {
+    // use find({dep_id : id from fetch })
+    const courses: any = await Course.find()
+      .populate({
+        path: "prerequisites",
+        select: "name code",
+      })
+      .populate({
+        path: "instructors",
+        select: "name email",
+      }).populate("department_id");;
+    
+    const courseView = courses.map((course: any) => {
+      return {
+        ...course.toObject(),
+        department_name: course.department_id?.name,
+      };
+    });
+
+    const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(courseView);
+    const filePath = path.join('./exports', 'courses.csv');
+
+        fs.writeFile(filePath, csvData, function(error:any) {
+          if (error) throw error;
+          console.log("Write to csv was successfull!");
+       
+        });
+// Get the path to the CSV file on the server
+const csvFilePath = path.join( './exports', 'courses.csv');
+
+// Set the path to the downloads folder
+const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'courses.csv');
+
+// Create a read stream for the CSV file
+const readStream = fs.createReadStream(csvFilePath);
+
+// Create a write stream to the downloads folder
+const writeStream = fs.createWriteStream(downloadsPath);
+
+// Pipe the read stream to the write stream
+readStream.pipe(writeStream);
+
+// Set the necessary headers to trigger a download
+await writeStream.on('open', () => {
+  res.setHeader('Content-Disposition', 'attachment; filename=courses.csv');
+  res.setHeader('Content-Type', 'text/csv');
+  res.status(200).json({ message: "successfully exported" });
+});
+      
+    console.log('Data exported to courses.csv');
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -211,9 +284,9 @@ export const createCourse = async (req: Request, res: Response) => {
 };
 export const updateCourse = async (req: Request, res: Response) => {
   try {
-    const { code } = req.params;
+    const { id } = req.params;
     const requestData = req.body;
-    const updates = await Course.findOneAndUpdate({ code: code }, requestData, {
+    const updates = await Course.findById(id, requestData, {
       new: true,
     }).exec();
     if (!updates) {
@@ -228,10 +301,10 @@ export const updateCourse = async (req: Request, res: Response) => {
   }
 };
 export const deleteCourse = async (req: Request, res: Response) => {
-  const { code } = req.params;
+  const { id } = req.params;
 
   try {
-    const deletedCourse = await Course.findOneAndDelete({ code: code });
+    const deletedCourse = await Course.findByIdAndDelete(id);
     if (!deletedCourse) {
       return res.status(404).json({ message: "Not found" });
     }
@@ -241,157 +314,3 @@ export const deleteCourse = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
-// export const registerStudentCsv = async (req: Request, res: Response) => {
-//   const currentYear = new Date().getFullYear();
-//   const subtractedYear = currentYear - 8;
-//   const year = subtractedYear % 100;
-
-//   console.log(year);
-
-//   const count = await Student.countDocuments();
-//   console.log(`Total number of documents: ${count}`);
-//   let idPrefix = "ets";
-
-//   fs.createReadStream("./students.csv")
-//     .pipe(csv())
-//     .on("data", (data: any) => {
-//       // Process each row of data
-//       results.push(data);
-//     })
-//     .on("end", async () => {
-//       try {
-//         // The parsing is complete
-//         console.log(results);
-
-//         const c = await Student.countDocuments();
-//         let count = parseInt(c);
-//         let idPrefix = "ets";
-//         const emails: String[] = [];
-
-//         for (const student of results) {
-//           // Validate each student object
-//           emails.push(student.email);
-//           const { error } = validateStudent(student);
-//           if (error) {
-//             console.error("Validation error:", error);
-//             continue; // Skip this student and move to the next one
-//           }
-
-//           // Generate an auto-incrementing ID
-//           let id: String = "";
-
-//           if (count < 10) {
-//             id = `${idPrefix}000${count + 1}` + `/${year}`;
-//           } else if (count < 100) {
-//             id = `${idPrefix}00${count + 1}` + `/${year}`;
-//           } else if (count < 1000) {
-//             id = `${idPrefix}0${count + 1}` + `/${year}`;
-//           } else {
-//             id = `${idPrefix}${count + 1}` + `/${year}`;
-//           }
-
-//           // Insert the student into the database
-//           await Student.create({ ...student, id });
-//           ///////////////////////////////////////////////////////////////////////
-//           try {
-//             const response: any = await fetch(
-//               "http://localhost:5000/auth/register",
-//               {
-//                 method: "POST",
-//                 headers: {
-//                   "Content-Type": "application/json",
-//                 },
-//                 body: JSON.stringify({
-//                   email: student.email,
-//                   role: ["student"],
-//                   id: id,
-//                 }),
-//               }
-//             );
-
-//             if (response.status === 201) {
-//               ////////////////////////////////////////////////////
-
-//               /////////////////////////////////////////////////
-//               const r = await response.json();
-//               console.log("created student auth profile");
-//               // const newStudent = await new Student({...data,id:id});
-//               // await newStudent.save()
-//               //  return res.status(201).json({ message: "successfully created student profile" });
-//             } else {
-//               const r = await response.json();
-
-//               console.log(r.message);
-//               //return res.status(400).json({ message: "An error happend please try again" });
-//               console.log("unable to create student auth profile");
-//             }
-//           } catch (error: any) {
-//             console.log(error.message);
-
-//             //return res.status(500).json({ message: error.message });
-//             console.log("unable to create student auth profile");
-//           }
-
-//           ////////////////////////////////////////////////////////////////////
-
-//           count++; // Increment the count for the next student
-//         }
-
-//         console.log("Data inserted successfully");
-//         res.status(200).json({ message: "Data inserted successfully" });
-//         console.log("emails", emails);
-//       } catch (error: any) {
-//         console.error("Error inserting data:", error);
-//         res.status(500).json({ message: error.message });
-//       }
-//     })
-//     .on("error", (error: any) => {
-//       // Handle any errors that occur during the parsing
-//       console.error(error);
-//       res.status(500).json({ message: error.message });
-//     });
-// };
-
-// export const getStudentByDepartment = async(req: Request, res: Response) => {
-
-//     const department  = req.body.department_id;
-
-//     try {
-
-//       const students:any = await Student.find({department_id:department});
-//       res.status(200).json({ message: students });
-
-//     } catch (error:any) {
-
-//         return res.status(500).json({ message: error.message });
-
-//     }
-//   }
-
-// function validateStudent(student: any) {
-//     const schema = Joi.object({
-//       email: Joi.string().email(),
-//       name: Joi.string().regex(/^[A-Za-z\s]+$/),
-//       //birthday: Joi.date().format('YYYY-MM-DD'),
-//      // phone: Joi.string().regex(/^\+\d{12}$/).withMessage('Phone number must start with "+" and be followed by 12 digits'),
-//       gender: Joi.string().valid('MALE', 'FEMALE'),
-//       department_id: Joi.string().optional(),
-//       status_id: Joi.string().optional(),
-//       year: Joi.number().integer(),
-//       //admission_date: Joi.date().format('YYYY-MM-DD').withMessage('Admission date must be in the format YYYY-MM-DD'),
-//       //grad_date: Joi.date().format('YYYY-MM-DD').withMessage('Graduation date must be in the format YYYY-MM-DD'),
-//       contact: Joi.string(),
-//       address: Joi.string(),
-//       emergencycontact_name: Joi.string().regex(/^[A-Za-z\s]+$/),
-//       emergencycontact_relation: Joi.string(),
-//       phone:Joi.string(),
-//       birthday: Joi.date(),
-//       admission_date: Joi.date(),
-//       grad_date:Joi.date(),
-//       //emergencycontact_phone: Joi.string().regex(/^\+\d{12}$/).withMessage('Emergency contact phone number must start with "+" and be followed by 12 digits'),
-//       emergencycontact_phone: Joi.string()
-
-//     });
-
-//     return schema.validate(student);
-//   }

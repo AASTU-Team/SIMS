@@ -3,6 +3,10 @@ import mongoose from "mongoose";
 const fs = require("fs");
 const csv = require("csv-parser");
 const Joi = require("joi");
+const Json2csvParser = require("json2csv").Parser;
+import path from "path";
+
+
 const checkPrerequisite = require("../../helper/checkPrerequisite");
 
 let results: any = [];
@@ -87,6 +91,70 @@ export const getDep = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const exportDeps = async (req: Request, res: Response) => {
+  // fetch dep id from the auth
+
+  try {
+    // use find({dep_id : id from fetch })
+    const department: any = await Department.find();
+    if (!department) {
+      return res.status(400).json("departmetnt not found");
+    }
+    const departmentData = await Promise.all(
+      department.map(async (dept: any) => {
+        let dept_head: any;
+        if (dept?.dep_head) {
+          const dhead = dept.dep_head?.toString();
+
+          dept_head = await Staff.findById(dhead);
+          return {
+            _id: dept._id,
+            name: dept.name,
+            dep_head: { email: dept_head.email, name: dept_head.name },
+          };
+        } else {
+          return dept;
+        }
+      })
+    );
+
+     const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(departmentData);
+    const filePath = path.join('./exports', 'departments.csv');
+
+        fs.writeFile(filePath, csvData, function(error:any) {
+          if (error) throw error;
+          console.log("Write to csv was successfull!");
+       
+        });
+// Get the path to the CSV file on the server
+const csvFilePath = path.join( './exports', 'departments.csv');
+
+// Set the path to the downloads folder
+const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'departments.csv');
+
+// Create a read stream for the CSV file
+const readStream = fs.createReadStream(csvFilePath);
+
+// Create a write stream to the downloads folder
+const writeStream = fs.createWriteStream(downloadsPath);
+
+// Pipe the read stream to the write stream
+readStream.pipe(writeStream);
+
+// Set the necessary headers to trigger a download
+await writeStream.on('open', () => {
+  res.setHeader('Content-Disposition', 'attachment; filename=departments.csv');
+  res.setHeader('Content-Type', 'text/csv');
+  res.status(200).json({ message: "successfully exported" });
+});
+      
+    console.log('Data exported to departments.csv');
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 export const getDepById = async (req: Request, res: Response) => {
   // fetch dep id from the auth
   const { id } = req.params;
@@ -137,13 +205,13 @@ export const createDep = async (req: Request, res: Response) => {
 export const updateDep = async (req: Request, res: Response) => {
   try {
     //const { id } = req.params;
-    const { code } = req.params;
+    const { id } = req.params;
     const requestData = req.body;
     /*   const updates = await Department.findByIdAndUpdate(id, requestData, {
       new: true,
     }).exec(); */
-    const updates = await Department.findOneAndUpdate(
-      { code: code },
+    const updates = await Department.findByIdAndUpdate(
+      id,
       requestData,
       {
         new: true,
@@ -161,10 +229,10 @@ export const updateDep = async (req: Request, res: Response) => {
   }
 };
 export const deleteDep = async (req: Request, res: Response) => {
-  const { code } = req.params;
+  const { id } = req.params;
 
   try {
-    const deletedDepartment = await Department.findOneAndDelete({ code: code });
+    const deletedDepartment = await Department.findByIdAndDelete(id);
     if (!deletedDepartment) {
       return res.status(404).json({ message: "Not found" });
     }

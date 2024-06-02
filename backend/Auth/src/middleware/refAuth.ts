@@ -5,6 +5,7 @@ import { func } from "joi";
 
 const refAuth = async (req: any, res: Response, next: NextFunction) => {
   let token = req.header("Authorization")?.replace("Bearer ", "");
+  console.log("adfadfadfadfs",token);
   try {
     const decoded: any = jwt.verify(token, process.env.JWT_RT_SECRET as string);
 

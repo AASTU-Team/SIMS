@@ -7,10 +7,9 @@ const inviteAuth = async (req: any, res: Response, next: NextFunction) => {
     console.log("req", req.body, req.header("Authorization"));
     const token = req.header("Authorization").replace("Bearer ", "");
     const decoded: any = jwt.verify(token, process.env.JWT_IT_SECRET as string);
-
+   
     const user = await Auth.findOne({
       email: decoded.email,
-      invitations: token,
     });
 
     console.log(user);

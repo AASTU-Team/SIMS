@@ -6,7 +6,8 @@ import {
   getCourseById,
   getCourses,
   updateCourse,
-  createCourseCsv
+  createCourseCsv,
+  exportCourses
 } from "./course.controller";
 
 import { Request, Response } from "express";
@@ -23,6 +24,7 @@ const Courserourer = express.Router();
 
 // get course based on dept
 Courserourer.get("/", getCourses);
+Courserourer.get("/export", exportCourses);
 Courserourer.get("/:id", getCourseById);
 Courserourer.post("/create", createCourse);
 Courserourer.post("/createCsv",upload.single("file"), createCourseCsv);

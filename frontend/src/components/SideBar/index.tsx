@@ -8,15 +8,54 @@ import DashboardIcon from "../../assets/sidebar/DashboardIcon";
 import StudentIcon from "../../assets/sidebar/StudentIcon";
 import StaffIcon from "../../assets/sidebar/StaffIcon";
 import {InsertRowLeftOutlined,CalendarOutlined, BookOutlined, ProfileOutlined } from "@ant-design/icons";
+import { staffSideBarData, studentSideBarData } from "./data";
 
 interface SidebarProps {
   sidebarOpen: boolean;
   setSidebarOpen: (arg: boolean) => void;
 }
 
+const Icon = [
+  {
+    name: "home",
+    component: <DashboardIcon />,
+  },
+  {
+    name: "student",
+    component: <StudentIcon />,
+  },
+  {
+    name: "user",
+    component: <StaffIcon />,
+  },
+  {
+    name: "staff",
+    component: <StaffIcon />,
+  },
+  {
+    name: "book",
+    component: <BookOutlined />,
+  },
+  {
+    name: "plans",
+    component: <ProfileOutlined />,
+  },
+  {
+    name: "building",
+    component: <ProfileOutlined />,
+  },
+  {
+    name: "room",
+    component: <InsertRowLeftOutlined />,
+  },
+  {
+    name: "calendar",
+    component: <CalendarOutlined />,
+  },
+];
+
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   const pathname = useLocation().pathname;
-
   const trigger = useRef<any>(null);
   const sidebar = useRef<any>(null);
 
@@ -63,6 +102,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   }, [sidebarExpanded]);
 
   const user = useSelector((state: RootState) => state.user);
+  const data = user.roles.includes("student")? studentSideBarData: staffSideBarData;
   
   return (
     <aside
@@ -121,129 +161,32 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </h3>
 
             <ul className="mb-6 flex flex-col gap-1.5">
-              {/* <!-- Menu Item Dashboard --> */}
-              <li>
-                <Link
-                  to="/"
-                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes("dashboard") &&
-                    "bg-graydark dark:bg-meta-4"
-                  }`}
-                >
-                  <DashboardIcon />
-                  Dashboard
-                </Link>
-              </li>
-              {/* <!-- Menu Item Dashboard --> */}
+              {
+                data.map((item, index) => {
+                  if (user.roles.includes(item.role) || item.role === "") {
+                    return (
+                      <li key={index}>
+                        <Link
+                          to={item.link}
+                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                            pathname.includes(item.link) && item.link!="/"&&
+                            "bg-graydark dark:bg-meta-4"
+                          }`}
+                        >
+                          {Icon.map((icon) => {
+                            if (item.icon === icon.name) {
+                              return icon.component;
+                            }})}
 
-              {/* <!-- Menu Item Student --> */}
-              <li>
-                {user.roles.includes("studentMan") && (
-                  <Link
-                    to="/students"
-                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                      pathname.includes("students") &&
-                      "bg-graydark dark:bg-meta-4"
-                    }`}
-                  >
-                    <StudentIcon />
-                    Student Management
-                  </Link>
-                )}
-              </li>
-              {/* <!-- Menu Item Student --> */}
-              {/* <!-- Menu Item Staff --> */}
-              <li>
-                {user.roles.includes("staffMan") && (
-                  <Link
-                    to="/staff"
-                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                      pathname.includes("staff") && "bg-graydark dark:bg-meta-4"
-                    }`}
-                  >
-                    <StaffIcon />
-                    Staff Management
-                  </Link>
-                )}
-              </li>
-              {/* <!-- Menu Item Staff --> */}
-              {/* <!-- Menu Item Course --> */}
-              <li>
-                {user.roles.includes("courseMan") && (
-                  <Link
-                    to="/course"
-                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                      pathname.includes("course") &&
-                      "bg-graydark dark:bg-meta-4"
-                    }`}
-                  >
-                    <BookOutlined />
-                    Course Management
-                  </Link>
-                )}
-              </li>
-              {/* <!-- Menu Item Course --> */}
-              {/* <!-- Menu Item Curriculum --> */}
-              <li>
-                {user.roles.includes("curriculumMan") && (
-                  <Link
-                    to="/curriculum"
-                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                      pathname.includes("curriculum") &&
-                      "bg-graydark dark:bg-meta-4"
-                    }`}
-                  >
-                    <ProfileOutlined />
-                    Curriculum Management
-                  </Link>
-                )}
-              </li>
-              {/* <!-- Menu Item Curriculum --> */}
-              {/* <!-- Menu Item Department --> */}
-              <li>
-                {user.roles.includes("departmentMan") && (
-                  <Link
-                    to="/department"
-                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                      pathname.includes("department") &&
-                      "bg-graydark dark:bg-meta-4"
-                    }`}
-                  >
-                    <ProfileOutlined />
-                    Department Management
-                  </Link>
-                )}
-              </li>
-              {/* <!-- Menu Item Department --> */}
-              {/* <!-- Menu Item Room --> */}
-              <li>
-                {user.roles.includes("roomMan") && (
-                  <Link
-                    to="/room"
-                    className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                      pathname.includes("room") && "bg-graydark dark:bg-meta-4"
-                    }`}
-                  >
-                    <InsertRowLeftOutlined />
-                    Room Management
-                  </Link>
-                )}
-              </li>
-              {/* <!-- Menu Item Room --> */}
-              {/* <!-- Menu Item Calendar --> */}
-              <li>
-                <Link
-                  to="/calendar"
-                  className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                    pathname.includes("calendar") &&
-                    "bg-graydark dark:bg-meta-4"
-                  }`}
-                >
-                  <CalendarOutlined />
-                  Calendar
-                </Link>
-              </li>
-              {/* <!-- Menu Item Calendar --> */}
+                          {item.label}
+                        </Link>
+                      </li>
+                    );
+                  }
+                  return null;
+                })
+              }
+ 
             </ul>
           </div>
         </nav>

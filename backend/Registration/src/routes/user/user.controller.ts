@@ -5,6 +5,7 @@ import mongoose, { Mongoose } from "mongoose";
 
 //const assignCourse = require("../../helper/assignFreshmanCourse");
 const assignCourse = require("../../helper/assignCourse");
+const deleteCsv = require("../../helper/deleteCsv");
 const checkPrerequisite = require("../../helper/checkPrerequisite");
 const isCourseTaken = require("../../helper/isCourseTaken");
 const getPossibleAddCourses = require("../../helper/getPossibleAddCourses");
@@ -20,7 +21,12 @@ async function getCredit(Id: String): Promise<any> {
 }
 
 const fs = require("fs");
+const https = require('https'); 
 const csv = require("csv-parser");
+const Csv = require('csv-stringify');
+const Json2csvParser = require("json2csv").Parser;
+
+
 const Joi = require("joi");
 
 let results: any = [];
@@ -33,6 +39,8 @@ const Course = require("../../models/course.model");
 const AddDrop = require("../../models/addDrop.model");
 const Curriculum = require("../../models/curriculum.model");
 const Assignment = require("../../models/Assignment.model");
+const NumberOfStudent = require("../../models/numberOfStudent.model");
+
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
 import path from "path";
@@ -153,11 +161,12 @@ export const registerStudent = async (req: Request, res: Response) => {
 
     /*    const newStatus = await new Status({status:"Active"})
         await newStatus.save() */
+    // console.log(data)
     const currentYear = new Date().getFullYear();
     const subtractedYear = currentYear - 8;
     const year = subtractedYear % 100;
 
-    console.log(year);
+    // console.log(year);
 
     const count = await Student.countDocuments();
     console.log(`Total number of documents: ${count}`);
@@ -188,22 +197,22 @@ export const registerStudent = async (req: Request, res: Response) => {
       });
 
       if (response.status === 201) {
-        const department = await Department.findOne({ name: data.department });
+        // const department = await Department.findOne({ name: data.department });
 
-        let department_id = "";
+        // let department_id = "";
 
-        if (department) {
-          department_id = department._id;
-          console.log("department_id:", department_id);
-        } else {
-          console.log("Department not found");
-        }
+        // if (department) {
+        //   department_id = department._id;
+        //   console.log("department_id:", department_id);
+        // } else {
+        //   console.log("Department not found");
+        // }
         const r = await response.json();
         console.log(r.message);
         const newStudent = await new Student({
           ...data,
           id: id,
-          department_id: department_id,
+          // department_id: department_id,
         });
         await newStudent.save();
         const insertedIds: String[] = [];
@@ -281,10 +290,28 @@ export const uploadFile = (req: Request, res: Response) => {
       res.status(500).json({ error: "Internal server error" });
     });
 };
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 
 export const registerStudentCsv = async (req: Request, res: Response) => {
   if (!req.file) {
     return res.status(400).json({ error: "No file uploaded" });
+  }
+
+  if (path.extname(req.file.filename).toLowerCase() !== ".csv") {
+    await deleteCsv(req.file.path);
+    return res
+      .status(400)
+      .json({ error: "The uploaded file is not a CSV file" });
+  }
+
+  // Check the file size
+  if (req.file.size > MAX_FILE_SIZE) {
+    await deleteCsv(req.file.path);
+    return res.status(400).json({
+      error: `The uploaded file exceeds the maximum size of ${
+        MAX_FILE_SIZE / (1024 * 1024)
+      } MB`,
+    });
   }
 
   const currentYear = new Date().getFullYear();
@@ -503,7 +530,7 @@ function validateStudent(student: any) {
     gender: Joi.string().valid("MALE", "FEMALE"),
     department: Joi.string().optional(),
     type: Joi.string().optional(),
-    status_id: Joi.string().optional(),
+    status: Joi.string().optional(),
     year: Joi.number().integer(),
     //admission_date: Joi.date().format('YYYY-MM-DD').withMessage('Admission date must be in the format YYYY-MM-DD'),
     //grad_date: Joi.date().format('YYYY-MM-DD').withMessage('Graduation date must be in the format YYYY-MM-DD'),
@@ -511,12 +538,12 @@ function validateStudent(student: any) {
     address: Joi.string(),
     emergencycontact_name: Joi.string().regex(/^[A-Za-z\s]+$/),
     emergencycontact_relation: Joi.string(),
-    phone: Joi.string(),
+    phone: Joi.string().regex(/^(\+\d{12}|\d{10})$/),
     birthday: Joi.date(),
     admission_date: Joi.date(),
     grad_date: Joi.date(),
     //emergencycontact_phone: Joi.string().regex(/^\+\d{12}$/).withMessage('Emergency contact phone number must start with "+" and be followed by 12 digits'),
-    emergencycontact_phone: Joi.string(),
+    emergencycontact_phone: Joi.string().regex(/^(\+\d{12}|\d{10})$/),
   });
 
   return schema.validate(student);
@@ -531,10 +558,65 @@ export const getAllStudent = async (req: Request, res: Response) => {
       return {
         ...student.toObject(),
         department_name: student.department_id?.name,
+        department_id: student.department_id?._id,
       };
     });
+    // console.log(myStudents);
 
     res.status(200).json({ message: myStudents });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const exportAllStudent = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    const students = await Student.find().populate("department_id");
+    const myStudents = students.map((student: any) => {
+      return {
+        ...student.toObject(),
+        department_name: student.department_id?.name,
+        department_id: student.department_id?._id,
+      };
+    });
+    const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(myStudents);
+    const filePath = path.join('./exports', 'students.csv');
+
+        fs.writeFile(filePath, csvData, function(error:any) {
+          if (error) throw error;
+          console.log("Write to csv was successfull!");
+       
+        });
+// Get the path to the CSV file on the server
+const csvFilePath = path.join( './exports', 'students.csv');
+
+// Set the path to the downloads folder
+const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'students.csv');
+
+// Create a read stream for the CSV file
+const readStream = fs.createReadStream(csvFilePath);
+
+// Create a write stream to the downloads folder
+const writeStream = fs.createWriteStream(downloadsPath);
+
+// Pipe the read stream to the write stream
+readStream.pipe(writeStream);
+
+// Set the necessary headers to trigger a download
+await writeStream.on('open', () => {
+  res.setHeader('Content-Disposition', 'attachment; filename=students.csv');
+  res.setHeader('Content-Type', 'text/csv');
+  res.status(200).json({ message: "successfully exported" });
+});
+      
+    console.log('Data exported to students.csv');
+
+    // console.log(myStudents);
+
+
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -557,12 +639,71 @@ export const getAllStaff = async (req: Request, res: Response) => {
   }
 };
 
+export const exportAllStaff = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    const staffs: any = await Staff.find().populate("department_id");
+    const myStaff = staffs.map((staff: any) => {
+      return {
+        ...staff.toObject(),
+        department_name: staff.department_id?.name,
+      };
+    });
+    const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(myStaff);
+    const filePath = path.join('./exports', 'staffs.csv');
+
+        fs.writeFile(filePath, csvData, function(error:any) {
+          if (error) throw error;
+          console.log("Write to csv was successfull!");
+       
+        });
+// Get the path to the CSV file on the server
+const csvFilePath = path.join( './exports', 'staffs.csv');
+
+// Set the path to the downloads folder
+const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'staffs.csv');
+
+// Create a read stream for the CSV file
+const readStream = fs.createReadStream(csvFilePath);
+
+// Create a write stream to the downloads folder
+const writeStream = fs.createWriteStream(downloadsPath);
+
+// Pipe the read stream to the write stream
+readStream.pipe(writeStream);
+
+// Set the necessary headers to trigger a download
+await writeStream.on('open', () => {
+  res.setHeader('Content-Disposition', 'attachment; filename=staffs.csv');
+  res.setHeader('Content-Type', 'text/csv');
+  res.status(200).json({ message: "successfully exported" });
+});
+      
+    console.log('Data exported to staffs.csv');
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const getStudentByDepartment = async (req: Request, res: Response) => {
   const department = req.body.department_id;
 
   try {
     const students: any = await Student.find({ department_id: department });
     res.status(200).json({ message: students });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getStaffByDepartment = async (req: Request, res: Response) => {
+  const department = req.body.department_id;
+
+  try {
+    const staffs: any = await Staff.find({ department_id: department });
+    res.status(200).json({ message: staffs });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -610,6 +751,90 @@ export const deleteStudent = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+export const deleteStaff = async (req: Request, res: Response) => {
+  const staff = req.body.staff_id;
+  const email = req.body.email;
+
+  try {
+    try {
+      const response: any = await fetch("http://localhost:5000/auth/delete", {
+        method: "Delete",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: email,
+        }),
+      });
+
+      if (response.status === 200) {
+        const r = await response.json();
+        console.log(r.message);
+        const deleteduser = await Staff.deleteOne({ _id: staff });
+        if (!deleteduser) {
+          return res.status(404).json({ message: "Not found" });
+        }
+
+        return res.status(200).json({ message: "success" });
+      } else {
+        const r = await response.json();
+
+        console.log(r.message);
+        return res
+          .status(400)
+          .json({ message: "An error happend please try again" });
+      }
+    } catch (error: any) {
+      console.log(error.message);
+
+      return res.status(500).json({ message: error.message });
+    }
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const deactivateUser = async (req: Request, res: Response) => {
+  //const staff = req.body.staff_id;
+  const email = req.body.email;
+
+  try {
+    try {
+      const response: any = await fetch(
+        "http://localhost:5000/auth/deactivate",
+        {
+          method: "patch",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+          }),
+        }
+      );
+
+      if (response.status === 200) {
+        const r = await response.json();
+        console.log(r.message);
+
+        return res.status(200).json({ message: "success" });
+      } else {
+        const r = await response.json();
+
+        console.log(r.message);
+        return res
+          .status(400)
+          .json({ message: "An error happend please try again" });
+      }
+    } catch (error: any) {
+      console.log(error.message);
+
+      return res.status(500).json({ message: error.message });
+    }
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 export const updateStudent = async (req: Request, res: Response) => {
   try {
@@ -620,6 +845,29 @@ export const updateStudent = async (req: Request, res: Response) => {
     console.log(documentId);
 
     const updates = await Student.findByIdAndUpdate(documentId, requestData, {
+      new: true,
+    }).exec();
+    if (!updates) {
+      return res.status(500).json({ message: "An error happened" });
+    } else {
+      console.log("Document updated successfully!");
+      return res.status(200).json({ message: updates });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "An error occurred" });
+  }
+};
+
+export const updateStaff = async (req: Request, res: Response) => {
+  try {
+    const documentId = req.query.id;
+    const requestData = req.body;
+
+    console.log(requestData);
+    console.log(documentId);
+
+    const updates = await Staff.findByIdAndUpdate(documentId, requestData, {
       new: true,
     }).exec();
     if (!updates) {
@@ -1500,6 +1748,25 @@ export const activateStudent = async (req: Request, res: Response) => {
   }
 
   return res.status(200).json({ message: "success" });
+};
+export const getNumberOfStudents = async (req: Request, res: Response) => {
+  const { course_id } = req.params;
+
+  const numberOfStudent = await NumberOfStudent.find({ course_id })
+    .populate("course_id", "name")
+    .populate("section_id", "name");
+
+  if (!numberOfStudent) {
+    res.status(400).json({ message: "No student found" });
+  }
+  const number = numberOfStudent.map((data: any) => {
+    return {
+      numberOfStudent: data.numberOfStudent.length,
+      section: data.section_id,
+    };
+  });
+
+  res.status(200).send({ message: "success", course_id, data: number });
 };
 /// if req
 

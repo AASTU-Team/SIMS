@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getDepartment } from '../../api/departmentApi';
 import Loader from '../../components/Loader';
+import { StaffFields } from '../../type/staff';
 
 
 
@@ -18,7 +19,6 @@ const DepartmentTable: React.FC = () => {
     queryFn: getDepartment
   });
   
-    // console.log(query.data);
   const columns: TableColumnsType<DepartmentFields> = [
     {
       title: "Name",
@@ -35,18 +35,20 @@ const DepartmentTable: React.FC = () => {
       sorter: true,
     },
     {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-      width: 150,
-      sorter: true,
-    },
-    {
-      title: "Head",
+      title: "Department Head",
       dataIndex: "dep_head",
       key: "dep_head",
       width: 150,
       sorter: true,
+      render: (dep_head: StaffFields) => <span>{dep_head?.name}</span>,
+    },
+    {
+      title: "Head Email",
+      width: 150,
+      sorter: true,
+      render: (record) => (
+        <span>{record?.dep_head?.email}</span>
+      ),
     },
     {
       title: "Action",

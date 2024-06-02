@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import type { FormProps } from "antd";
@@ -13,7 +12,8 @@ import Loader from "../../components/Loader";
 import setCookie from "../../hooks/setCookie";
 
 
-const SignIn: React.FC = () => {
+
+export default function SignIn(){
   const router = useNavigate()
 
 const loginMutation = useMutation({
@@ -144,6 +144,5 @@ const loginMutation = useMutation({
       </div>
     </div>
   );
-};
+}
 
-export default SignIn;

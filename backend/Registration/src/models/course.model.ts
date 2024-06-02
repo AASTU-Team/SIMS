@@ -42,6 +42,14 @@ let courseSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  tut: {
+    type: Number,
+    required: true,
+  },
+  hs: {
+    type: Number,
+    required: true,
+  },
   description: {
     type: String,
     required: false,

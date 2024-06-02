@@ -9,5 +9,8 @@ export type CourseFields = {
     code?: string;
     lec?: string;
     lab?: string;
+    tut?: string;
+    option?:string;
+    hs?:string;
     description?: string;
 };

@@ -9,6 +9,7 @@ import {
   addDropCourse,
   acceptReject,
   getAddDrop,
+  getNumberOfStudents,
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
@@ -31,6 +32,11 @@ import { Request, Response } from "express";
 import { getWithdrawalRequests } from "./user.controller";
 import { AcceptWithdrawalRequest } from "./user.controller";
 import { activateStudent } from "./user.controller";
+import { deactivateUser } from "./user.controller";
+import { deleteStaff } from "./user.controller";
+import { updateStaff } from "./user.controller";
+import { getStaffByDepartment } from "./user.controller";
+import { exportAllStudent, exportAllStaff } from "./user.controller";
 
 const assignSection = require("../../helper/assignSection");
 
@@ -61,10 +67,16 @@ Studentrouter.post("/me", getStudentProfile);
 
 Studentrouter.post("/upload", upload.single("file"), uploadFile);
 Studentrouter.get("/student/all", getAllStudent);
+Studentrouter.get("/student/all/export", exportAllStudent);
 Studentrouter.get("/staff/all", getAllStaff);
+Studentrouter.get("/staff/all/export", exportAllStaff);
 Studentrouter.get("/student/department", getStudentByDepartment);
+Studentrouter.get("/staff/department", getStaffByDepartment);
 Studentrouter.delete("/student/delete", deleteStudent);
+Studentrouter.delete("/staff/delete", deleteStaff);
+Studentrouter.patch("/deactivate", deactivateUser);
 Studentrouter.patch("/student/update", updateStudent);
+Studentrouter.patch("/staff/update", updateStaff);
 
 Studentrouter.get("/student/courses", getStudentCourses);
 Studentrouter.post("/student/register", studentRegistration);
@@ -108,5 +120,7 @@ Studentrouter.post("/student/test", async (req: Request, res: Response) => {
     res.status(400).json(a);
   }
 });
+
+Studentrouter.get("/student/numberofstudent/:course_id", getNumberOfStudents);
 
 module.exports = Studentrouter;

@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import ProtectedRoutes from "../hooks/protectedRoutes";
-import SignIn from "../pages/Login";
+import SignIn from "../pages/login/index";
 import NotFoundPage from "../pages/NotFound";
 import Sidebar from "../components/SideBar";
 import Header from "../components/Header";
 import Dashboard from "../pages/Dashboard";
-import RegisterUser from "../pages/RegisterUser";
-import Profile from "../pages/Profile";
+import Profile from "../pages/profile/index";
 import SetPassword from "../pages/SetPassword";
 import Loader from "../components/Loader";
 import StudentManagement from "../pages/StudentManagement";
@@ -29,6 +28,7 @@ import EditRoom from "../pages/RoomManagement/EditRoom";
 import DepartmentManagement from "../pages/DepartmentManagement";
 import AddDepartment from "../pages/DepartmentManagement/AddDepartment";
 import EditDepartment from "../pages/DepartmentManagement/EditDepartment";
+import StudentRegistration from "../pages/StudentRegistration";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -73,8 +73,8 @@ const AllRoutes = () => {
                     <Route path="/room" element={<RoomManagement />} />
                     <Route path="/room/add" element={<AddRooms />} />
                     <Route path="/rooms/edit" element={<EditRoom />} />
+                    <Route path="/myRegistration" element={<StudentRegistration/>}/>
                     <Route path="/calendar" element={<Calendar />} />
-                    <Route path="/registration" element={<RegisterUser />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="*" element={<NotFoundPage />} />
                   </Routes>

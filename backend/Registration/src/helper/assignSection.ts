@@ -2,6 +2,8 @@ const Student = require("../models/student.model");
 const Registration = require("../models/registration.model");
 const Department = require("../models/department.model");
 const Section = require("../models/section.model");
+const NumberOfStudent = require("../models/numberOfStudent.model");
+const incStudentNumber = require("./incStudentNumber");
 
 interface AssignSection {
   department: string;
@@ -50,6 +52,11 @@ async function assignSection({
           { stud_id: student._id, semester },
           { section_id: existingSection._id }
         );
+        a?.courses.forEach(async (courseData: any) => {
+          const course = courseData.courseID;
+          // add student to number of students
+          await incStudentNumber(existingSection._id, course, student._id);
+        });
       } else {
         // Create new section
         await Section.create({ name: sectionName, department, year, semester });
@@ -59,10 +66,15 @@ async function assignSection({
           year,
           semester,
         }); // Get the newly created section
-        await Registration.findOneAndUpdate(
+        const a = await Registration.findOneAndUpdate(
           { stud_id: student._id, semester },
           { section_id: section._id }
         );
+        a?.courses.forEach(async (courseData: any) => {
+          const course = courseData.courseID;
+          // add student to number of students
+          await incStudentNumber(section._id, course, student._id);
+        });
       }
 
       await student.save();
@@ -83,5 +95,24 @@ async function assignSection({
     console.error("Error assigning section IDs:", err);
   }
 }
+// async function incStudentNumber(id: string, course: string, stud_id: string) {
+//   const number = await NumberOfStudent.findOne({
+//     section_id: id,
+//     course_id: course,
+//   });
+//   console.log(number);
+//   if (number) {
+//     number.numberOfStudent.push(stud_id);
+//     await number.save();
+//     return;
+//   } else {
+//     const numstud = await NumberOfStudent.create({
+//       course_id: course,
+//       section_id: id,
+//       numberOfStudent: [stud_id],
+//     });
+//     await numstud.save();
+//   }
+// }
 
 module.exports = assignSection;

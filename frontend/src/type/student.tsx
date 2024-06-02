@@ -1,4 +1,5 @@
 export interface StudentFields {
+  _id:string;
   id: string;
   name: string;
   email: string;
@@ -16,4 +17,9 @@ export interface StudentFields {
   emergencycontact_relation: string;
   status: string;
   department_name?:string;
+}
+
+export interface StudentDeleteFields {
+  student_id: string;
+  email:string;
 }
