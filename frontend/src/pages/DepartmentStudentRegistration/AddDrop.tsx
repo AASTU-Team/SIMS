@@ -1,9 +1,10 @@
-import { Popconfirm, Table, Button } from "antd";
+import {  Table, Button } from "antd";
 import type { TableColumnsType } from "antd";
-import RegistrationSlip from "./RegistrationSlip";
 import { SlipDetails } from "../../type/registration";
+import { useNavigate } from "react-router-dom";
 
-export default function Registration() {
+export default function AddDrop() {
+  const navigate = useNavigate();
   const columns: TableColumnsType<SlipDetails> = [
     {
       title: "Full Name",
@@ -43,7 +44,7 @@ export default function Registration() {
       title: "Academic Year",
       dataIndex: "ac_year",
       key: "ac_year",
-      width: 100,
+      width: 70,
     },
     {
       title: "Year",
@@ -61,24 +62,21 @@ export default function Registration() {
       title: "Action",
       key: "operation",
       fixed: "right",
-      width: 100,
-      render: (text, record) => (
+      width: 150,
+      render: (text,record) => (
         <div className="font-semibold">
-          <Popconfirm
-            title="Approve Request"
-            description="Are you sure to approve this request?"
-            onConfirm={() => console.log(text, record)}
-            okText="Yes"
-            cancelText="No"
+          <Button
+            onClick={() => {
+              navigate(`/studentDepReg/viewRequest/`, { state: record });
+            }}
           >
-            <Button>Approve</Button>
-          </Popconfirm>
-          
+            Review Request
+          </Button>
         </div>
       ),
     },
   ];
-    const data = [
+  const data = [
     {
       name: "Yabsera Haile",
       student_id: "ETS0660/12",
@@ -92,22 +90,12 @@ export default function Registration() {
   ];
   return (
     <div className="pt-2">
-      <div className="flex justify-end">
-          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
-            Approve All Requests
-          </button>
-      </div>
+      
       <Table
         columns={columns}
         dataSource={data}
         scroll={{ x: 1300 }}
-        expandable={{
-          expandedRowRender: (record) => (
-            <div className="p-1 bg-white">
-              <RegistrationSlip details={record}/>
-            </div>
-          ),
-        }}
+        
       />
     </div>
   );
