@@ -49,6 +49,11 @@ let registrationSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
       },
+      section: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Section",
+        required: false,
+      },
     },
   ],
   registration_date: {

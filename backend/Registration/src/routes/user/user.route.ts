@@ -6,6 +6,9 @@ import {
   dropCourse,
   registerStudent,
   WithdrawalRequest,
+  addDropCourse,
+  acceptReject,
+  getAddDrop,
   getNumberOfStudents,
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
@@ -33,8 +36,7 @@ import { deactivateUser } from "./user.controller";
 import { deleteStaff } from "./user.controller";
 import { updateStaff } from "./user.controller";
 import { getStaffByDepartment } from "./user.controller";
-import { exportAllStudent,exportAllStaff } from "./user.controller";
-
+import { exportAllStudent, exportAllStaff } from "./user.controller";
 
 const assignSection = require("../../helper/assignSection");
 
@@ -84,8 +86,12 @@ Studentrouter.get(
 );
 Studentrouter.get("/student/addcourses", ListAddCourses);
 
-Studentrouter.post("/student/dropcourse/:id", dropCourse);
-Studentrouter.post("/student/addcourse/:id", addCourse);
+// Studentrouter.post("/student/dropcourse/:id", dropCourse);
+// Studentrouter.post("/student/addcourse/:id", addCourse);
+
+Studentrouter.post("/student/addDrop/:student_id", addDropCourse);
+Studentrouter.post("/student/stausUpdate", acceptReject);
+Studentrouter.get("/student/addDrop", getAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
 Studentrouter.get("/students/withdrawalRequests", getWithdrawalRequests);
