@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, notification, Popconfirm } from 'antd';
+import { Table, notification, Popconfirm, Switch } from 'antd';
 import type { TableColumnsType } from 'antd';
 import {StudentFields, StudentDeleteFields} from "../../type/student";
 import { useNavigate } from 'react-router-dom';
@@ -132,7 +132,7 @@ const StudentTable: React.FC = () =>
         fixed: "right",
         width: 180,
         render: (text, record) => (
-          <div className="flex gap-2 px-4 font-semibold">
+          <div className="flex gap-4 px-4 font-semibold">
             <a
               onClick={() => {
                 navigate(`/students/edit/`, { state: record });
@@ -150,6 +150,13 @@ const StudentTable: React.FC = () =>
             >
               <a className=" hover:text-red">Delete</a>
             </Popconfirm>
+            <Switch
+              checkedChildren="Active"
+              unCheckedChildren="Inactive"
+              defaultChecked={record.status === "Active"}
+              onChange={(checked) => {
+                console.log(checked);
+              }}/>
           </div>
         ),
       },

@@ -322,6 +322,52 @@ export default function AddCourse() {
                 </div>
               </Form.Item>
               <Form.Item<CourseFields>
+                name="tut"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the lab hours!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="tut"
+                  >
+                    Tutorial Hours
+                  </label>
+                  <Input
+                    placeholder="Enter the tut hours"
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  />
+                </div>
+              </Form.Item>
+             </div>
+             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+              <Form.Item<CourseFields>
+                name="hs"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please input the HS hours!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="hs"
+                  >
+                    HS Hours
+                  </label>
+                  <Input
+                    placeholder="Enter the hs hours"
+                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                  />
+                </div>
+              </Form.Item>
+              <Form.Item<CourseFields>
                 name="description"
                 rules={[
                   {
