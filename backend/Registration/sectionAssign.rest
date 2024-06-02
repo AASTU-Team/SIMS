@@ -1,4 +1,17 @@
-GET  http://localhost:3000/user/student/test
+POST   http://localhost:3000/user/student/test
 Content-Type:  application/json
 
+{
+    "department":"Freshman",
+    "year" : 1 ,
+    "semester" : 1 ,
+    "max" : 2
+}
+### get the number of stud sec id
+GET   http://localhost:3000/user/student/numberofstudent/662802ac728d90164b677588
+Content-Type:  application/json
+
+ 
+
+ 
  
