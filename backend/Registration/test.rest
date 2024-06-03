@@ -71,13 +71,13 @@ POST http://localhost:3000/curriculum/create
 Content-Type:  application/json
 
 {
-  "name": "Freshman",
-  "department_id":"6627f1cb16bcc35f5d498f30",
+  "name": "Software",
+  "department_id":"66339dd2caaf3b0b164e50e2",
   "credits_required":10,
-  "year":1,
+  "year":2,
   "type":"Undergraduate",
-  "semester":2,
-   "courses" : ["6635375c6c47724068fb48b5","663537946c47724068fb48b7"]
+  "semester":1,
+   "courses" : ["66363f250dfeb00796223221","66363f2e0dfeb00796223223"]
        
        
     

@@ -5,12 +5,11 @@ import {
   getTemplate,
   dropCourse,
   registerStudent,
- 
-  WithdrawalRequest
-  
-  
-  
- 
+  WithdrawalRequest,
+  addDropCourse,
+  acceptReject,
+  getAddDrop,
+  getNumberOfStudents,
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
@@ -37,8 +36,7 @@ import { deactivateUser } from "./user.controller";
 import { deleteStaff } from "./user.controller";
 import { updateStaff } from "./user.controller";
 import { getStaffByDepartment } from "./user.controller";
-import { exportAllStudent,exportAllStaff } from "./user.controller";
-
+import { exportAllStudent, exportAllStaff } from "./user.controller";
 
 const assignSection = require("../../helper/assignSection");
 
@@ -80,24 +78,31 @@ Studentrouter.patch("/deactivate", deactivateUser);
 Studentrouter.patch("/student/update", updateStudent);
 Studentrouter.patch("/staff/update", updateStaff);
 
-
 Studentrouter.get("/student/courses", getStudentCourses);
 Studentrouter.post("/student/register", studentRegistration);
-Studentrouter.get("/student/registrationCourses", getstudentRegistrationCourses);
+Studentrouter.get(
+  "/student/registrationCourses",
+  getstudentRegistrationCourses
+);
 Studentrouter.get("/student/addcourses", ListAddCourses);
 
-Studentrouter.post("/student/dropcourse/:id", dropCourse);
-Studentrouter.post("/student/addcourse/:id", addCourse);
- 
-Studentrouter.post("/student/withdrawalRequest",WithdrawalRequest);
-Studentrouter.get("/students/withdrawalRequests",getWithdrawalRequests);
-Studentrouter.post("/students/acceptWithdrawalRequests",AcceptWithdrawalRequest);
-Studentrouter.post("/students/activateStudent",activateStudent);
+// Studentrouter.post("/student/dropcourse/:id", dropCourse);
+// Studentrouter.post("/student/addcourse/:id", addCourse);
 
-Studentrouter.get("/students/getStudentStatus",getStudentRegistrationStatus);
-Studentrouter.post("/students/confirmStatus",confirmStudentRegistration);
+Studentrouter.post("/student/addDrop/:student_id", addDropCourse);
+Studentrouter.post("/student/stausUpdate", acceptReject);
+Studentrouter.get("/student/addDrop", getAddDrop);
 
- 
+Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
+Studentrouter.get("/students/withdrawalRequests", getWithdrawalRequests);
+Studentrouter.post(
+  "/students/acceptWithdrawalRequests",
+  AcceptWithdrawalRequest
+);
+Studentrouter.post("/students/activateStudent", activateStudent);
+
+Studentrouter.get("/students/getStudentStatus", getStudentRegistrationStatus);
+Studentrouter.post("/students/confirmStatus", confirmStudentRegistration);
 
 Studentrouter.get("/template", getTemplate);
 
@@ -115,5 +120,7 @@ Studentrouter.post("/student/test", async (req: Request, res: Response) => {
     res.status(400).json(a);
   }
 });
+
+Studentrouter.get("/student/numberofstudent/:course_id", getNumberOfStudents);
 
 module.exports = Studentrouter;

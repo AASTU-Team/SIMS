@@ -1,0 +1,24 @@
+POST http://localhost:3000/user/student/addDrop/6648ec022101c6cda3c57d0b
+Content-Type:  application/json
+
+{
+   "add" : ["6633753421c6431fbbd36514" ,"663382e7a0411f84d80671f6"  ]  ,
+   "drop" : ["66363f250dfeb00796223221"]
+}
+### to accept or reject 
+POST http://localhost:3000/user/student/stausUpdate
+Content-Type:  application/json
+
+{
+  "addDrop_id" : "664b2a67ca340acae975f11d",
+  "status" : "Accept",
+  "assignSec" : [
+    //{"course_id" : "662802ac728d90164b677588" , "section_id" : "66486b2d16fac6e8375feab0"},
+    {"course_id" : "664b13d72fa1ab9ef543688c" , "section_id" : "66486b2d16fac6e8375feab0"}
+  ]
+}
+###
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&status=pending
+Content-Type:  application/json
+
+ 
