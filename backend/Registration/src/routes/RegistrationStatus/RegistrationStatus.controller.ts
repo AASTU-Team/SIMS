@@ -54,6 +54,70 @@ export const createRegistrationStatus = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+export const ActivateRegistrationStatus = async (req: Request, res: Response) => {
+  const data = req.body;
+  const type = data.type
+  const semester = data.semester
+  const year = data.year
+  try {
+
+    const RegStatus = await RegistrationStatus.findOne({ type: type, semester: semester,year: year})
+
+    if(RegStatus)
+      {
+        RegStatus.status = true
+        await RegStatus.save()
+        return res.status(200).json({ message: "success", staus: RegStatus });
+
+      }
+
+      else{
+        const newStatus = await new RegistrationStatus({type:type,semester:semester,status:true,year:year});
+        await newStatus.save();
+        return res.status(201).json({ message: "success", staus: newStatus });
+
+      }
+
+
+
+  
+  } catch (error: any) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+export const DeactivateRegistrationStatus = async (req: Request, res: Response) => {
+  const data = req.body;
+  const type = data.type
+  const semester = data.semester
+  const year = data.year
+  try {
+
+    const RegStatus = await RegistrationStatus.findOne({ type: type, semester: semester,year: year})
+
+    if(RegStatus)
+      {
+        RegStatus.status = false
+        await RegStatus.save()
+        return res.status(200).json({ message: "success", staus: RegStatus });
+
+      }
+
+      else{
+   
+        return res.status(400).json({ message: "unable to find registration status" });
+
+      }
+
+
+
+  
+  } catch (error: any) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
 export const updateStatus = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

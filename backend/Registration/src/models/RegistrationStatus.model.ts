@@ -11,6 +11,16 @@ let RegistrationstatusSchema  = new mongoose.Schema({
         type:Number,
         required:true
     },
+    semester:{
+        type:Number,
+        required:true
+
+    },
+    type: {
+        type: String,
+        enum: ["Undergraduate", "Masters"],
+        required: false,
+      },
     department_id:{
         type:mongoose.Schema.Types.ObjectId,
         required:false,
