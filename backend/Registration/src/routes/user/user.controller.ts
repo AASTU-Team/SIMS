@@ -21,11 +21,10 @@ async function getCredit(Id: String): Promise<any> {
 }
 
 const fs = require("fs");
-const https = require('https'); 
+const https = require("https");
 const csv = require("csv-parser");
-const Csv = require('csv-stringify');
+const Csv = require("csv-stringify");
 const Json2csvParser = require("json2csv").Parser;
-
 
 const Joi = require("joi");
 
@@ -583,40 +582,41 @@ export const exportAllStudent = async (req: Request, res: Response) => {
     });
     const json2csvParser = new Json2csvParser({ header: true });
     const csvData = json2csvParser.parse(myStudents);
-    const filePath = path.join('./exports', 'students.csv');
+    const filePath = path.join("./exports", "students.csv");
 
-        fs.writeFile(filePath, csvData, function(error:any) {
-          if (error) throw error;
-          console.log("Write to csv was successfull!");
-       
-        });
-// Get the path to the CSV file on the server
-const csvFilePath = path.join( './exports', 'students.csv');
+    fs.writeFile(filePath, csvData, function (error: any) {
+      if (error) throw error;
+      console.log("Write to csv was successfull!");
+    });
+    // Get the path to the CSV file on the server
+    const csvFilePath = path.join("./exports", "students.csv");
 
-// Set the path to the downloads folder
-const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'students.csv');
+    // Set the path to the downloads folder
+    const downloadsPath = path.join(
+      require("os").homedir(),
+      "Downloads",
+      "students.csv"
+    );
 
-// Create a read stream for the CSV file
-const readStream = fs.createReadStream(csvFilePath);
+    // Create a read stream for the CSV file
+    const readStream = fs.createReadStream(csvFilePath);
 
-// Create a write stream to the downloads folder
-const writeStream = fs.createWriteStream(downloadsPath);
+    // Create a write stream to the downloads folder
+    const writeStream = fs.createWriteStream(downloadsPath);
 
-// Pipe the read stream to the write stream
-readStream.pipe(writeStream);
+    // Pipe the read stream to the write stream
+    readStream.pipe(writeStream);
 
-// Set the necessary headers to trigger a download
-await writeStream.on('open', () => {
-  res.setHeader('Content-Disposition', 'attachment; filename=students.csv');
-  res.setHeader('Content-Type', 'text/csv');
-  res.status(200).json({ message: "successfully exported" });
-});
-      
-    console.log('Data exported to students.csv');
+    // Set the necessary headers to trigger a download
+    await writeStream.on("open", () => {
+      res.setHeader("Content-Disposition", "attachment; filename=students.csv");
+      res.setHeader("Content-Type", "text/csv");
+      res.status(200).json({ message: "successfully exported" });
+    });
+
+    console.log("Data exported to students.csv");
 
     // console.log(myStudents);
-
-
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -652,36 +652,39 @@ export const exportAllStaff = async (req: Request, res: Response) => {
     });
     const json2csvParser = new Json2csvParser({ header: true });
     const csvData = json2csvParser.parse(myStaff);
-    const filePath = path.join('./exports', 'staffs.csv');
+    const filePath = path.join("./exports", "staffs.csv");
 
-        fs.writeFile(filePath, csvData, function(error:any) {
-          if (error) throw error;
-          console.log("Write to csv was successfull!");
-       
-        });
-// Get the path to the CSV file on the server
-const csvFilePath = path.join( './exports', 'staffs.csv');
+    fs.writeFile(filePath, csvData, function (error: any) {
+      if (error) throw error;
+      console.log("Write to csv was successfull!");
+    });
+    // Get the path to the CSV file on the server
+    const csvFilePath = path.join("./exports", "staffs.csv");
 
-// Set the path to the downloads folder
-const downloadsPath = path.join(require('os').homedir(), 'Downloads', 'staffs.csv');
+    // Set the path to the downloads folder
+    const downloadsPath = path.join(
+      require("os").homedir(),
+      "Downloads",
+      "staffs.csv"
+    );
 
-// Create a read stream for the CSV file
-const readStream = fs.createReadStream(csvFilePath);
+    // Create a read stream for the CSV file
+    const readStream = fs.createReadStream(csvFilePath);
 
-// Create a write stream to the downloads folder
-const writeStream = fs.createWriteStream(downloadsPath);
+    // Create a write stream to the downloads folder
+    const writeStream = fs.createWriteStream(downloadsPath);
 
-// Pipe the read stream to the write stream
-readStream.pipe(writeStream);
+    // Pipe the read stream to the write stream
+    readStream.pipe(writeStream);
 
-// Set the necessary headers to trigger a download
-await writeStream.on('open', () => {
-  res.setHeader('Content-Disposition', 'attachment; filename=staffs.csv');
-  res.setHeader('Content-Type', 'text/csv');
-  res.status(200).json({ message: "successfully exported" });
-});
-      
-    console.log('Data exported to staffs.csv');
+    // Set the necessary headers to trigger a download
+    await writeStream.on("open", () => {
+      res.setHeader("Content-Disposition", "attachment; filename=staffs.csv");
+      res.setHeader("Content-Type", "text/csv");
+      res.status(200).json({ message: "successfully exported" });
+    });
+
+    console.log("Data exported to staffs.csv");
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -920,21 +923,25 @@ export const getStudentProfile = async (req: Request, res: Response) => {
 ////get student courses
 
 export const getStudentCourses = async (req: Request, res: Response) => {
-  const student_id = req.body.student_id;
+  const { student_id } = req.params;
   const courseids: String[] = [];
 
-  const registration = await Registration.find({ stud_id: student_id });
+  const registration = await Registration.find({
+    stud_id: student_id,
+  }).populate({
+    path: "courses.courseID",
+    select: "code name credits lec lab description ",
+  });
 
-  if (!registration) {
+  if (!registration.length) {
     return res.status(404).json({ message: "Courses Not found" });
   }
-
+  console.log(registration);
   const registrationData: any[] = registration;
 
   registrationData.map((registration) => {
     registration.courses.map((course: any) => {
       // console.log(course)
-
       if (course.status === "Active") {
         courseids.push(course.courseID);
       }
@@ -1365,41 +1372,66 @@ export const acceptReject = async (req: Request, res: Response) => {
   if (assignSec.length !== addDrop.courseToAdd.length) {
     return res.status(400).send({ message: "nor all courses are included" });
   }
-  let added: any = [];
-  let dropped: any = [];
-  assignSec.forEach(async (element: any) => {
-    const add = await addCourse({
-      id: addDrop.stud_id,
-      course_id: element.course_id,
-      section_id: element.section_id,
-    });
-    added.push(add);
-  });
-  // drop logic
-  addDrop.courseToDrop.forEach(async (element: any) => {
-    const drop = await dropCourse({
-      id: addDrop.stud_id,
-      course_id: element,
-    });
-  });
-  // end
-
-  if (
-    (addDrop.courseToAdd.length > 0 && added.length > 0) ||
-    (addDrop.courseToDrop.length > 0 && dropped.length > 0)
-  ) {
+  addDrop.courseToAddWithSec = assignSec;
+  addDrop.save();
+  return res.status(200).send({ message: "accepted" });
+};
+export const acceptRejectRegistrar = async (req: Request, res: Response) => {
+  const { addDrop_id, status, reason } = req.body;
+  const addDrop = await AddDrop.findById(addDrop_id);
+  if (addDrop.status !== "Accepted") {
+    return res
+      .status(400)
+      .send({ message: "The requested action cannot be performed" });
+  }
+  if (status === "reject") {
     const registration = await AddDrop.findByIdAndUpdate(addDrop_id, {
-      status: "accepted",
+      registrarStatus: "rejected",
+      registrarReason: reason,
     });
-    return res.status(200).send({ message: "success" });
+    return res.status(200).send({ message: "rejected" });
+  } else if (status === "accept") {
+    let added: any = [];
+    let dropped: any = [];
+    addDrop?.courseToAddWithSec.forEach(async (element: any) => {
+      const add = await addCourse({
+        id: addDrop.stud_id,
+        course_id: element.course_id,
+        section_id: element.section_id,
+      });
+      added.push(add);
+    });
+    // drop logic
+    addDrop.courseToDrop.forEach(async (element: any) => {
+      const drop = await dropCourse({
+        id: addDrop.stud_id,
+        course_id: element,
+      });
+    });
+    // end
+    if (
+      (addDrop.courseToAdd.length > 0 && added.length > 0) ||
+      (addDrop.courseToDrop.length > 0 && dropped.length > 0)
+    ) {
+      const registration = await AddDrop.findByIdAndUpdate(addDrop_id, {
+        registrarStatus: "Accepted",
+      });
+      return res.status(200).send({ message: "success" });
+    }
+  } else {
+    return res
+      .status(400)
+      .send({ message: "status should be accept or reject" });
   }
 };
 
 export const getAddDrop = async (req: Request, res: Response) => {
-  const { skip, limit, status } = req.query;
+  const { skip, limit, status, registerarStatus } = req.query;
   let st = {};
   if (status) {
     st = { status: status };
+  } else if (registerarStatus) {
+    st = { registrarStatus: registerarStatus };
   }
   console.log(skip, limit);
   const addDrop = await AddDrop.find(st)
@@ -1631,8 +1663,8 @@ export const addCourse = async ({
 };
 
 export const ListAddCourses = async (req: Request, res: Response) => {
-  const { id } = req.body;
-  res.status(200).send(await getPossibleAddCourses(id));
+  const { student_id } = req.params;
+  res.status(200).send(await getPossibleAddCourses(student_id));
 };
 
 function checkOverLoad(total_credit: Number, credits: Number, add: boolean) {

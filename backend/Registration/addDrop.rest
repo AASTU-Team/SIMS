@@ -21,4 +21,9 @@ Content-Type:  application/json
 GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&status=pending
 Content-Type:  application/json
 
+###
+GET  http://localhost:3000/user/student/courses/6646788517b2c61fd5e52d85
+Content-Type:  application/json
+
+
  

@@ -10,6 +10,7 @@ import {
   acceptReject,
   getAddDrop,
   getNumberOfStudents,
+  acceptRejectRegistrar,
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
@@ -78,19 +79,20 @@ Studentrouter.patch("/deactivate", deactivateUser);
 Studentrouter.patch("/student/update", updateStudent);
 Studentrouter.patch("/staff/update", updateStaff);
 
-Studentrouter.get("/student/courses", getStudentCourses);
+Studentrouter.get("/student/courses/:student_id", getStudentCourses);
 Studentrouter.post("/student/register", studentRegistration);
 Studentrouter.get(
   "/student/registrationCourses",
   getstudentRegistrationCourses
 );
-Studentrouter.get("/student/addcourses", ListAddCourses);
+Studentrouter.get("/student/addcourses/:student_id", ListAddCourses);
 
 // Studentrouter.post("/student/dropcourse/:id", dropCourse);
 // Studentrouter.post("/student/addcourse/:id", addCourse);
 
 Studentrouter.post("/student/addDrop/:student_id", addDropCourse);
 Studentrouter.post("/student/stausUpdate", acceptReject);
+Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
