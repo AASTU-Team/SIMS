@@ -1237,8 +1237,14 @@ export const getDepartmentRegistrationStatus = async (
 
   for (const id of ids) {
     const registrations = await Registration.findOne({
-      stud_id: id,
-      status: "Student",
+      $or: [
+        { status: "Student",stud_id:id },
+        { 
+          stud_id:id,
+          status: "Rejected",
+          "rejections.by": "Registrar"
+        },
+      ],
     })
     .populate({
       path: "stud_id",
@@ -1989,8 +1995,13 @@ export const getDepartmentWithdrawalRequests = async (req: Request, res: Respons
   })
   for (const id of Ids) {
     const withdrawal = await Withdrawal.findOne({
-      stud_id: id,
-      status: "Student",
+      $or: [
+        { status: "Student" },
+        { 
+          status: "Rejected",
+          "rejections.by": "Registrar"
+        },
+      ],
     })
     .populate({
       path: "stud_id",
