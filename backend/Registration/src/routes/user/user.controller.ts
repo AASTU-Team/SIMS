@@ -978,14 +978,14 @@ export const getstudentRegistrationCourses = async (
     //console.log(`Highest combination: Year ${highestYear}, Semester ${highestSemester}`);
     // res.status(200).send(`Highest combination: Year ${highestYear}, Semester ${highestSemester}`)
 
-    const status = await RegistrationStatus.findOne({ year: highestYear });
+    const status = await RegistrationStatus.findOne({ year: highestYear,semester:highestSemester,type:student.type });
     if (!status) {
       return res.status(404).json({ message: "Registration data not found" });
-    }
+    } 
 
     if (!status.status) {
       return res.status(400).json({
-        message: "Registration is not active. contact the administrator",
+        message: false,
       });
     }
     if (highestSemester == 1) {
@@ -1055,6 +1055,8 @@ export const getstudentRegistrationCourses = async (
           credit: Thecourse.credits,
           lec: Thecourse?.lec,
           lab: Thecourse?.lab,
+          tut: Thecourse?.tut,
+          hs: Thecourse?.hs,
           prerequisites: coursePreq,
         });
         const value = await getCredit(course);
@@ -1192,7 +1194,7 @@ export const studentRegistration = async (req: Request, res: Response) => {
       courses: regCourses,
       registration_date: new Date(),
       total_credit: sum,
-      status: "Pending",
+      status: "Student",
     });
 
     try {
@@ -1210,7 +1212,8 @@ export const studentRegistration = async (req: Request, res: Response) => {
     res.status(200).send(`error`);
   }
 };
-export const getStudentRegistrationStatus = async (
+
+export const getDepartmentRegistrationStatus = async (
   req: Request,
   res: Response
 ) => {
@@ -1218,6 +1221,7 @@ export const getStudentRegistrationStatus = async (
   const ids: any[] = [];
   const pendingIds: any[] = [];
   const pendingStudents: any[] = [];
+  const registrationStatuses: any[] = [];
 
   const students = await Student.find({ department_id: department });
 
@@ -1225,18 +1229,24 @@ export const getStudentRegistrationStatus = async (
     return res.status(404).json({ message: "students not found" });
   }
   students.map((student: any) => {
+
     ids.push(student._id);
   });
 
   for (const id of ids) {
     const registrations = await Registration.findOne({
       stud_id: id,
-      status: "Pending",
-    });
+      status: "Student",
+    })
+    .populate({
+      path: "stud_id",
+      select: "name",
+    })
     if (!registrations) {
       continue;
     }
     pendingIds.push(registrations.stud_id);
+    registrationStatuses.push(registrations);
   }
   if (pendingIds.length == 0) {
     return res.status(200).json({ message: "No pending registrations" });
@@ -1247,10 +1257,10 @@ export const getStudentRegistrationStatus = async (
     pendingStudents.push(student);
   }
 
-  return res.json({ message: pendingStudents });
+  return res.json({ registrations:registrationStatuses,students: pendingStudents });
 };
 
-export const confirmStudentRegistration = async (
+export const confirmDepartmentRegistration = async (
   req: Request,
   res: Response
 ) => {
@@ -1277,11 +1287,11 @@ export const confirmStudentRegistration = async (
       try {
         const registration = await Registration.findOne({
           stud_id: id,
-          status: "Pending",
+          status: "Student",
         });
         if (registration) {
           console.log(registration);
-          registration.status = "Confirmed";
+          registration.status = "Department";
           await registration.save();
           success.push(`updated student ${id}`);
         } else {
@@ -1319,11 +1329,150 @@ export const confirmStudentRegistration = async (
       try {
         const registration = await Registration.findOne({
           stud_id: id,
-          status: "Pending",
+          status: "Student",
         });
         if (registration) {
           console.log(registration);
-          registration.status = "Confirmed";
+          registration.status = "Department";
+          await registration.save();
+          success.push(`updated student ${id}`);
+        } else {
+          errors.push(`can't find student ${id}`);
+        }
+      } catch (error) {
+        console.error(`Error updating student ${id}: ${error}`);
+        errors.push(`can't update student ${id}`);
+      }
+    }
+    if (success.length > 0) {
+      return res
+        .status(200)
+        .json({ message: "successfully updated students", errors: errors });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "No students were updated", errors: errors });
+    }
+  }
+};
+
+
+export const getRegistrarRegistrationStatus = async (
+  req: Request,
+  res: Response
+) => {
+  const department = req.body.department;
+  const ids: any[] = [];
+  const pendingIds: any[] = [];
+  const pendingStudents: any[] = [];
+  const registrationStatuses: any[] = [];
+
+
+  
+    const registrations = await Registration.find({
+     
+      status: "Department",
+    })
+    .populate({
+      path: "stud_id",
+      select: "name",
+    })
+    registrations.map((registration:any )=>{
+      pendingIds.push(registration.stud_id);
+
+    })
+
+
+  
+  
+    registrationStatuses.push(registrations);
+  
+  if (pendingIds.length == 0) {
+    return res.status(200).json({ message: "No pending registrations" });
+  }
+
+  for (const id of pendingIds) {
+    const student = await Student.findById(id);
+    pendingStudents.push(student);
+  }
+
+  return res.json({ registrations:registrations,students: pendingStudents });
+};
+export const confirmRegistrarRegistration = async (
+  req: Request,
+  res: Response
+) => {
+  const department = req.body.department;
+  const isAll = req.body.isAll;
+  const data = req.body.data;
+
+  const ids: any[] = [];
+  const errors: any[] = [];
+  const success: any[] = [];
+
+  if (isAll == true) {
+   
+    
+
+
+      // console.log(id)
+      try {
+        const registrations = await Registration.find({
+         
+          status: "Department",
+        });
+        if (registrations.length > 0) {
+          const updatePromises = registrations.map(async (registration:any) => {
+            try {
+              registration.status = "Registrar";
+              await registration.save();
+              success.push(`updated student ${registration.stud_id}`);
+            } catch (err:any) {
+              errors.push(`failed to update student ${registration.stud_id}: ${err.message}`);
+            }
+          });
+        
+          await Promise.all(updatePromises);
+        } else {
+          res.status(400).json({ error:"unable to find requests "})
+        
+        }
+      } catch (error) {
+        console.error(`error updating student status`);
+        errors.push(`error updating student status`);
+      }
+    
+    if (success.length > 0) {
+      return res
+        .status(200)
+        .json({ message: "successfully updated students", errors: errors });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "No students were updated", errors: errors });
+    }
+  } else {
+    /*  const students = await Student.find({department_id:department})
+
+
+      if (!students) {
+        return res.status(404).json({ message: "students not found" });
+      }
+      students.map((student:any) =>
+        {
+          ids.push(student._id)
+    
+        }) */
+    for (const id of data) {
+      // console.log(id)
+      try {
+        const registration = await Registration.findOne({
+          stud_id: id,
+          status: "Student",
+        });
+        if (registration) {
+          console.log(registration);
+          registration.status = "Department";
           await registration.save();
           success.push(`updated student ${id}`);
         } else {

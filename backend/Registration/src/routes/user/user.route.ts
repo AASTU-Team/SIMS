@@ -18,8 +18,10 @@ import { uploadFile } from "./user.controller";
 import { getStudentProfile } from "./user.controller";
 import { getAllStaff } from "./user.controller";
 import { getstudentRegistrationCourses } from "./user.controller";
-import { getStudentRegistrationStatus } from "./user.controller";
-import { confirmStudentRegistration } from "./user.controller";
+import { getDepartmentRegistrationStatus } from "./user.controller";
+import { confirmDepartmentRegistration } from "./user.controller";
+import { getRegistrarRegistrationStatus } from "./user.controller";
+import { confirmRegistrarRegistration } from "./user.controller";
 
 import { getAllStudent } from "./user.controller";
 import { getStudentByDepartment } from "./user.controller";
@@ -100,9 +102,11 @@ Studentrouter.post(
   AcceptWithdrawalRequest
 );
 Studentrouter.post("/students/activateStudent", activateStudent);
+Studentrouter.get("/department/getStudentStatus", getDepartmentRegistrationStatus);
+Studentrouter.post("/department/confirmStudentStatus", confirmDepartmentRegistration);
 
-Studentrouter.get("/students/getStudentStatus", getStudentRegistrationStatus);
-Studentrouter.post("/students/confirmStatus", confirmStudentRegistration);
+Studentrouter.get("/registrar/getStudentStatus", getRegistrarRegistrationStatus);
+Studentrouter.post("/registrar/confirmStudentStatus", confirmRegistrarRegistration);
 
 Studentrouter.get("/template", getTemplate);
 
