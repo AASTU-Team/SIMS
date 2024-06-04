@@ -9,4 +9,5 @@ export type StaffFields = {
     gender?: 'MALE' | 'FEMALE';
     role?: Array<string>;
     hireDate?: Date;
+    status?: string;
 };

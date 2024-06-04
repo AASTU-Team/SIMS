@@ -324,6 +324,22 @@ export default function AddStaff() {
                           value: "departmentMan",
                           label: "Department Management",
                         },
+                        {
+                          value: "studentGrade",
+                          label: "Student Grade Management"
+                        },
+                        {
+                          value: "semesterMan",
+                          label: "Semester Management"
+                        },
+                        {
+                          value: "studentDepReg",
+                          label: "Department Office"
+                        },
+                        {
+                          value: "studentReg",
+                          label: "Registrar Office"
+                        }
                       ]}
                     />
                   </div>
