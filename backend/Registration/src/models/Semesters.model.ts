@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const semesterSchema = new mongoose.Schema({
    
     batches: {
-      type: [Number],
+      type: [String],
       required: true,
     },
     program:  {
@@ -12,7 +12,7 @@ const semesterSchema = new mongoose.Schema({
         required: true,
       },
     semester: {
-      type: Number,
+      type: String,
       required: true,
     },
     start_date: {
