@@ -15,6 +15,20 @@ let addDropSchema = new mongoose.Schema({
     required: false,
     ref: "Course",
   },
+  courseToAddWithSec: [
+    {
+      course_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "Course",
+      },
+      section_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "Section",
+      },
+    },
+  ],
   department_id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
@@ -26,6 +40,16 @@ let addDropSchema = new mongoose.Schema({
     default: "pending",
   },
   reason: {
+    type: String,
+    required: false,
+    default: "",
+  },
+  registrarStatus: {
+    type: String,
+    required: false,
+    default: "pending",
+  },
+  registrarReason: {
     type: String,
     required: false,
     default: "",
