@@ -18,10 +18,12 @@ export const getSemesters = async (req: Request, res: Response) => {
 
   try {
     // use find({dep_id : id from fetch })
-    const status: any = await Semester.find()
-  
+    const status = await Semester.find().lean();
 
-    res.status(200).json({ data: status });
+    // Add the 'key' property to each document
+    const data = status.map((doc:any) => ({ ...doc, key: doc._id.toString() }));
+
+    res.status(200).json({ data });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -67,13 +69,11 @@ export const createSemester = async (req: Request, res: Response) => {
 };
 
 export const ActivateSemester= async (req: Request, res: Response) => {
-  const data = req.body;
-  const program = data.program
-  const semester = data.semester
-  const academic_year = data.academic_year
+  const id = req.body.id;
+  
   try {
 
-    const semesterStatus = await Semester.findOne({ program: program, semester: semester,academic_year: academic_year})
+    const semesterStatus = await Semester.findById(id)
 
     if(semesterStatus)
       {
@@ -98,13 +98,12 @@ export const ActivateSemester= async (req: Request, res: Response) => {
   }
 };
 export const DeactivateSemesterStatus = async (req: Request, res: Response) => {
-  const data = req.body;
-  const program = data.program
-  const semester = data.semester
-  const academic_year = data.academic_year
+  const id= req.body.id;
+
   try {
 
-    const semesterStatus = await Semester.findOne({ program: program, semester: semester,academic_year: academic_year})
+    const semesterStatus = await Semester.findById(id)
+
 
     if(semesterStatus)
       {
