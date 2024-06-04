@@ -2,6 +2,7 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import Registration from "./Registration";
 import AddDrop from "./AddDrop";
+import WithDrawalReadmit from "./WithdrawalReadmit";
 
 const items: TabsProps["items"] = [
   {
@@ -13,6 +14,11 @@ const items: TabsProps["items"] = [
     key: "2",
     label: "Add/Drop Requests",
     children: <AddDrop />,
+  },
+  {
+    key: "3",
+    label: "Withdrawal and Readmission",
+    children: <WithDrawalReadmit />,
   },
 ];
 

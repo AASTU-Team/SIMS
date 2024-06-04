@@ -93,7 +93,7 @@ export default function Registration() {
   return (
     <div className="pt-2">
       <div className="flex justify-end">
-          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
+          <button className="flex justify-center items-center gap-2 mb-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
             Approve All Requests
           </button>
       </div>
