@@ -39,6 +39,7 @@ const AddDrop = require("../../models/addDrop.model");
 const Curriculum = require("../../models/curriculum.model");
 const Assignment = require("../../models/Assignment.model");
 const NumberOfStudent = require("../../models/numberOfStudent.model");
+const incStudentNumber = require("../../helper/incStudentNumber");
 
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
@@ -1356,6 +1357,13 @@ export const acceptReject = async (req: Request, res: Response) => {
   const { addDrop_id, status, assignSec, reason } = req.body;
   console.log(addDrop_id);
   const addDrop = await AddDrop.findById(addDrop_id);
+
+  if (!addDrop) {
+    return res
+      .status(400)
+      .send({ message: "The requested action cannot be performed" });
+  }
+
   if (addDrop.status !== "pending") {
     return res
       .status(400)
@@ -1373,19 +1381,35 @@ export const acceptReject = async (req: Request, res: Response) => {
     return res.status(400).send({ message: "nor all courses are included" });
   }
   addDrop.courseToAddWithSec = assignSec;
+  addDrop.status = "Accepted";
+  addDrop.registrarStatus = "pending";
   addDrop.save();
   return res.status(200).send({ message: "accepted" });
 };
 export const acceptRejectRegistrar = async (req: Request, res: Response) => {
   const { addDrop_id, status, reason } = req.body;
+
   const addDrop = await AddDrop.findById(addDrop_id);
-  if (addDrop.status !== "Accepted") {
+  if (!addDrop) {
     return res
       .status(400)
       .send({ message: "The requested action cannot be performed" });
   }
+  if (addDrop.status != "Accepted") {
+    return res.status(400).send({
+      message:
+        "The requested action cannot be performed departmetn must accept first",
+    });
+  }
+  if (addDrop.status === "Accepted" && addDrop.registrarStatus !== "pending") {
+    return res
+      .status(400)
+      .send({ message: "The requested action cannot be performed" });
+  }
+  console.log("2", addDrop);
   if (status === "reject") {
     const registration = await AddDrop.findByIdAndUpdate(addDrop_id, {
+      status: "pending",
       registrarStatus: "rejected",
       registrarReason: reason,
     });
@@ -1393,30 +1417,45 @@ export const acceptRejectRegistrar = async (req: Request, res: Response) => {
   } else if (status === "accept") {
     let added: any = [];
     let dropped: any = [];
-    addDrop?.courseToAddWithSec.forEach(async (element: any) => {
-      const add = await addCourse({
-        id: addDrop.stud_id,
-        course_id: element.course_id,
-        section_id: element.section_id,
-      });
-      added.push(add);
-    });
+
+    const addPromises = addDrop?.courseToAddWithSec.map(
+      async (element: any) => {
+        const add = await addCourse({
+          id: addDrop.stud_id,
+          course_id: element.course_id.toString(),
+          section_id: element.section_id.toString(),
+        });
+        added.push(add);
+        console.log(add);
+      }
+    );
     // drop logic
-    addDrop.courseToDrop.forEach(async (element: any) => {
+    const dropPromises = addDrop.courseToDrop.map(async (element: any) => {
       const drop = await dropCourse({
         id: addDrop.stud_id,
         course_id: element,
       });
+      dropped.push(drop);
+      console.log(drop);
     });
+    await Promise.all([...addPromises, ...dropPromises]);
+    console.log("crs", added, "dlt ", dropped);
     // end
     if (
       (addDrop.courseToAdd.length > 0 && added.length > 0) ||
       (addDrop.courseToDrop.length > 0 && dropped.length > 0)
     ) {
-      const registration = await AddDrop.findByIdAndUpdate(addDrop_id, {
-        registrarStatus: "Accepted",
-      });
+      const registration = await AddDrop.findByIdAndUpdate(
+        { _id: addDrop_id },
+        {
+          registrarStatus: "Accepted",
+        }
+      );
       return res.status(200).send({ message: "success" });
+    } else {
+      return res
+        .status(400)
+        .send({ message: "something went wrong check the status manually " });
     }
   } else {
     return res
@@ -1426,12 +1465,12 @@ export const acceptRejectRegistrar = async (req: Request, res: Response) => {
 };
 
 export const getAddDrop = async (req: Request, res: Response) => {
-  const { skip, limit, status, registerarStatus } = req.query;
+  const { skip, limit, status, registrarStatus } = req.query;
   let st = {};
   if (status) {
     st = { status: status };
-  } else if (registerarStatus) {
-    st = { registrarStatus: registerarStatus };
+  } else if (registrarStatus) {
+    st = { registrarStatus: registrarStatus };
   }
   console.log(skip, limit);
   const addDrop = await AddDrop.find(st)
@@ -1439,7 +1478,14 @@ export const getAddDrop = async (req: Request, res: Response) => {
     .skip(skip)
     .limit(limit)
     .populate("courseToAdd", "_id name code")
-    .populate("courseToDrop", "_id name code");
+    .populate("courseToDrop", "_id name code")
+    .populate("stud_id", "_id name email")
+    .populate("department_id", "_id name")
+    .populate({ path: "courseToAddWithSec.course_id", select: "_id name code" })
+    .populate({
+      path: "courseToAddWithSec.section_id",
+      select: "_id name code",
+    });
   console.log(addDrop);
   if (!addDrop) {
     return res.status(400).send({ message: "not found" });
@@ -1612,7 +1658,17 @@ export const dropCourse = async ({
   if (!updatedRegistration) {
     return { message: "Registration not found" };
   }
-
+  const number = await NumberOfStudent.findOne({
+    section_id: registrationData.section_id,
+    course_id: course,
+  });
+  if (number) {
+    if (number.numberOfStudent.includes(id)) {
+      const index = number.numberOfStudent.indexOf(id);
+      number.numberOfStudent.splice(index, 1);
+      await number.save();
+    }
+  }
   return { message: "success" };
 };
 
@@ -1647,6 +1703,7 @@ export const addCourse = async ({
     isRetake,
     section: section_id,
   };
+
   const updatedRegistration = await Registration.findByIdAndUpdate(
     registrationData._id,
     {
@@ -1659,6 +1716,7 @@ export const addCourse = async ({
   if (!updatedRegistration) {
     return { error: "Registration not found" };
   }
+  await incStudentNumber(section_id, course_id, id);
   return { message: "success", data: course_id };
 };
 
