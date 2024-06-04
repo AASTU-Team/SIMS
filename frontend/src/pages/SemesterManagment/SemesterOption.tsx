@@ -7,15 +7,15 @@ export default function SemesterOption({semester}:{semester: SemesterDetails}) {
   const navigate = useNavigate()
   // const batches = ["1", "2", "3", "4"];
   return (
-    <div className="flex gap-5 justify-between mx-5">
-      <div className="flex flex-col gap-5 bg-transparent pb-2 ">
+    <div className="flex gap-5 divide-x divide-slate-200 justify-between mx-5">
+      <div className="flex flex-col gap-5 bg-transparent pb-2">
         <span className="font-semibold text-lg underline">Actions</span>
         <div className="flex flex-col gap-5">
           <Button type="primary">Edit Semester</Button>
           <Button danger>Delete Semester</Button>
         </div>
       </div>
-      <div className="flex flex-col gap-5 bg-transparent pb-2 ">
+      <div className="flex flex-col gap-5 bg-transparent pb-2 px-4">
         <span className="font-semibold text-lg underline">Semester Status</span>
         <div className="flex flex-col justify-between gap-3">
           <div className="flex gap-2 justify-between">
@@ -74,7 +74,7 @@ export default function SemesterOption({semester}:{semester: SemesterDetails}) {
           </div>
         </div>
       </div>
-      <div className="flex flex-col gap-5 bg-transparent pb-2 ">
+      <div className="flex flex-col gap-5 bg-transparent pb-2 px-4">
         <span className="font-semibold text-lg underline">Batches</span>
         <div className="grid grid-cols-3 gap-5">
           {semester?.batches?.map((batch) => (

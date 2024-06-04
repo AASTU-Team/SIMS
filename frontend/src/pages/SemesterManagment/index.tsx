@@ -1,16 +1,34 @@
 import SemesterTable from "./table";
 import { useState } from "react";
 import {  FileAddOutlined } from "@ant-design/icons";
-import { Button, Modal, Form, Select, DatePicker, Input } from "antd";
+import { Button, Modal, Form, Select, DatePicker, Input, notification } from "antd";
 import type { FormProps } from "antd";
 import { SemesterDetails } from "../../type/registration";
+import { useMutation } from "@tanstack/react-query";
+import { addSemester } from "../../api/registration";
 
 
 export default function SemesterManagement() {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
+
+  const semesterMutation = useMutation({
+    mutationKey: ["addSemester"],
+    mutationFn: (values: SemesterDetails) => addSemester(values),
+    onError: () => {
+      notification.error({ message: "Semester Not Created" });
+    },
+    onSuccess: () => {
+      notification.success({ message: "Semester Created Successfully" });
+      form.resetFields();
+    },
+  });
+  
   const onFinish: FormProps["onFinish"] = (values) => {
-    console.log("Success:", values);
+    // console.log("Success:", values);
+    semesterMutation.mutate(values);
+    form.resetFields();
+    setOpen(false);
   };
 
   const onFinishFailed: FormProps["onFinishFailed"] = (
@@ -51,7 +69,7 @@ export default function SemesterManagement() {
           <Button
             key="submit"
             type="primary"
-            onClick={() => setOpen(false)}
+            onClick={() => form.submit()}
             className="bg-primary"
           >
             Create
@@ -63,6 +81,7 @@ export default function SemesterManagement() {
           name="semester registration"
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
+          form={form}
         >
           <div className="flex gap-6 justify-center items-start">
             <div className="">
@@ -90,7 +109,7 @@ export default function SemesterManagement() {
                       optionFilterProp="children"
                       filterOption={filterOption}
                       onChange={(value) => {
-                        form.setFieldValue("batch", value);
+                        form.setFieldValue("batches", value);
                       }}
                       options={[
                         {
@@ -138,7 +157,6 @@ export default function SemesterManagement() {
                     <Select
                       showSearch
                       placeholder="Select program type"
-                      mode="multiple"
                       optionFilterProp="children"
                       filterOption={filterOption}
                       onChange={(value) => {
@@ -182,7 +200,6 @@ export default function SemesterManagement() {
                     <Select
                       showSearch
                       placeholder="Select semester"
-                      mode="multiple"
                       optionFilterProp="children"
                       filterOption={filterOption}
                       onChange={(value) => {
@@ -191,15 +208,15 @@ export default function SemesterManagement() {
                       options={[
                         {
                           value: "1",
-                          label: "I Semester",
+                          label: "First Semester",
                         },
                         {
                           value: "2",
-                          label: "II Semester",
+                          label: "Second Semester",
                         },
                         {
                           value: "3",
-                          label: "III Semester",
+                          label: "Third Semester",
                         },
                       ]}
                     />
