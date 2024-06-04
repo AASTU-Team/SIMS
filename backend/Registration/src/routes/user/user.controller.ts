@@ -43,6 +43,8 @@ const NumberOfStudent = require("../../models/numberOfStudent.model");
 
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
+const Withdrawal = require("../../models/Withdrawal.model")
+
 import path from "path";
 
 export const UploadFile = (req: Request, res: Response) => {
@@ -1357,6 +1359,102 @@ export const confirmDepartmentRegistration = async (
 };
 
 
+export const rejectDepartmentRegistration = async (
+  req: Request,
+  res: Response
+) => {
+  const department = req.body.department;
+  const isAll = req.body.isAll;
+  const data = req.body.data;
+
+  const ids: any[] = [];
+  const errors: any[] = [];
+  const success: any[] = [];
+
+  if (isAll == true) {
+    const students = await Student.find({ department_id: department });
+
+    if (!students) {
+      return res.status(404).json({ message: "students not found" });
+    }
+    students.map((student: any) => {
+      ids.push(student._id);
+    });
+
+    for (const id of ids) {
+      // console.log(id)
+      try {
+        const registration = await Registration.findOne({
+          stud_id: id,
+          status: "Student",
+        });
+        if (registration) {
+          console.log(registration);
+          registration.status = "Rejected";
+          registration.rejections = {
+            "by": "Department",
+            "reason": id.reason
+          },
+          await registration.save();
+          success.push(`updated student ${id.id}`);
+        } else {
+          errors.push(`can't find student ${id.id}`);
+        }
+      } catch (error) {
+        console.error(`Error updating student ${id.id}: ${error}`);
+        errors.push(`can't update student ${id.id}`);
+      }
+    }
+    if (success.length > 0) {
+      return res
+        .status(200)
+        .json({ message: "successfully updated students", errors: errors });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "No students were updated", errors: errors });
+    }
+  } else {
+   
+
+    for (const id of data) {
+      // console.log(id)
+      try {
+        const registration = await Registration.findOne({
+          stud_id: id,
+          status: "Student",
+        });
+        if (registration) {
+          console.log(registration);
+          registration.status = "Rejected";
+          registration.rejections = {
+            "by": "Department",
+            "reason": id.reason
+          }
+          await registration.save();
+          success.push(`updated student ${id.id}`);
+        } else {
+          errors.push(`can't find student ${id.id}`);
+        }
+      } catch (error) {
+        console.error(`Error updating student ${id.id}: ${error}`);
+        errors.push(`can't update student ${id.id}`);
+      }
+    }
+    if (success.length > 0) {
+      return res
+        .status(200)
+        .json({ message: "successfully updated students", errors: errors });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "No students were updated", errors: errors });
+    }
+  }
+};
+
+
+
 export const getRegistrarRegistrationStatus = async (
   req: Request,
   res: Response
@@ -1494,6 +1592,56 @@ export const confirmRegistrarRegistration = async (
     }
   }
 };
+export const rejectRegistrarRegistration = async (
+  req: Request,
+  res: Response
+) => {
+  const department = req.body.department;
+  const data = req.body.data;
+
+  const ids: any[] = [];
+  const errors: any[] = [];
+  const success: any[] = [];
+
+
+   
+
+    for (const id of data) {
+      // console.log(id)
+      try {
+        const registration = await Registration.findOne({
+          stud_id: id,
+          status: "Department",
+        });
+        if (registration) {
+          console.log(registration);
+          registration.status = "Rejected";
+          registration.rejections = {
+            "by": "Registrar",
+            "reason": id.reason
+          }
+          await registration.save();
+          success.push(`updated student ${id.id}`);
+        } else {
+          errors.push(`can't find student ${id.id}`);
+        }
+      } catch (error) {
+        console.error(`Error updating student ${id.id}: ${error}`);
+        errors.push(`can't update student ${id.id}`);
+      }
+    }
+    if (success.length > 0) {
+      return res
+        .status(200)
+        .json({ message: "successfully updated students", errors: errors });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "No students were updated", errors: errors });
+    }
+  
+};
+
 export const acceptReject = async (req: Request, res: Response) => {
   const { addDrop_id, status, assignSec, reason } = req.body;
   console.log(addDrop_id);
@@ -1811,6 +1959,8 @@ export const getTemplate = async (req: Request, res: Response) => {
 
 export const WithdrawalRequest = async (req: Request, res: Response) => {
   const id = req.body.id;
+  const reason = req.body.reason;
+  const data = req.body
 
   const student = await Student.findById(id);
 
@@ -1818,25 +1968,203 @@ export const WithdrawalRequest = async (req: Request, res: Response) => {
     return res.status(404).json({ message: "Student not found" });
   }
 
-  const updated = await Student.findByIdAndUpdate(id, {
-    status: "Pending-Withdrawal",
-  });
+  const withdrawalRequest = await new Withdrawal({stud_id:id,reason:reason,status:"Student"});
 
-  if (!updated) {
-    return res.status(404).json({ message: "Unable to update" });
-  }
+  await withdrawalRequest.save()
 
-  return res.status(200).json({ message: "success" });
+
+
+  return res.status(200).json({ message: "successfully submitted request" });
 };
 
-export const getWithdrawalRequests = async (req: Request, res: Response) => {
-  const students = await Student.find({ status: "Pending-Withdrawal" });
+export const getDepartmentWithdrawalRequests = async (req: Request, res: Response) => {
+  const department = req.body.department;
+  const Ids:any = []
+  const Withdrawals:any = []
+  const students = await Student.find({ department_id: department });
+  students.map((student:any)=>{
 
-  if (!students) {
-    return res.status(404).json({ message: " No Student found" });
+    Ids.push(student._id)
+
+  })
+  for (const id of Ids) {
+    const withdrawal = await Withdrawal.findOne({
+      stud_id: id,
+      status: "Student",
+    })
+    .populate({
+      path: "stud_id",
+      select: "name",
+    })
+    if (!withdrawal) {
+      continue;
+    }
+    Withdrawals.push(withdrawal);
+   
+  }
+  if (Withdrawals.length == 0) {
+    return res.status(200).json({ message: "No pending withdrawals" });
   }
 
-  return res.status(200).json(students);
+
+
+  return res.json({ requests:Withdrawals });
+
+};
+export const getRegistrarWithdrawalRequests = async (req: Request, res: Response) => {
+
+  const withdrawalRequests = await Withdrawal.find({status:"Department"}).populate({
+    path: "stud_id",
+    select: "name",
+  })
+
+  if(!withdrawalRequests)
+    {
+      return res.status(400).json({ message: "No pending withdrawals" });
+    }
+
+    return res.status(200).json({ message:withdrawalRequests })
+
+
+
+
+
+}
+export const AcceptDepartmentWithdrawalRequest = async (req: Request, res: Response) => {
+  const ids = req.body.data;
+  const errors:any = []
+  const success:any = []
+
+  for(const id of ids) {
+  const student = await Student.findById(id);
+  let status: Boolean = false;
+  if (!student) {
+    errors.push(`Could not find student with id ${id}`);
+  }
+
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id}, { status: "Department" });
+
+  if (!updated) {
+    errors.push(`Could not update student with name ${student.name}`);
+    
+  }
+  else{
+    success.push(` updated student with name ${student.name}`);
+
+  }
+}
+
+  return res.status(200).json({ success: success,errors: errors });
+};
+export const AcceptRegistrarWithdrawalRequest = async (req: Request, res: Response) => {
+  const ids = req.body.data;
+  const errors:any = []
+  const success:any = []
+
+  for(const id of ids) {
+  const student = await Student.findById(id);
+  let status: Boolean = false;
+  if (!student) {
+    errors.push(`Could not find student with id ${id}`);
+  }
+  const highestCombination = await Registration.findOne({ stud_id: id })
+  .sort({ year: -1, semester: -1 })
+  .select("year semester")
+  .limit(1);
+
+
+if (highestCombination) {
+  const highestYear = highestCombination.year;
+  const highestSemester = highestCombination.semester;
+
+  const currentRegistration = await Registration.findOne({
+    year: highestYear,
+    semester: highestSemester,
+  });
+  const courses: any[] = currentRegistration.courses;
+
+  for (const course of courses) {
+    if (course.status !== "Completed") {
+      status = true;
+      await Registration.deleteOne({ _id: currentRegistration._id });
+      break; // Stop further iteration
+    }
+  }
+}
+
+
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id}, { status: "Registrar" });
+
+  if (!updated) {
+    errors.push(`Could not update student with name ${student.name}`);
+    
+  }
+  else{
+    success.push(` updated student with name ${student.name}`);
+
+  }
+}
+
+  return res.status(200).json({ success: success,errors: errors });
+};
+export const RejectDepartmentWithdrawalRequest = async (req: Request, res: Response) => {
+  const ids = req.body.data;
+  const errors:any = []
+  const success:any = []
+
+  for(const id of ids) {
+  const student = await Student.findById(id.id);
+  let status: Boolean = false;
+  if (!student) {
+    errors.push(`Could not find student with id ${id.id}`);
+  }
+
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Rejected", rejections: {
+    "by": "Department",
+    "reason": id.reason
+  }, });
+
+  if (!updated) {
+    errors.push(`Could not update student with name ${student.name}`);
+    
+  }
+  else{
+    success.push(` updated student with name ${student.name}`);
+
+  }
+}
+
+  return res.status(200).json({ success: success,errors: errors });
+};
+
+export const RejectRegistrarWithdrawalRequest = async (req: Request, res: Response) => {
+  const ids = req.body.data;
+  const errors:any = []
+  const success:any = []
+
+  for(const id of ids) {
+  const student = await Student.findById(id.id);
+  let status: Boolean = false;
+  if (!student) {
+    errors.push(`Could not find student with id ${id.id}`);
+  }
+
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Rejected", rejections: {
+    "by": "Registrar",
+    "reason": id.reason
+  }, });
+
+  if (!updated) {
+    errors.push(`Could not update student with name ${student.name}`);
+    
+  }
+  else{
+    success.push(` updated student with name ${student.name}`);
+
+  }
+}
+
+  return res.status(200).json({ success: success,errors: errors });
 };
 
 export const AcceptWithdrawalRequest = async (req: Request, res: Response) => {
@@ -1852,6 +2180,7 @@ export const AcceptWithdrawalRequest = async (req: Request, res: Response) => {
     .sort({ year: -1, semester: -1 })
     .select("year semester")
     .limit(1);
+
 
   if (highestCombination) {
     const highestYear = highestCombination.year;
