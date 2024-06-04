@@ -1,8 +1,11 @@
 import {Switch, Popconfirm, Button } from "antd";
 import { QuestionCircleOutlined } from "@ant-design/icons";
+import { useNavigate } from "react-router-dom";
+import { SemesterDetails } from "../../type/registration";
 
-export default function SemesterOption() {
-  const batches = ["1", "2", "3", "4"];
+export default function SemesterOption({semester}:{semester: SemesterDetails}) {
+  const navigate = useNavigate()
+  // const batches = ["1", "2", "3", "4"];
   return (
     <div className="flex gap-5 justify-between mx-5">
       <div className="flex flex-col gap-5 bg-transparent pb-2 ">
@@ -74,10 +77,17 @@ export default function SemesterOption() {
       <div className="flex flex-col gap-5 bg-transparent pb-2 ">
         <span className="font-semibold text-lg underline">Batches</span>
         <div className="grid grid-cols-2 gap-5">
-          {batches.map((batch) => (
+          {semester?.batches?.map((batch) => (
             <div className="flex gap-3 items-center">
               <span className="font-semibold">Year {batch}:</span>
-              <Button id={batch}>View Batch</Button>
+              <Button
+                id={batch}
+                onClick={() => {
+                  navigate(`/semester/batches/`, { state: { semesterId: semester?.id, batch: batch, semester: semester?.semester}});
+                }}
+              >
+                View Batch Detail
+              </Button>
             </div>
           ))}
         </div>

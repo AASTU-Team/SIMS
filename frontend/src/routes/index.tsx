@@ -36,6 +36,7 @@ import RegistrarRegistration from "../pages/RegistrarRegistration";
 import RegistrarAddDropRequests from "../pages/RegistrarRegistration/AddDropRequests";
 import StudentGrades from "../pages/StudentGrades";
 import SemesterManagement from "../pages/SemesterManagment";
+import BatchCourses from "../pages/SemesterManagment/BatchCourses";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -65,10 +66,7 @@ const AllRoutes = () => {
                     <Route path="/students" element={<StudentManagement />} />
                     <Route path="/students/add" element={<AddStudent />} />
                     <Route path="/students/edit/" element={<EditStudent />} />
-                    <Route
-                      path="/studentGrades"
-                      element={<StudentGrades />}
-                    />
+                    <Route path="/studentGrades" element={<StudentGrades />} />
                     <Route
                       path="/studentDepReg"
                       element={<DepartmentStudentRegistration />}
@@ -119,6 +117,7 @@ const AllRoutes = () => {
                     />
                     <Route path="/myCourses" element={<StudentCourses />} />
                     <Route path="/semester" element={<SemesterManagement />} />
+                    <Route path="/semester/batches" element={<BatchCourses />} />
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="*" element={<NotFoundPage />} />

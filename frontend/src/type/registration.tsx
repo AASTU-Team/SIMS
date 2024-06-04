@@ -10,6 +10,7 @@ export interface SlipDetails {
 }
 
 export interface SemesterDetails {
+  id?: string;
   batches?: Array<string>;
   program?: string;
   semester?: string;

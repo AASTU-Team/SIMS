@@ -1,7 +1,6 @@
 import React from 'react';
-import { Table, Space} from 'antd';
+import { Table} from 'antd';
 import type { TableColumnsType } from 'antd';
-import { useNavigate } from 'react-router-dom';
 // import { useQuery } from '@tanstack/react-query';
 // import Loader from '../../components/Loader';
 import { SemesterDetails } from '../../type/registration';
@@ -9,36 +8,41 @@ import SemesterOption from './SemesterOption';
 
 const data = [
   {
-    key: '1',
-    academic_year: '2021',
-    program: 'BSCS',
-    batches: ['A', 'B'],
-    start_date: '2021-09-01',
-    end_date: '2021-12-01',
-    status: 'Active',
+    id: "1",
+    key:"1",
+    academic_year: "2021",
+    program: "BSCS",
+    batches: ["1", "2", "3", "4"],
+    semester: "II",
+    start_date: "2021-09-01",
+    end_date: "2021-12-01",
+    status: "Active",
   },
   {
-    key: '2',
-    academic_year: '2021',
-    program: 'BSIT',
-    batches: ['A', 'B'],
-    start_date: '2021-09-01',
-    end_date: '2021-12-01',
-    status: 'Active',
+    id: "2",
+    key:"2",
+    academic_year: "2021",
+    program: "BSIT",
+    batches: ["1", "2", "3", "4"],
+    semester: "I",
+    start_date: "2021-09-01",
+    end_date: "2021-12-01",
+    status: "Active",
   },
   {
-    key: '3',
-    academic_year: '2021',
-    program: 'BSSE',
-    batches: ['A', 'B'],
-    start_date: '2021-09-01',
-    end_date: '2021-12-01',
-    status: 'Active',
+    id: "3",
+    key:"3",
+    academic_year: "2021",
+    program: "BSSE",
+    batches: ["1", "2", "4"],
+    semester: "III",
+    start_date: "2021-09-01",
+    end_date: "2021-12-01",
+    status: "Active",
   },
 ];
 const SemesterTable: React.FC = () =>
   {
-    const navigate = useNavigate();
     // const query = useQuery({
     //     queryKey: ["staff"],
     //     queryFn: getStaff,
@@ -61,6 +65,13 @@ const SemesterTable: React.FC = () =>
         width: 150,
       },
       {
+        title: "Semester",
+        dataIndex: "semester",
+        key: "semester",
+        width: 150,
+      },
+
+      {
         title: "Start Date",
         dataIndex: "start_date",
         key: "start_date",
@@ -79,7 +90,7 @@ const SemesterTable: React.FC = () =>
           return <span>{formattedDate}</span>;
         },
         width: 150,
-      }
+      },
     ];
     return (
       <div className="shadow-lg py-4 ">
@@ -101,9 +112,9 @@ const SemesterTable: React.FC = () =>
           dataSource={data} // Fix: Access the 'data' property of the resolved data
           scroll={{ x: 1300 }}
           expandable={{
-            expandedRowRender: () => (
+            expandedRowRender: (record) => (
               <div className="p-2 bg-white">
-                <SemesterOption />
+                <SemesterOption semester={record} />
               </div>
             ),
           }}
