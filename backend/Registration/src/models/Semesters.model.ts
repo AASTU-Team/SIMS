@@ -1,28 +1,36 @@
 import mongoose from "mongoose";
 
-let SemesterSchema  = new mongoose.Schema({
-    status:{
-        type: Boolean,
-        required: true
-    
+const semesterSchema = new mongoose.Schema({
+   
+    batches: {
+      type: [Number],
+      required: true,
     },
-
-    year:{
-        type:Number,
-        required:true
-    },
-    semester:{
-        type:Number,
-        required:true
-
-    },
-    type: {
+    program:  {
         type: String,
         enum: ["Undergraduate", "Masters"],
         required: true,
       },
-  
+    semester: {
+      type: Number,
+      required: true,
+    },
+    start_date: {
+      type: Date,
+      required: false,
+    },
+    end_date: {
+      type: Date,
+      required: false,
+    },
+    academic_year: {
+      type: String,
+      required: false,
+    },
+    status: {
+      type: Boolean,
+      required: true,
+    },
+  });
 
-})
-
-module.exports = mongoose.models.Semester || mongoose.model("ActiveSemester",SemesterSchema);
+module.exports = mongoose.models.Semester || mongoose.model("Semester",semesterSchema);

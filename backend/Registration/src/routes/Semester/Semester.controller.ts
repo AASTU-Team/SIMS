@@ -68,12 +68,12 @@ export const createSemester = async (req: Request, res: Response) => {
 
 export const ActivateSemester= async (req: Request, res: Response) => {
   const data = req.body;
-  const type = data.type
+  const program = data.program
   const semester = data.semester
-  const year = data.year
+  const academic_year = data.academic_year
   try {
 
-    const semesterStatus = await Semester.findOne({ type: type, semester: semester,year: year})
+    const semesterStatus = await Semester.findOne({ program: program, semester: semester,academic_year: academic_year})
 
     if(semesterStatus)
       {
@@ -84,9 +84,8 @@ export const ActivateSemester= async (req: Request, res: Response) => {
       }
 
       else{
-        const newStatus = await new Semester({type:type,semester:semester,status:true,year:year});
-        await newStatus.save();
-        return res.status(201).json({ message: "success", staus: newStatus });
+       
+        return res.status(400).json({ message: "unable to find semester"});
 
       }
 
@@ -100,12 +99,12 @@ export const ActivateSemester= async (req: Request, res: Response) => {
 };
 export const DeactivateSemesterStatus = async (req: Request, res: Response) => {
   const data = req.body;
-  const type = data.type
+  const program = data.program
   const semester = data.semester
-  const year = data.year
+  const academic_year = data.academic_year
   try {
 
-    const semesterStatus = await Semester.findOne({ type: type, semester: semester,year: year})
+    const semesterStatus = await Semester.findOne({ program: program, semester: semester,academic_year: academic_year})
 
     if(semesterStatus)
       {
