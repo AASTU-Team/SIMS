@@ -26,8 +26,20 @@ let registrationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Student", "Department","Registrar"],
+    enum: ["Student", "Department","Registrar","Rejected"],
     required: false,
+  },
+  rejections: {
+    by: {
+      type: String,
+      enum: ['Department', 'Registrar'],
+      required: false,
+    },
+    reason: {
+      type: String,
+      required: false,
+    },
+    
   },
  
   courses: [

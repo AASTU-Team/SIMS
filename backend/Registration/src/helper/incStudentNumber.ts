@@ -5,7 +5,7 @@ async function incStudentNumber(id: string, course: string, stud_id: string) {
     section_id: id,
     course_id: course,
   });
-
+  console.log(number);
   if (number) {
     if (number.numberOfStudent.includes(stud_id)) {
       console.log(number.numberOfStudent.includes(stud_id));

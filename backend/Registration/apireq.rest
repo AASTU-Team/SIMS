@@ -1,0 +1,49 @@
+## the params are temp should be fetched from auth
+### 13 get list of enrolled courses student id 
+GET  http://localhost:3000/user/student/courses/6646788517b2c61fd5e52d85
+Content-Type:  application/json
+### 13 get list of courses we can add 
+GET  http://localhost:3000/user/student/addcourses/6646788517b2c61fd5e52d85
+Content-Type:  application/json
+
+### 14 student send list of courses student id
+POST http://localhost:3000/user/student/addDrop/6646788517b2c61fd5e52d84
+Content-Type:  application/json
+
+{
+   "add" : ["662802ac728d90164b677588" ,"664b13d72fa1ab9ef543688c"  ]  ,
+   "drop" : ["663a03d879c454a6075ec31d"]
+}
+### 15 department : fetch add and drop requests should use auth to get depid 
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&status=pending
+Content-Type:  application/json
+### get the number course id 
+GET   http://localhost:3000/user/student/numberofstudent/662802ac728d90164b677588
+Content-Type:  application/json
+### 16 department : accept or reject 
+POST http://localhost:3000/user/student/stausUpdate
+Content-Type:  application/json
+
+{
+  "addDrop_id" : "665f0191ec73504a0ad4c78c",
+  "status" : "Accept",
+  "assignSec" : [
+    {"course_id" : "662802ac728d90164b677588" , "section_id" : "665cc8fd8191e76e0532e368"},
+    {"course_id" : "664b13d72fa1ab9ef543688c" , "section_id" : "665cc8fd8191e76e0532e368"}
+  ]
+}
+### 17 registrar : get accepted req 
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&status=Accepted
+Content-Type:  application/json
+### 18 registrar : accept or reject 
+POST http://localhost:3000/user/student/stausUpdateRegistrar
+Content-Type:  application/json
+
+{
+  "addDrop_id" : "665f0191ec73504a0ad4c78c",
+  "status" : "accept"
+}
+### 17 dept : get rejected req from registrar
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&registrarStatus=rejected
+Content-Type:  application/json
+ 
