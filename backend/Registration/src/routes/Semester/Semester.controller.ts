@@ -7,7 +7,7 @@ const Joi = require("joi");
 
 let results: any = [];
 
-const Semester = require("../../models/Semesters");
+const Semester = require("../../models/Semesters.model");
 
 
 
