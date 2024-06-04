@@ -2,13 +2,12 @@ GET http://localhost:3000/auth
 
 ### register
 
-POST http://localhost:3000/auth/register 
+POST http://localhost:5000/auth/register 
 Content-Type:  application/json
 
 {
-    "username": "newusuer",
-    "email" : "new@haislot.com",
-    "password" : "newpasswod"
+    "id": "newusuer",
+    "email" : "new@haislot.com"
 }
 ### Login
 POST http://localhost:3000/auth/login 
@@ -36,8 +35,8 @@ Content-Type:  application/json
 }
 ### first time 
 
-PATCH  http://localhost:3000/auth/invitePass
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjI5MmVjZTJlMGI3YzE4YzJiN2FkZmIiLCJlbWFpbCI6Im5ld0BoYWlzbG90LmNvbSIsImlhdCI6MTcxMzk3NDk5MCwiZXhwIjoxNzE0NTc5NzkwfQ.2oXezWEkkF6_Qaz60Y5tuJJA-cdQ4HjMSvHfn9T21uw
+PATCH  http://localhost:5000/auth/invitePass
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2NjVlY2MwMDRkNWU2NDQwNGVjOGM5ZDgiLCJlbWFpbCI6Im5ld0BoYWlzbG90LmNvbSIsImlhdCI6MTcxNzQ4ODY0MCwiZXhwIjoxNzE4MDkzNDQwfQ.gOPgwetaw6EoGYBQcrAm7SuJFAeKV2icVwSzkr36OTc
 Content-Type:  application/json
 
 {
