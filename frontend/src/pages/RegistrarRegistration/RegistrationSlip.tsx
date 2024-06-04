@@ -67,7 +67,7 @@ export default function RegistrationSlip( {details}: {details: SlipDetails}) {
   return (
     <div className="pt-1 flex flex-col gap-5">
       <Table columns={columns} dataSource={[]} scroll={{ x: 1300 }} />
-      
+    
     </div>
   );
 }
