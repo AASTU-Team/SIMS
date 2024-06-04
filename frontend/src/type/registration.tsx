@@ -7,6 +7,8 @@ export interface SlipDetails {
   sem?: string;
   name?:string;
   student_id?:string;
+  type?:string;
+  reason?:string;
 }
 
 export interface SemesterDetails {
@@ -18,4 +20,11 @@ export interface SemesterDetails {
   end_date?: string;
   academic_year?: string;
   status?: string;
+}
+
+export interface SectionFields {
+  key: string;
+  name: string;
+  enrolled: string;
+  staff?:string;
 }

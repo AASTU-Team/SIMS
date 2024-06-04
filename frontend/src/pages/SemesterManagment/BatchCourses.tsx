@@ -1,22 +1,27 @@
 import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import { Link, useLocation } from "react-router-dom";
+import CourseTable from "./CourseTable";
 
-const items: TabsProps["items"] = [
-  {
-    key: "1",
-    label: "Courses",
-    children: <div>Courses</div>,
-  },
-  {
-    key: "2",
-    label: "Course Assignment History",
-    children: <div>Course Assignment History</div>,
-  },
-];
- 
+type BatchCoursesProps = {
+    semesterId: string;
+    batch: string;
+    semester: string;}
+
 export default function BatchCourses() {
- const {state}: {state:{semesterId: string,batch: string,semester:string}} = useLocation();
+    const {state}: {state:BatchCoursesProps} = useLocation();
+    const items: TabsProps["items"] = [
+        {
+            key: "1",
+            label: "Courses",
+            children: <CourseTable {...state} />
+        },
+        {
+            key: "2",
+            label: "Course Assignment History",
+            children: <div>Course Assignment History</div>,
+        },
+    ];
   return (
     <div className="max-w-screen-2xl p-4 md:p-5 2xl:p-8">
       <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">

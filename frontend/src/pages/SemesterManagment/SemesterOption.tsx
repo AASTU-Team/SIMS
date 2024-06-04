@@ -76,7 +76,7 @@ export default function SemesterOption({semester}:{semester: SemesterDetails}) {
       </div>
       <div className="flex flex-col gap-5 bg-transparent pb-2 ">
         <span className="font-semibold text-lg underline">Batches</span>
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-3 gap-5">
           {semester?.batches?.map((batch) => (
             <div className="flex gap-3 items-center">
               <span className="font-semibold">Year {batch}:</span>

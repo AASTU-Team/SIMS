@@ -12,7 +12,7 @@ const data = [
     key:"1",
     academic_year: "2021",
     program: "BSCS",
-    batches: ["1", "2", "3", "4"],
+    batches: ["1", "2", "3", "4","5"],
     semester: "II",
     start_date: "2021-09-01",
     end_date: "2021-12-01",
