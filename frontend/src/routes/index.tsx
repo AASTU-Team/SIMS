@@ -35,6 +35,7 @@ import AddDropRequests from "../pages/DepartmentStudentRegistration/AddDropReque
 import RegistrarRegistration from "../pages/RegistrarRegistration";
 import RegistrarAddDropRequests from "../pages/RegistrarRegistration/AddDropRequests";
 import StudentGrades from "../pages/StudentGrades";
+import SemesterManagement from "../pages/SemesterManagment";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -117,7 +118,7 @@ const AllRoutes = () => {
                       element={<StudentRegistration />}
                     />
                     <Route path="/myCourses" element={<StudentCourses />} />
-                    <Route path="/semester" element={<Calendar />} />
+                    <Route path="/semester" element={<SemesterManagement />} />
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="*" element={<NotFoundPage />} />

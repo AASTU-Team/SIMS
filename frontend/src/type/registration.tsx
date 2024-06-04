@@ -8,3 +8,13 @@ export interface SlipDetails {
   name?:string;
   student_id?:string;
 }
+
+export interface SemesterDetails {
+  batches?: Array<string>;
+  program?: string;
+  semester?: string;
+  start_date?: string;
+  end_date?: string;
+  academic_year?: string;
+  status?: string;
+}

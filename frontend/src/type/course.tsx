@@ -13,4 +13,11 @@ export type CourseFields = {
     option?:string;
     hs?:string;
     description?: string;
+    
 };
+
+export type Assessments = {
+    id:string;
+    name?:string;
+    value?:number;
+}
