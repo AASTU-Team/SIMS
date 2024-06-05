@@ -20,6 +20,7 @@ export interface SemesterDetails {
   end_date?: string;
   academic_year?: string;
   status?: string;
+  _id?:string;
 }
 
 export interface SectionFields {

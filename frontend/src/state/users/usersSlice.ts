@@ -7,7 +7,8 @@ interface UserState {
     email: string,
     role: string,
     roles:string[],
-    id: string
+    id: string,
+    _id:string
 }
 
 const initialState: UserState = {
@@ -15,7 +16,8 @@ const initialState: UserState = {
     email: "loading",
     role: "loading",
     roles:[],
-    id: "loading"
+    id: "loading",
+    _id: "loading"
 }
 
 export const userSlice = createSlice({
