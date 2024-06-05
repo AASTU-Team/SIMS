@@ -102,7 +102,7 @@ Studentrouter.patch("/staff/update", updateStaff);
 
 Studentrouter.get("/student/courses/:student_id", getStudentCourses);
 Studentrouter.post("/student/register",checkRegistrationStatus, studentRegistration);
-Studentrouter.get("/student/registrationCourses" ,checkRegistrationStatus ,getstudentRegistrationCourses
+Studentrouter.get("/student/registrationCourses/:student_id" ,checkRegistrationStatus ,getstudentRegistrationCourses
 );
 Studentrouter.get("/student/addcourses/:student_id", ListAddCourses);
 
