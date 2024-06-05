@@ -77,10 +77,10 @@ export const createSemester = async (req: Request, res: Response) => {
     const newStatus = await new Semester(data);
     await newStatus.save();
 
-    const addStatus = await new AddStatus({semester: newStatus._id, status:false});
+    const addStatus = await new AddStatus({semester: newStatus._id, status:"Inactive"});
     await addStatus.save();
 
-    const registrationStatus = await new RegistrationStatus({semester: newStatus._id, status:false});
+    const registrationStatus = await new RegistrationStatus({semester: newStatus._id, status:"Inactive"});
     await registrationStatus.save();
 
     return res.status(201).json({ message: "success", staus: newStatus });
