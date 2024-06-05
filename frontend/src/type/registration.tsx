@@ -21,6 +21,8 @@ export interface SemesterDetails {
   academic_year?: string;
   status?: string;
   _id?:string;
+  addStatus?:boolean;
+  regStatus?:boolean;
 }
 
 export interface SectionFields {

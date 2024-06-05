@@ -5,5 +5,6 @@ export type CurriculumFields = {
   semester?: string;
   year?: string;
   courses?: string[];
+  type?: string;
   description?: string;
 };
