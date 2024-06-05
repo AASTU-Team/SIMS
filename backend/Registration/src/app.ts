@@ -19,7 +19,7 @@ app.use("/user", userrouter);
 app.use("/course", courseRouter);
 app.use("/department", departmentRoute);
 app.use("/curriculum", curriculumRoute);
-app.use("/schedule", assignmentRoute);
+app.use("/assignment", assignmentRoute);
 app.use("/RegistrationStatus", RegistrationStatusRoute);
 app.use("/AddStatus", AddStatusRoute);
 // app.get("/", (req , res) => {
