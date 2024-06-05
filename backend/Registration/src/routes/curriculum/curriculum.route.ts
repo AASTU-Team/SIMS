@@ -9,6 +9,7 @@ import {
   deleteCurriculum,
   removeCurriculumCourse,
   createCurriculumCsv,
+  getSpecCurriculum,
   exportCurriculums,
 } from "./curriculum.controller";
 
@@ -26,6 +27,7 @@ const curriculumRoute = express.Router();
 
 // get course based on dept
 curriculumRoute.get("/", getCurriculum);
+curriculumRoute.get("/spec", getSpecCurriculum);
 curriculumRoute.get("/export", exportCurriculums);
 curriculumRoute.get("/:id", getCurriculumById);
 curriculumRoute.post("/create", createCurriculum);

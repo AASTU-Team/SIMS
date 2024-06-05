@@ -47,7 +47,32 @@ const Staff = require("../../models/staff.model");
 export const getCurriculum = async (req: Request, res: Response) => {
   // fetch curriculum based on id from the auth
   // and courses should have name
-  const { id, year, semester } = req.query;
+  try {
+    // use find({dep_id : id from fetch })
+    const curriculums: any = await Curriculum.find()
+      .populate("courses")
+      .populate("department_id");
+
+    const curriculumView = curriculums.map((curriculum: any) => {
+      return {
+        ...curriculum.toObject(),
+        department_name: curriculum.department_id?.name,
+      };
+    });
+    if (!curriculums) {
+      return res.status(404).json({ message: "curriculums not found." });
+    }
+    console.log(curriculumView);
+    res.status(200).json({ data: curriculumView });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getSpecCurriculum = async (req: Request, res: Response) => {
+  // fetch curriculum based on id from the auth
+  // and courses should have name
+  const { id, year, semester, type } = req.query;
   console.log(typeof id, typeof Number(year), typeof semester);
   try {
     // use find({dep_id : id from fetch })
@@ -56,11 +81,12 @@ export const getCurriculum = async (req: Request, res: Response) => {
     if (!user) {
       return res.status(200).send([]);
     }
-    console.log(user);
+
     const curriculums: any = await Curriculum.find({
       department_id: user?.department_id.toString(),
       year: Number(year),
       semester: Number(semester),
+      type,
     })
       .populate("courses", "_id name instructors credits code lec lab")
       .populate("department_id", "name")
