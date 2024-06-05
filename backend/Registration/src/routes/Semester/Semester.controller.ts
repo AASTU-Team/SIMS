@@ -91,7 +91,8 @@ export const createSemester = async (req: Request, res: Response) => {
 };
 
 export const ActivateSemester= async (req: Request, res: Response) => {
-  const id = req.body.id;
+  //const id = req.body.id;
+  const { id } = req.params;
   
   try {
 
