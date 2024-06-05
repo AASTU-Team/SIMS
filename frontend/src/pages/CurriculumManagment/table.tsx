@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { useQuery } from '@tanstack/react-query';
 import { getCurriculum } from '../../api/curriculum';
-import { CourseFields } from '../../type/course';
 
 // const data: CurriculumFields[] = [
 //   {
@@ -67,23 +66,6 @@ const CurriculumTable: React.FC = () => {
       sorter: true,
     },
     {
-      title: "Courses",
-      dataIndex: "courses",
-      key: "courses",
-      render: (courses: CourseFields[]) => (
-        <ul>
-          {courses.map((course) => (
-            <li key={course.code}>{course.name}</li>
-          ))}
-        </ul>
-      ),
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
-    },
-    {
       title: "Action",
       key: "operation",
       render: (text, record) => (
@@ -104,7 +86,7 @@ const CurriculumTable: React.FC = () => {
   return (
     <div className="shadow-lg py-4 ">
       {query.isPending ? (
-        <div className='h-auto'>
+        <div className="h-auto">
           <Loader />
         </div>
       ) : query.isError ? (
@@ -112,7 +94,25 @@ const CurriculumTable: React.FC = () => {
       ) : (
         <Table
           columns={columns}
-          dataSource={query?.data?.data?.data || []} 
+          dataSource={query?.data?.data?.data || []}
+          expandable={{
+            expandedRowRender: (record) => (
+              <div className="p-2 bg-white flex">
+                <div>
+                  <h3 className="font-semibold">Courses</h3>
+                  <ul>
+                    {record?.courses?.map((course) => (
+                      <li >{course}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Description</h3>
+                  <p>{record.description}</p>
+                </div>
+              </div>
+            ),
+          }}
         />
       )}
     </div>
