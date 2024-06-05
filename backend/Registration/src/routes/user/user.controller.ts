@@ -859,6 +859,48 @@ export const deactivateUser = async (req: Request, res: Response) => {
   }
 };
 
+export const activateUser = async (req: Request, res: Response) => {
+  //const staff = req.body.staff_id;
+  const email = req.body.email;
+
+  try {
+    try {
+      const response: any = await fetch(
+        "http://localhost:5000/auth/activate",
+        {
+          method: "patch",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: email,
+          }),
+        }
+      );
+
+      if (response.status === 200) {
+        const r = await response.json();
+        console.log(r.message);
+
+        return res.status(200).json({ message: "success" });
+      } else {
+        const r = await response.json();
+
+        console.log(r.message);
+        return res
+          .status(400)
+          .json({ message: "An error happend please try again" });
+      }
+    } catch (error: any) {
+      console.log(error.message);
+
+      return res.status(500).json({ message: error.message });
+    }
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const updateStudent = async (req: Request, res: Response) => {
   try {
     const documentId = req.query.id;

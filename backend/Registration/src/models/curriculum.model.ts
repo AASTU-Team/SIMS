@@ -19,10 +19,7 @@ let curriculumSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
-  startDate: {
-    type: Date,
-    required: false,
-  },
+ 
   semester: {
    type: Number,
     required: true,

@@ -1,5 +1,7 @@
 import express from "express";
 
+
+
 import {
   addCourse,
   getTemplate,
@@ -47,6 +49,7 @@ import { RejectRegistrarWithdrawalRequest } from "./user.controller";
 import { AcceptWithdrawalRequest } from "./user.controller";
 import { activateStudent } from "./user.controller";
 import { deactivateUser } from "./user.controller";
+import { activateUser } from "./user.controller";
 import { deleteStaff } from "./user.controller";
 import { updateStaff } from "./user.controller";
 import { getStaffByDepartment } from "./user.controller";
@@ -58,6 +61,7 @@ const assignSection = require("../../helper/assignSection");
 
 const validateRegistration = require("../../middlware/validateRegistration");
 const validateSRegistration = require("../../middlware/validateSRegistration");
+const checkRegistrationStatus = require("../../middlware/checkRegistrationStatus");
 
 const multer = require("multer");
 const csv = require("csv-parser");
@@ -92,14 +96,13 @@ Studentrouter.get("/staff/department", getStaffByDepartment);
 Studentrouter.delete("/student/delete", deleteStudent);
 Studentrouter.delete("/staff/delete", deleteStaff);
 Studentrouter.patch("/deactivate", deactivateUser);
+Studentrouter.patch("/activate", activateUser);
 Studentrouter.patch("/student/update", updateStudent);
 Studentrouter.patch("/staff/update", updateStaff);
 
 Studentrouter.get("/student/courses/:student_id", getStudentCourses);
-Studentrouter.post("/student/register", studentRegistration);
-Studentrouter.get(
-  "/student/registrationCourses",
-  getstudentRegistrationCourses
+Studentrouter.post("/student/register",checkRegistrationStatus, studentRegistration);
+Studentrouter.get("/student/registrationCourses" ,checkRegistrationStatus ,getstudentRegistrationCourses
 );
 Studentrouter.get("/student/addcourses/:student_id", ListAddCourses);
 
