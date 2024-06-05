@@ -38,7 +38,7 @@ let curriculumSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["Undergraduate", "Masters"],
+    enum: ["Undergraduate", "Masters","PhD"],
     required: false,
   },
 });
