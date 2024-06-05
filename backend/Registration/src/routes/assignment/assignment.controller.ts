@@ -120,9 +120,14 @@ export const deleteAssignment = async (req: Request, res: Response) => {
   }
 };
 export const getAssignmentBycourse = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { id, year, semester } = req.query;
+  console.log(id, year, semester);
   try {
-    const assignment = await Assignment.find({ course_id: id })
+    const assignment = await Assignment.find({
+      course_id: id,
+      year: Number(year),
+      semester: Number(semester),
+    })
       .populate("instructor_id", "name")
       .populate("section_id", "name");
     if (!assignment) {
