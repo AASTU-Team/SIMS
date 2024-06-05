@@ -38,7 +38,7 @@ export const getSemesters = async (req: Request, res: Response) => {
     // Add the 'key' property to each document
     const data = status.map((doc:any) => ({ ...doc, key: doc._id.toString() }));
 
-    res.status(200).json({ mydata });
+    res.status(200).json({data:mydata });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -121,6 +121,7 @@ export const ActivateSemester= async (req: Request, res: Response) => {
 };
 export const DeactivateSemesterStatus = async (req: Request, res: Response) => {
   const id= req.body.id;
+  console.log(id)
 
   try {
 
