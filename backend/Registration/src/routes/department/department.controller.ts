@@ -66,7 +66,7 @@ export const getDep = async (req: Request, res: Response) => {
     // use find({dep_id : id from fetch })
     const department: any = await Department.find();
     if (!department) {
-      return res.status(400).json("departmetnt not found");
+      return res.status(400).json("department not found");
     }
     const departmentData = await Promise.all(
       department.map(async (dept: any) => {

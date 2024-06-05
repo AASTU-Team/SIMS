@@ -775,9 +775,9 @@ export const deleteStudent = async (req: Request, res: Response) => {
   }
 };
 export const deleteStaff = async (req: Request, res: Response) => {
-  const staff = req.body.staff_id;
-  const email = req.body.email;
-
+  const staff = req.query.staff_id
+  const email = req.query.email;
+  console.log(staff,email)
   try {
     try {
       const response: any = await fetch("http://localhost:5000/auth/delete", {
