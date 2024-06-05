@@ -11,6 +11,7 @@ import {
   addDropCourse,
   acceptReject,
   getAddDrop,
+  getStaffByDepId,
   getNumberOfStudents,
   acceptRejectRegistrar,
 } from "./user.controller";
@@ -84,6 +85,9 @@ Studentrouter.post("/me", getStudentProfile);
 Studentrouter.post("/upload", upload.single("file"), uploadFile);
 Studentrouter.get("/student/all", getAllStudent);
 Studentrouter.get("/student/all/export", exportAllStudent);
+
+Studentrouter.get("/staff/dept/:id", getStaffByDepId);
+
 Studentrouter.get("/staff/all", getAllStaff);
 Studentrouter.get("/staff/all/export", exportAllStaff);
 Studentrouter.get("/student/department", getStudentByDepartment);
