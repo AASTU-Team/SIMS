@@ -609,9 +609,20 @@ export const exportAllStudent = async (req: Request, res: Response) => {
       // Set the necessary headers to trigger a download
       res.setHeader("Content-Disposition", "attachment; filename=students.csv");
       res.setHeader("Content-Type", "text/csv");
+      const file = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+
+      "exports",
+      "students.csv"
+    );
+    console.log(__dirname);
+    res.download(file);
     
       // Send the Blob in the response
-      res.status(200).send(blob);
+      // res.status(200).send({data:blob});
     });;
 
     // console.log(myStudents);

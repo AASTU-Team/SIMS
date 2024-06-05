@@ -8,7 +8,7 @@ const semesterSchema = new mongoose.Schema({
     },
     program:  {
         type: String,
-        enum: ["Undergraduate", "Masters"],
+        enum: ["Undergraduate", "Masters","PhD"],
         required: true,
       },
     semester: {
@@ -28,7 +28,8 @@ const semesterSchema = new mongoose.Schema({
       required: false,
     },
     status: {
-      type: Boolean,
+      type: String,
+      enum: ["Active", "Inactive"],
       required: true,
     },
   });
