@@ -73,7 +73,7 @@ Content-Type:  application/json
 }
 
 ### get curriculum
-GET  http://localhost:3000/curriculum?id=664217adf8b1cf7706c8c48c&year=1&semester=1
+GET  http://localhost:3000/curriculum/spec?id=664217adf8b1cf7706c8c48c&year=1&semester=1&type=Undergraduate
 Content-Type:  application/json
 
 ### get staff by depid
