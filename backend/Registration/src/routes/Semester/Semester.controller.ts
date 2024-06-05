@@ -91,8 +91,8 @@ export const createSemester = async (req: Request, res: Response) => {
 };
 
 export const ActivateSemester= async (req: Request, res: Response) => {
-  //const id = req.body.id;
-  const { id } = req.params;
+  const id = req.body.id;
+ // const { id } = req.params;
   
   try {
 
@@ -100,7 +100,7 @@ export const ActivateSemester= async (req: Request, res: Response) => {
 
     if(semesterStatus)
       {
-        semesterStatus.status = true
+        semesterStatus.status = "Active"
         await semesterStatus.save()
         return res.status(200).json({ message: "success", staus: semesterStatus });
 
@@ -130,7 +130,7 @@ export const DeactivateSemesterStatus = async (req: Request, res: Response) => {
 
     if(semesterStatus)
       {
-        semesterStatus.status = false
+        semesterStatus.status = "Inactive"
         await semesterStatus.save()
         return res.status(200).json({ message: "success", staus: semesterStatus });
 
