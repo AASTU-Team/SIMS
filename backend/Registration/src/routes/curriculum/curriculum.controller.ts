@@ -107,8 +107,8 @@ export const getSpecCurriculum = async (req: Request, res: Response) => {
     if (!curriculums) {
       return res.status(200).json({ message: [] });
     }
-    console.log();
-    res.status(200).json({ data: curriculums });
+
+    res.status(200).json({ data: curriculums[0].courses });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
