@@ -46,4 +46,31 @@ Content-Type:  application/json
 ### 17 dept : get rejected req from registrar
 GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&registrarStatus=rejected
 Content-Type:  application/json
+
+### assing teacher to sec 
+POST http://localhost:3000/assignment/register
+Content-Type:  application/json
+
+{
+  "course_id": "662802ac728d90164b677588",
+  "section_id":  "665cc8fd8191e76e0532e368",
+  "instructor_id" : "664217adf8b1cf7706c8c48c" ,
+  "Lab_Lec" : "lecccm"
+}
+
+## lab lec inst if assigned no of student
+### 
+GET  http://localhost:3000/assignment/course/662802ac728d90164b677588
+Content-Type:  application/json
+
  
+### assign teacher 
+PATCH  http://localhost:3000/assignment/6660153088ec2ceb7defb8b0
+Content-Type:  application/json
+
+{
+  "instructor_id" : "664217adf8b1cf7706c8c48c"
+}
+
+
+
