@@ -30,6 +30,8 @@ export default function AddDrop() {
   //     queryKey: ["myCourse"],
   //     queryFn: ?,
   //   });
+  const [enrolledCourses, setEnrolledCourses] = useState<CourseFields[]>([]);
+  const [addDropCourses, setAddDropCourses] = useState<CourseFields[]>([]);
   const [open,setOpen] = useState(false)
   const courseQuery = useQuery({
       queryKey: ["course"],
@@ -105,8 +107,8 @@ export default function AddDrop() {
         <div className="flex gap-2 px-4 font-semibold">
     
           <Popconfirm
-            title="Delete the student"
-            description="Are you sure to delete this student?"
+            title="Drop the course"
+            description="Are you sure to drop this course?"
             onConfirm={() => console.log(text, record)}
             okText="Yes"
             cancelText="No"
@@ -184,8 +186,8 @@ export default function AddDrop() {
        render: (text, record) => (
          <div className="flex gap-2 px-4 font-semibold">
            <Popconfirm
-             title="Delete the student"
-             description="Are you sure to delete this student?"
+             title="Remove the course"
+             description="Are you sure to remove this course?"
              onConfirm={() => console.log(text, record)}
              okText="Yes"
              cancelText="No"
@@ -212,7 +214,7 @@ export default function AddDrop() {
             </button>
           </div>
         </div>
-        <Table columns={columns} dataSource={[]} scroll={{ x: 1300 }} />
+        <Table columns={columns} dataSource={enrolledCourses} scroll={{ x: 1300 }} />
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex justify-between">
@@ -226,7 +228,7 @@ export default function AddDrop() {
             </button>
           </div>
         </div>
-        <Table columns={addDrop} dataSource={[]} scroll={{ x: 1300 }} />
+        <Table columns={addDrop} dataSource={addDropCourses} scroll={{ x: 1300 }} />
       </div>
       <Modal
         centered

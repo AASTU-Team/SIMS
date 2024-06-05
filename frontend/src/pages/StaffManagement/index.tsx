@@ -1,6 +1,6 @@
 import StudentTable from "./table";
 import { useState } from "react";
-import { UserAddOutlined, UploadOutlined, InboxOutlined } from "@ant-design/icons";
+import { UserAddOutlined, UploadOutlined, InboxOutlined,DownloadOutlined } from "@ant-design/icons";
 import { Button, Modal, Form, Upload } from "antd";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -23,21 +23,27 @@ export default function StaffManagement() {
       <div className="flex justify-between">
         <div className="text-title-md">Staff Management</div>
         <div className="flex gap-2">
-        <button 
-          className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90" 
-          onClick={() => router('/staff/add')}>
-          <UserAddOutlined />
-          Register Staff
-        </button>
-        <button
-          onClick={() => setOpen(true)}
-          className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
-        >
-          <UploadOutlined />
-          Register Multiple Staff Members
-        </button>
+          <button
+            className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+            onClick={() => router("/staff/add")}
+          >
+            <UserAddOutlined />
+            Register Staff
+          </button>
+          <button
+            onClick={() => setOpen(true)}
+            className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+          >
+            <UploadOutlined />
+            Register Multiple Staff Members
+          </button>
+          <button
+            className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+          >
+            <DownloadOutlined />
+            Export List
+          </button>
         </div>
-
       </div>
       <StudentTable />
       <Modal
@@ -50,7 +56,12 @@ export default function StaffManagement() {
           <Button key="back" onClick={() => setOpen(false)}>
             Cancel
           </Button>,
-          <Button key="submit" type="primary" onClick={() => setOpen(false)} className="bg-primary">
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => setOpen(false)}
+            className="bg-primary"
+          >
             Register
           </Button>,
         ]}
@@ -63,9 +74,9 @@ export default function StaffManagement() {
         >
           <Form.Item>
             <Form.Item name="user_list" valuePropName="fileList" noStyle>
-              <Upload.Dragger name="files" action="/upload.do" >
+              <Upload.Dragger name="files" action="/upload.do">
                 <p className="ant-upload-drag-icon">
-                  <InboxOutlined/>
+                  <InboxOutlined />
                 </p>
                 <p className="ant-upload-text">
                   Click or drag csv files to this area to upload

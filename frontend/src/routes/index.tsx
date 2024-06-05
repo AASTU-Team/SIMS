@@ -29,6 +29,14 @@ import DepartmentManagement from "../pages/DepartmentManagement";
 import AddDepartment from "../pages/DepartmentManagement/AddDepartment";
 import EditDepartment from "../pages/DepartmentManagement/EditDepartment";
 import StudentRegistration from "../pages/StudentRegistration";
+import StudentCourses from "../pages/StudentCourses";
+import DepartmentStudentRegistration from "../pages/DepartmentStudentRegistration";
+import AddDropRequests from "../pages/DepartmentStudentRegistration/AddDropRequests";
+import RegistrarRegistration from "../pages/RegistrarRegistration";
+import RegistrarAddDropRequests from "../pages/RegistrarRegistration/AddDropRequests";
+import StudentGrades from "../pages/StudentGrades";
+import SemesterManagement from "../pages/SemesterManagment";
+import BatchCourses from "../pages/SemesterManagment/BatchCourses";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -56,24 +64,60 @@ const AllRoutes = () => {
                   <Routes>
                     <Route index element={<Dashboard />} />
                     <Route path="/students" element={<StudentManagement />} />
-                    <Route path="/students/add" element={<AddStudent/>} />
+                    <Route path="/students/add" element={<AddStudent />} />
                     <Route path="/students/edit/" element={<EditStudent />} />
+                    <Route path="/studentGrades" element={<StudentGrades />} />
+                    <Route
+                      path="/studentDepReg"
+                      element={<DepartmentStudentRegistration />}
+                    />
+                    <Route
+                      path="/studentDepReg/viewRequest"
+                      element={<AddDropRequests />}
+                    />
+                    <Route
+                      path="/studentReg"
+                      element={<RegistrarRegistration />}
+                    />
+                    <Route
+                      path="/studentReg/viewRequest"
+                      element={<RegistrarAddDropRequests />}
+                    />
+
                     <Route path="/staff" element={<StaffManagement />} />
-                    <Route path="/staff/add" element={<AddStaff/>} />
+                    <Route path="/staff/add" element={<AddStaff />} />
                     <Route path="/staff/edit" element={<EdditStaff />} />
                     <Route path="/course" element={<CourseManagement />} />
                     <Route path="/courses/add" element={<AddCourse />} />
                     <Route path="/courses/edit" element={<EditCourse />} />
-                    <Route path="/curriculum" element={<CurriculumManagement />} />
+                    <Route
+                      path="/curriculum"
+                      element={<CurriculumManagement />}
+                    />
                     <Route path="/curriculum/add" element={<AddCurriculum />} />
-                    <Route path="/curriculum/edit" element={<EditCurriculum />} />
-                    <Route path="/department" element={<DepartmentManagement />} />
-                    <Route path="/department/add" element={<AddDepartment/>} />
-                    <Route path="/department/edit" element={<EditDepartment />} />
+                    <Route
+                      path="/curriculum/edit"
+                      element={<EditCurriculum />}
+                    />
+                    <Route
+                      path="/department"
+                      element={<DepartmentManagement />}
+                    />
+                    <Route path="/department/add" element={<AddDepartment />} />
+                    <Route
+                      path="/department/edit"
+                      element={<EditDepartment />}
+                    />
                     <Route path="/room" element={<RoomManagement />} />
                     <Route path="/room/add" element={<AddRooms />} />
                     <Route path="/rooms/edit" element={<EditRoom />} />
-                    <Route path="/myRegistration" element={<StudentRegistration/>}/>
+                    <Route
+                      path="/myRegistration"
+                      element={<StudentRegistration />}
+                    />
+                    <Route path="/myCourses" element={<StudentCourses />} />
+                    <Route path="/semester" element={<SemesterManagement />} />
+                    <Route path="/semester/batches" element={<BatchCourses />} />
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="*" element={<NotFoundPage />} />

@@ -44,6 +44,10 @@ let studentSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  semester: {
+    type: Number,
+    required: true,
+  },
   admission_date: {
     type: Date,
     required: true,
@@ -54,7 +58,7 @@ let studentSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["Undergraduate", "Masters"],
+    enum: ["Undergraduate", "Masters","PhD"],
     required: false,
   },
   address: {

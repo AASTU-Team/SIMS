@@ -41,6 +41,10 @@ const validateRegistration = [
     .isNumeric()
     .withMessage('year must be a number'),
 
+    body('semester')
+    .isNumeric()
+    .withMessage('semester must be a number'),
+
     body('admission_date')
     .isDate({ format: 'YYYY-MM-DD' })
     .withMessage('addmission date must be in the format YYYY-MM-DD'),

@@ -9,6 +9,7 @@ import StudentIcon from "../../assets/sidebar/StudentIcon";
 import StaffIcon from "../../assets/sidebar/StaffIcon";
 import {InsertRowLeftOutlined,CalendarOutlined, BookOutlined, ProfileOutlined } from "@ant-design/icons";
 import { staffSideBarData, studentSideBarData } from "./data";
+import CalendarIcon from "../../assets/sidebar/CalendarIcon";
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -49,9 +50,13 @@ const Icon = [
     component: <InsertRowLeftOutlined />,
   },
   {
-    name: "calendar",
+    name: "semester",
     component: <CalendarOutlined />,
   },
+  {
+    name: "calendar",
+    component: <CalendarIcon/>
+  }
 ];
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {

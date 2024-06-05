@@ -1,21 +1,18 @@
 import mongoose from "mongoose";
 
 let AddStatusSchema  = new mongoose.Schema({
-    status:{
-        type: Boolean,
-        required: true
-    
-    },
+    status: {
+        type: String,
+        enum: ["Active", "Inactive"],
+        required: true,
+      },
+    semester: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "Semester",
+      }
 
-    year:{
-        type:Number,
-        required:true
-    },
-    department_id:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:false,
-        ref:"Department"
-    },
+  
 
 })
 

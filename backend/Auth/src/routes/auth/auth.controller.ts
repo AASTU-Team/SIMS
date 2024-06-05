@@ -102,6 +102,33 @@ async function deactivateUser(req: Request, res: Response): Promise<any> {
   
 }
 
+async function activateUser(req: Request, res: Response): Promise<any> {
+  //  Validate user data
+  const { error } = validateUser(req.body);
+  if (error) return res.status(400).send(error.details[0].message);
+
+  try {
+    const updateduser = await Auth.findOneAndUpdate({email: req.body.email},{status: 'Active'})
+    if(!updateduser)
+      {
+        return res.status(404).json({message:"Not Updated"})
+      }
+
+
+      return res.status(200).json({message:"success"})
+  
+    
+  } catch (error:any) {
+
+    return res.status(400).send(error.message);
+
+    
+  }
+ 
+  
+  
+}
+
 async function login(req: Request, res: Response): Promise<any> {
   const { error } = validateAuth(req.body);
   if (error) return res.status(400).send(error.details[0].message);
@@ -199,6 +226,17 @@ async function findByCredentials(
   if (!user) {
     throw new Error("invalid email or password");
   }
+  if(user.status === "Inactive")
+    {
+      throw new Error("your account is inactive please contact the administrator");
+
+    }
+
+    if(user.status === "Pending")
+      {
+        throw new Error("Please Verify your password");
+  
+      }
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     throw new Error(" invalid email or password");
@@ -215,5 +253,6 @@ export {
   logout,
   logoutAll,
   deleteUser,
-  deactivateUser
+  deactivateUser,
+  activateUser
 };
