@@ -131,3 +131,9 @@ export const deleteSemester = async (id: string) => {
   setHeaderToken(access_token);
   return await client.delete(`Semester/${id}`);
 };
+
+export const getBatchCourses = async (staff_id:string,year:number,semester:number,type:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`curriculum/spec?id=${staff_id}&year=${year}&semester=${semester}&type=${type}`);
+};

@@ -2,11 +2,16 @@ import { Table } from "antd";
 import type { TableColumnsType } from "antd";
 import { CourseFields } from "../../type/course";
 import SectionDetails from "./SectionDetail";
+import { useQuery } from "@tanstack/react-query";
+import { getBatchCourses } from "../../api/registration";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
 
 type BatchCoursesProps = {
   semesterId: string;
   batch: string;
   semester: string;
+  type:string;
 };
 
 const data = [
@@ -38,6 +43,19 @@ const data = [
 
 export default function CourseTable(state:BatchCoursesProps) {
 //   console.log(state)
+  
+  const user = useSelector((state: RootState) => state.user);
+  const query = useQuery({
+    queryKey: ["batchCourses"],
+    queryFn: () =>
+      getBatchCourses(
+        user._id,
+        parseInt(state.batch),
+        parseInt(state.semester),
+        state.type
+      ),
+  });
+  console.log(query)
   const columns: TableColumnsType<CourseFields> = [
     {
       title: "Course Name",

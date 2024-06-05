@@ -34,7 +34,6 @@ export default function SemesterOption({
 }: {
   semester: SemesterDetails;
 }) {
-
   const navigate = useNavigate();
   const [form] = useForm();
   form.setFieldValue("batches", semester.batches);
@@ -196,9 +195,9 @@ export default function SemesterOption({
             <Switch
               checkedChildren="Open"
               unCheckedChildren="Closed"
-              defaultChecked={semester.regStatus}
+              defaultChecked={semester.regStatus === true}
               onChange={() => {
-                if (semester?.regStatus) {
+                if (semester?.regStatus === true) {
                   regDeactivateMutation.mutate(semester?._id || "");
                   queryClient.refetchQueries({ queryKey: ["semester"] });
                 } else {
@@ -214,9 +213,9 @@ export default function SemesterOption({
             <Switch
               checkedChildren="Open"
               unCheckedChildren="Closed"
-              defaultChecked={semester.addStatus}
+              defaultChecked={semester.addStatus === true}
               onChange={() => {
-                if (semester?.addStatus) {
+                if (semester?.addStatus === true) {
                   addDeactivateMutation.mutate(semester?._id || "");
                   queryClient.refetchQueries({ queryKey: ["semester"] });
                 } else {
@@ -242,6 +241,7 @@ export default function SemesterOption({
                       semesterId: semester?.id,
                       batch: batch,
                       semester: semester?.semester,
+                      type: semester?.program,
                     },
                   });
                 }}
