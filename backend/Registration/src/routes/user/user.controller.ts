@@ -575,7 +575,10 @@ export const exportAllStudent = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
-    const students = await Student.find().populate("department_id");
+    const students = await Student.find()  .populate({
+      path: "department_id",
+      select: "name",
+    })
     const myStudents = students.map((student: any) => {
       return {
         ...student.toObject(),
@@ -586,38 +589,30 @@ export const exportAllStudent = async (req: Request, res: Response) => {
     const json2csvParser = new Json2csvParser({ header: true });
     const csvData = json2csvParser.parse(myStudents);
     const filePath = path.join("./exports", "students.csv");
-
+    
     fs.writeFile(filePath, csvData, function (error: any) {
       if (error) throw error;
       console.log("Write to csv was successfull!");
     });
-    // Get the path to the CSV file on the server
-    const csvFilePath = path.join("./exports", "students.csv");
-
-    // Set the path to the downloads folder
-    const downloadsPath = path.join(
-      require("os").homedir(),
-      "Downloads",
-      "students.csv"
-    );
-
-    // Create a read stream for the CSV file
-    const readStream = fs.createReadStream(csvFilePath);
-
-    // Create a write stream to the downloads folder
-    const writeStream = fs.createWriteStream(downloadsPath);
-
-    // Pipe the read stream to the write stream
-    readStream.pipe(writeStream);
-
-    // Set the necessary headers to trigger a download
-    await writeStream.on("open", () => {
+    
+    // Read the CSV file contents
+    fs.readFile(filePath, (err:any, data:any) => {
+      if (err) {
+        console.error("Error reading CSV file:", err);
+        res.status(500).json({ error: "Error exporting data" });
+        return;
+      }
+    
+      // Create a Blob object from the CSV data
+      const blob = new Blob([data], { type: "text/csv" });
+    
+      // Set the necessary headers to trigger a download
       res.setHeader("Content-Disposition", "attachment; filename=students.csv");
       res.setHeader("Content-Type", "text/csv");
-      res.status(200).json({ message: "successfully exported" });
-    });
-
-    console.log("Data exported to students.csv");
+    
+      // Send the Blob in the response
+      res.status(200).send(blob);
+    });;
 
     // console.log(myStudents);
   } catch (error: any) {

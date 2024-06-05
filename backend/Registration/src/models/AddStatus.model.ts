@@ -6,26 +6,13 @@ let AddStatusSchema  = new mongoose.Schema({
         required: true
     
     },
-
-    year:{
-        type:Number,
-        required:true
-    },
-    semester:{
-        type:Number,
-        required:true
-
-    },
-    type: {
-        type: String,
-        enum: ["Undergraduate", "Masters"],
+    semester: {
+        type: Array<mongoose.Schema.Types.ObjectId>,
         required: false,
-      },
-    department_id:{
-        type:mongoose.Schema.Types.ObjectId,
-        required:false,
-        ref:"Department"
-    },
+        ref: "Semester",
+      }
+
+  
 
 })
 
