@@ -168,11 +168,62 @@ export default function AddCurriculum() {
             </div>
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item<CurriculumFields>
+                name="year"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the year!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="year"
+                  >
+                    Batch Year
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-3 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder="Select year"
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("year", value);
+                      }}
+                      options={[
+                        {
+                          value: "1",
+                          label: "First Year",
+                        },
+                        {
+                          value: "2",
+                          label: "Second Year",
+                        },
+                        {
+                          value: "3",
+                          label: "Third Year",
+                        },
+                        {
+                          value: "4",
+                          label: "Fourth Year",
+                        },
+                        {
+                          value: "5",
+                          label: "Fifth Year",
+                        },
+                      ]}
+                    />
+                  </div>
+                </div>
+              </Form.Item>
+              <Form.Item<CurriculumFields>
                 name="semester"
                 rules={[
                   {
                     required: true,
-                    message: "Please input the semester!",
+                    message: "Please select the semester!",
                   },
                 ]}
               >
@@ -183,32 +234,74 @@ export default function AddCurriculum() {
                   >
                     Semester
                   </label>
-                  <Input
-                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    placeholder="Enter the semester"
-                  />
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-3 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder="Select semester"
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("semester", value);
+                      }}
+                      options={[
+                        {
+                          value: "1",
+                          label: "First Semester",
+                        },
+                        {
+                          value: "2",
+                          label: "Second Semester",
+                        },
+                        {
+                          value: "3",
+                          label: "Third Semester",
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
               </Form.Item>
               <Form.Item<CurriculumFields>
-                name="year"
+                name="type"
                 rules={[
                   {
                     required: true,
-                    message: "Please input the year!",
+                    message: "Please select the program type!",
                   },
                 ]}
               >
                 <div>
                   <label
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="year"
+                    htmlFor="type"
                   >
-                    Year
+                    Program Type
                   </label>
-                  <Input
-                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    placeholder="Enter the year"
-                  />
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder={"Select Program Type"}
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("type", value);
+                      }}
+                      options={[
+                        {
+                          value: "Undergraduate",
+                          label: "Undergraduate",
+                        },
+                        {
+                          value: "Masters",
+                          label: "Masters Degree",
+                        },
+                        {
+                          value: "PhD",
+                          label: "PhD",
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
               </Form.Item>
             </div>
