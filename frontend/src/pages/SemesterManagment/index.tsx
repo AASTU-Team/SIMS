@@ -4,14 +4,15 @@ import {  FileAddOutlined } from "@ant-design/icons";
 import { Button, Modal, Form, Select, DatePicker, Input, notification } from "antd";
 import type { FormProps } from "antd";
 import { SemesterDetails } from "../../type/registration";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { addSemester } from "../../api/registration";
 
 
 export default function SemesterManagement() {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
-
+  const queryClient = useQueryClient();
+  
   const semesterMutation = useMutation({
     mutationKey: ["addSemester"],
     mutationFn: (values: SemesterDetails) => addSemester(values),
@@ -20,6 +21,7 @@ export default function SemesterManagement() {
     },
     onSuccess: () => {
       notification.success({ message: "Semester Created Successfully" });
+      queryClient.refetchQueries({ queryKey: ["semester"] });
       form.resetFields();
     },
   });
@@ -27,7 +29,9 @@ export default function SemesterManagement() {
   const onFinish: FormProps["onFinish"] = (values) => {
     // console.log("Success:", values);
     semesterMutation.mutate(values);
-    form.resetFields();
+    values.status="Active"
+    
+    // queryClient.invalidateQueries({ queryKey: ['semester'] });
     setOpen(false);
   };
 
@@ -164,11 +168,11 @@ export default function SemesterManagement() {
                       }}
                       options={[
                         {
-                          value: "Bachelors Degree",
+                          value: "Undergraduate",
                           label: "Bachelors Degree",
                         },
                         {
-                          value: "Masters Degree",
+                          value: "Masters",
                           label: "Masters Degree",
                         },
                         {
