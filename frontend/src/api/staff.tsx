@@ -27,7 +27,9 @@ export const fetchNewToken = async () => {
   }
 };
 
-export const refreshAuth = async (failedRequest:{response:AxiosResponse} ) => {
+export const refreshAuth = async (failedRequest: {
+  response: AxiosResponse;
+}) => {
   const newToken = await fetchNewToken();
 
   if (newToken) {
@@ -43,10 +45,28 @@ export const getStaff = async () => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
   return await client.get("/staff/all");
-}
+};
 
 export const registerStaff = async (data: StaffFields) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
   return await client.post("/register/staff", data);
-}
+};
+
+export const exportStudent = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  const response = await client.get("/student/all/export");
+  saveFile(response.data, "staff.csv");
+};
+
+const saveFile = (data: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};

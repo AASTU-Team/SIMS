@@ -12,7 +12,8 @@ interface UserState {
     email: string,
     role: string,
     roles:string[],
-    id: string
+    id: string,
+    _id:string
 }
 
 export default function ProtectedRoutes({ children }: { children: React.ReactNode }) {
@@ -35,13 +36,15 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   if(query.isSuccess){
 
   const user = query.data?.data
+  console.log(user)
  
   const state:UserState ={
     name:user?.user?.name,
     email: user?.user?.email,
     role: user?.role?.includes("student")? "Student" : "Staff",
     roles: user?.role,
-    id: user?.user?.id
+    id: user?.user?.id,
+    _id:user?.user?._id
   }
   
   dispatch(setUser(state))
