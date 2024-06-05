@@ -113,8 +113,69 @@ export const getSpecCurriculum = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 export const exportCurriculums = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    const curriculums: any = await Curriculum.find()
+    .populate("courses")
+    .populate("department_id");
+
+  const curriculumView = curriculums.map((curriculum: any) => {
+    return {
+      ...curriculum.toObject(),
+      department_name: curriculum.department_id?.name,
+    };
+  });
+  if (!curriculums) {
+    return res.status(404).json({ message: "curriculums not found." });
+  }
+  const json2csvParser = new Json2csvParser({ header: true });
+  const csvData = json2csvParser.parse(curriculumView);
+  const filePath = path.join("./exports", "curriculums.csv");
+    
+    fs.writeFile(filePath, csvData, function (error: any) {
+      if (error) throw error;
+      console.log("Write to csv was successfull!");
+    });
+    
+    // Read the CSV file contents
+    fs.readFile(filePath, (err:any, data:any) => {
+      if (err) {
+        console.error("Error reading CSV file:", err);
+        res.status(500).json({ error: "Error exporting data" });
+        return;
+      }
+    
+      // Create a Blob object from the CSV data
+      const blob = new Blob([data], { type: "text/csv" });
+    
+      // Set the necessary headers to trigger a download
+      res.setHeader("Content-Disposition", "attachment; filename=curriculums.csv");
+      res.setHeader("Content-Type", "text/csv");
+      const file = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+
+      "exports",
+      "curriculums.csv"
+    );
+    console.log(__dirname);
+    res.download(file);
+    
+      // Send the Blob in the response
+      // res.status(200).send({data:blob});
+    });;
+
+    // console.log(myStudents);
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+/* export const exportCurriculums = async (req: Request, res: Response) => {
   // fetch curriculum based on id from the auth
   // and courses should have name
   try {
@@ -173,7 +234,7 @@ export const exportCurriculums = async (req: Request, res: Response) => {
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
-};
+}; */
 export const getCurriculumById = async (req: Request, res: Response) => {
   // fetch dep id from the auth
   const { id } = req.params;

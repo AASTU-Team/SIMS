@@ -610,9 +610,20 @@ export const exportAllStudent = async (req: Request, res: Response) => {
       // Set the necessary headers to trigger a download
       res.setHeader("Content-Disposition", "attachment; filename=students.csv");
       res.setHeader("Content-Type", "text/csv");
+      const file = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+
+      "exports",
+      "students.csv"
+    );
+    console.log(__dirname);
+    res.download(file);
     
       // Send the Blob in the response
-      res.status(200).send(blob);
+      // res.status(200).send({data:blob});
     });;
 
     // console.log(myStudents);
@@ -620,7 +631,6 @@ export const exportAllStudent = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 export const getAllStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
@@ -647,8 +657,63 @@ export const getStaffByDepId = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 export const exportAllStaff = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    const staffs: any = await Staff.find().populate("department_id");
+    const myStaff = staffs.map((staff: any) => {
+      return {
+        ...staff.toObject(),
+        department_name: staff.department_id?.name,
+      };
+    });
+    const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(myStaff);
+    const filePath = path.join("./exports", "staffs.csv");
+    
+    fs.writeFile(filePath, csvData, function (error: any) {
+      if (error) throw error;
+      console.log("Write to csv was successfull!");
+    });
+    
+    // Read the CSV file contents
+    fs.readFile(filePath, (err:any, data:any) => {
+      if (err) {
+        console.error("Error reading CSV file:", err);
+        res.status(500).json({ error: "Error exporting data" });
+        return;
+      }
+    
+      // Create a Blob object from the CSV data
+      const blob = new Blob([data], { type: "text/csv" });
+    
+      // Set the necessary headers to trigger a download
+      res.setHeader("Content-Disposition", "attachment; filename=students.csv");
+      res.setHeader("Content-Type", "text/csv");
+      const file = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+
+      "exports",
+      "staffs.csv"
+    );
+    console.log(__dirname);
+    res.download(file);
+    
+      // Send the Blob in the response
+      // res.status(200).send({data:blob});
+    });;
+
+    // console.log(myStudents);
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+/* export const exportAllStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
@@ -697,7 +762,7 @@ export const exportAllStaff = async (req: Request, res: Response) => {
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
-};
+}; */
 
 export const getStudentByDepartment = async (req: Request, res: Response) => {
   const department = req.body.department_id;
