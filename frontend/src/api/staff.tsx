@@ -70,3 +70,9 @@ const saveFile = (data: Blob, filename: string) => {
   document.body.removeChild(link);
   window.URL.revokeObjectURL(url);
 };
+
+export const deleteStaff = async (id: string, email: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.delete(`/staff/delete/?staff_id=${id}&email=${email}`);
+};
