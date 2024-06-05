@@ -1,6 +1,7 @@
 import { patch } from "app";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
+import { registerStaff } from "routes/user/user.controller";
 const fs = require("fs");
 const csv = require("csv-parser");
 const Joi = require("joi");
@@ -8,6 +9,8 @@ const Joi = require("joi");
 let results: any = [];
 
 const Semester = require("../../models/Semesters.model");
+const AddStatus = require("../../models/AddStatus.model");
+const RegistrationStatus = require("../../models/RegistrationStatus.model");
 
 
 
@@ -61,6 +64,13 @@ export const createSemester = async (req: Request, res: Response) => {
   try {
     const newStatus = await new Semester(data);
     await newStatus.save();
+
+    const addStatus = await new AddStatus({semester: newStatus._id, status:false});
+    await addStatus.save();
+
+    const registrationStatus = await new RegistrationStatus({semester: newStatus._id, status:false});
+    await registrationStatus.save();
+
     return res.status(201).json({ message: "success", staus: newStatus });
   } catch (error: any) {
     console.log(error.message);
