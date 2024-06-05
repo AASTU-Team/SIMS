@@ -191,6 +191,71 @@ export const getCourses = async (req: Request, res: Response) => {
 };
 
 export const exportCourses = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    const courses: any = await Course.find()
+      .populate({
+        path: "prerequisites",
+        select: "name code",
+      })
+      .populate({
+        path: "instructors",
+        select: "name email",
+      }).populate("department_id");;
+    
+    const courseView = courses.map((course: any) => {
+      return {
+        ...course.toObject(),
+        department_name: course.department_id?.name,
+      };
+    });
+    const json2csvParser = new Json2csvParser({ header: true });
+    const csvData = json2csvParser.parse(courseView);
+    const filePath = path.join("./exports", "courses.csv");
+    
+    fs.writeFile(filePath, csvData, function (error: any) {
+      if (error) throw error;
+      console.log("Write to csv was successfull!");
+    });
+    
+    // Read the CSV file contents
+    fs.readFile(filePath, (err:any, data:any) => {
+      if (err) {
+        console.error("Error reading CSV file:", err);
+        res.status(500).json({ error: "Error exporting data" });
+        return;
+      }
+    
+      // Create a Blob object from the CSV data
+      const blob = new Blob([data], { type: "text/csv" });
+    
+      // Set the necessary headers to trigger a download
+      res.setHeader("Content-Disposition", "attachment; filename=students.csv");
+      res.setHeader("Content-Type", "text/csv");
+      const file = path.join(
+      __dirname,
+      "..",
+      "..",
+      "..",
+
+      "exports",
+      "courses.csv"
+    );
+    console.log(__dirname);
+    res.download(file);
+    
+      // Send the Blob in the response
+      // res.status(200).send({data:blob});
+    });;
+
+    // console.log(myStudents);
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+/* export const exportCourses = async (req: Request, res: Response) => {
   // fetch dep id from the auth
 
   try {
@@ -247,7 +312,7 @@ await writeStream.on('open', () => {
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
-};
+}; */
 export const getCourseById = async (req: Request, res: Response) => {
   // fetch dep id from the auth
   const { id } = req.params;
