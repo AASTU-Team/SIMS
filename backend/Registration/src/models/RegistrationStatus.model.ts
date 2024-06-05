@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 
 let RegistrationstatusSchema  = new mongoose.Schema({
-    status:{
-        type: Boolean,
-        required: true
-    
-    },
+    status: {
+        type: String,
+        enum: ["Active", "Inactive"],
+        required: true,
+      },
     semester: {
         type: mongoose.Schema.Types.ObjectId,
         required: false,
