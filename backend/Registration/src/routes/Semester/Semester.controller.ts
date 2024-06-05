@@ -193,17 +193,36 @@ export const deleteStatus = async (req: Request, res: Response) => {
     });
     if(students.length > 0)
       {
+        students.map((student:any) =>{
+          let year = 0
+          let semester = 0
+          if(student.semester == 1)
+            {
+              semester = parseInt(student.semester)+1
+              year = parseInt(student.year)
+            }
+            else if(student.semester == 2){
+              semester = 1
+              year = parseInt(student.year)+1
+            }
+
+            student.year = year
+            student.semester = semester
+            student.save()
+
+          
+        })
 
       }
   
 
   
   try {
-   /*  const deletedStatus = await Semester.findByIdAndDelete(id);
+     const deletedStatus = await Semester.findByIdAndDelete(id);
     if (!deletedStatus) {
       return res.status(404).json({ message: "Not found" });
-    } */
-    return res.status(200).json({ message: students });
+    } 
+    return res.status(200).json({ message: "success" });
   } catch (error: any) {
     console.log(error.message);
     return res.status(500).json({ message: error.message });
