@@ -17,6 +17,23 @@ let assignmentSchema = new mongoose.Schema({
     required: false,
     ref: "Section",
   },
+  room_number: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: false,
+    ref: "Room",
+  },
+  start_time: {
+    type: String,
+    required: false,
+  },
+  end_time: {
+    type: String,
+    required: false,
+  },
+  day_of_week: {
+    type: String,
+    required: false,
+  },
   Lab_Lec: {
     type: String,
     required: false,
