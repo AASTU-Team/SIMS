@@ -1,0 +1,46 @@
+POST http://localhost:4000/rooms
+Content-Type:  application/json
+
+{
+ "data" : [
+      { "room_number": "101", "block": "A" },
+      { "room_number": "102", "block": "B" }
+    ]
+}
+### create rooms 
+POST http://localhost:4000/rooms/createRooms
+Content-Type:  application/json
+
+{
+  "block":"65",
+  "rooms":10,
+  "start_with":101
+ 
+}
+
+### get rooms 
+GET  http://localhost:4000/rooms
+Content-Type:  application/json
+
+
+
+### get spc
+GET  http://localhost:4000/rooms/663a8a581f5ac9b89475633a
+Content-Type:  application/json
+ 
+
+### update a room (with put or patch)
+PATCH http://localhost:4000/rooms/663a8a581f5ac9b894756339
+Content-Type:  application/json
+
+{
+  "block": "c"	
+}
+###
+DELETE  http://localhost:4000/rooms/663a8a581f5ac9b894756339
+Content-Type:  application/json
+ 
+
+ 
+ 
+ 
