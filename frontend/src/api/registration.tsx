@@ -5,7 +5,7 @@ import setCookie from "../hooks/setCookie";
 import { SemesterDetails } from "../type/registration";
 
 const client = axios.create({
-  baseURL: "http://localhost:3000/Semester",
+  baseURL: "http://localhost:3000/",
 });
 
 const authClient = axios.create({
@@ -74,11 +74,60 @@ client.interceptors.response.use(
 export const getSemester = async () => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.get("/");
+  return await client.get("Semester/");
 };
 
 export const addSemester = async (data: SemesterDetails) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.post("/create", data);
+  return await client.post("Semester/create", data);
+};
+
+export const activateSemester = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post("Semester/activate", {id:id});
+};
+
+export const deactivateSemester = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch("Semester/deactivate", {id:id});
+};
+
+export const activateRegistration = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post("RegistrationStatus/activate", { id: id });
+};
+
+
+export const deactivateRegistration = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch("RegistrationStatus/deactivate", { id: id });
+};
+
+export const activateAddDrop = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post("AddStatus/activate", { id: id });
+};
+
+export const deactivateAddDrop = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch("AddStatus/deactivate", { id: id });
+};
+
+export const updateSemester = async (data: SemesterDetails,id:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch(`Semester/${id}`,data);
+};
+
+export const deleteSemester = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.delete(`Semester/${id}`);
 };

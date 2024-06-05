@@ -14,7 +14,7 @@ const SemesterTable: React.FC = () =>
         queryKey: ["semester"],
         queryFn: getSemester,
       });
-    // console.log(query.data?.data?.data)
+    console.log(query?.data?.data)
   
     const columns: TableColumnsType<SemesterDetails> = [
       {
