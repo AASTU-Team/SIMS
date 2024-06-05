@@ -199,22 +199,22 @@ export const registerStudent = async (req: Request, res: Response) => {
       });
 
       if (response.status === 201) {
-        // const department = await Department.findOne({ name: data.department });
+        const department = await Department.findOne({ name: data.department });
 
-        // let department_id = "";
+         let department_id = "";
 
-        // if (department) {
-        //   department_id = department._id;
-        //   console.log("department_id:", department_id);
-        // } else {
-        //   console.log("Department not found");
-        // }
+         if (department) {
+           department_id = department._id;
+           console.log("department_id:", department_id);
+       } else {
+           console.log("Department not found");
+         }
         const r = await response.json();
         console.log(r.message);
         const newStudent = await new Student({
           ...data,
           id: id,
-          // department_id: department_id,
+          department_id: department_id,
         });
         await newStudent.save();
         const insertedIds: String[] = [];
@@ -236,8 +236,9 @@ export const registerStudent = async (req: Request, res: Response) => {
         // }
         // else if(data.type =="Masters")
         //  {
-        const registration = await assignCourse(insertedStudents);
-        console.log("registration", registration);
+          ///////Reeeeeeeeeeeeeegistration///////////
+        /* const registration = await assignCourse(insertedStudents);
+        console.log("registration", registration); */
 
         // }
 
@@ -977,24 +978,28 @@ export const getstudentRegistrationCourses = async (
 
   const student = await Student.findById(student_id);
 
+  const highestYear =  student.year
+  const highestSemester =  student.semester
+
+
   if (!student) {
     return res.status(404).json({ message: "student not found" });
   }
   department_id = student.department_id;
   type = student.type;
 
-  const highestCombination = await Registration.findOne({ stud_id: student_id })
+/*   const highestCombination = await Registration.findOne({ stud_id: student_id })
     .sort({ year: -1, semester: -1 })
     .select("year semester")
-    .limit(1);
+    .limit(1); */
 
-  if (highestCombination) {
-    const highestYear = highestCombination.year;
-    const highestSemester = highestCombination.semester;
+ // if (highestCombination) {
+   // const highestYear = highestCombination.year;
+    //const highestSemester = highestCombination.semester;
     //console.log(`Highest combination: Year ${highestYear}, Semester ${highestSemester}`);
     // res.status(200).send(`Highest combination: Year ${highestYear}, Semester ${highestSemester}`)
 
-    const status = await RegistrationStatus.findOne({ year: highestYear,semester:highestSemester,type:student.type });
+  /*   const status = await RegistrationStatus.findOne({ year: highestYear,semester:highestSemester,type:student.type });
     if (!status) {
       return res.status(404).json({ message: "Registration data not found" });
     } 
@@ -1003,22 +1008,23 @@ export const getstudentRegistrationCourses = async (
       return res.status(400).json({
         message: false,
       });
-    }
-    if (highestSemester == 1) {
+    } */
+
+  /*   if (highestSemester == 1) {
       newyear = highestYear;
       newsemester = highestSemester + 1;
     } else {
       newyear = highestYear + 1;
       newsemester = 1;
-    }
+    } */
 
-    console.log("semister", newsemester);
-    console.log("year", newyear);
+    console.log("semister", highestSemester);
+    console.log("year",highestYear);
     console.log("department", department_id);
 
     const curriculum = await Curriculum.findOne({
-      year: newyear,
-      semester: newsemester,
+      year: highestYear,
+      semester: highestSemester,
       department_id: department_id,
       type: type,
     });
@@ -1077,7 +1083,7 @@ export const getstudentRegistrationCourses = async (
         });
         const value = await getCredit(course);
         total_credit.push(value);
-      }
+      //}
     }
     let sum: number = 0;
     total_credit.map((credit: any) => {
@@ -1100,11 +1106,9 @@ export const getstudentRegistrationCourses = async (
       console.error("Error saving registration:", error);
     } */
 
-    return res.status(200).json({ message: regCourses });
-  } else {
-    console.log("No registrations found for the given stud_id");
-    res.status(200).send(`error`);
-  }
+  
+  } 
+  return res.status(200).json({ message: regCourses });
 };
 
 export const studentRegistration = async (req: Request, res: Response) => {

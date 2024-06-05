@@ -19,10 +19,7 @@ export const getAddStatus = async (req: Request, res: Response) => {
   try {
     // use find({dep_id : id from fetch })
     const status: any = await AddStatus.find()
-      .populate({
-        path: "department_id",
-        select: "name",
-      })
+  
      
 
     res.status(200).json({ data: status });
@@ -55,26 +52,23 @@ export const createAddStatus = async (req: Request, res: Response) => {
   }
 };
 export const ActivateAddStatus = async (req: Request, res: Response) => {
-  const data = req.body;
-  const type = data.type
-  const semester = data.semester
-  const year = data.year
+  const id = req.body.body;
+
   try {
 
-    const RegStatus = await AddStatus.findOne({ type: type, semester: semester,year: year})
+    const RegStatus = await AddStatus.findOne({  semester:id})
 
     if(RegStatus)
       {
-        RegStatus.status = true
+        RegStatus.status = "Active"
         await RegStatus.save()
         return res.status(200).json({ message: "success", staus: RegStatus });
 
       }
 
       else{
-        const newStatus = await new AddStatus({type:type,semester:semester,status:true,year:year});
-        await newStatus.save();
-        return res.status(201).json({ message: "success", staus: newStatus });
+ 
+        return res.status(400).json({ message: "unable to find" });
 
       }
 
@@ -87,17 +81,15 @@ export const ActivateAddStatus = async (req: Request, res: Response) => {
   }
 };
 export const DeactivateAddStatus = async (req: Request, res: Response) => {
-  const data = req.body;
-  const type = data.type
-  const semester = data.semester
-  const year = data.year
+  const id = req.body.id;
+ 
   try {
 
-    const RegStatus = await AddStatus.findOne({ type: type, semester: semester,year: year})
+    const RegStatus = await AddStatus.findOne({  semester:id})
 
     if(RegStatus)
       {
-        RegStatus.status = false
+        RegStatus.status ="Inactive"
         await RegStatus.save()
         return res.status(200).json({ message: "success", staus: RegStatus });
 
