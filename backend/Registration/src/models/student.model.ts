@@ -44,6 +44,10 @@ let studentSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  semester: {
+    type: Number,
+    required: true,
+  },
   admission_date: {
     type: Date,
     required: true,
