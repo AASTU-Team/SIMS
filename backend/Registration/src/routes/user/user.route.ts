@@ -49,6 +49,7 @@ import { RejectRegistrarWithdrawalRequest } from "./user.controller";
 import { AcceptWithdrawalRequest } from "./user.controller";
 import { activateStudent } from "./user.controller";
 import { deactivateUser } from "./user.controller";
+import { activateUser } from "./user.controller";
 import { deleteStaff } from "./user.controller";
 import { updateStaff } from "./user.controller";
 import { getStaffByDepartment } from "./user.controller";
@@ -95,6 +96,7 @@ Studentrouter.get("/staff/department", getStaffByDepartment);
 Studentrouter.delete("/student/delete", deleteStudent);
 Studentrouter.delete("/staff/delete", deleteStaff);
 Studentrouter.patch("/deactivate", deactivateUser);
+Studentrouter.patch("/activate", activateUser);
 Studentrouter.patch("/student/update", updateStudent);
 Studentrouter.patch("/staff/update", updateStaff);
 

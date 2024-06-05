@@ -1,6 +1,5 @@
 const nodemailer = require("nodemailer");
 require("dotenv").config();
-
 // Create a transporter object using Gmail SMTP server
 const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
