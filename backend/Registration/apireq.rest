@@ -76,6 +76,13 @@ Content-Type:  application/json
 GET  http://localhost:3000/curriculum?id=664217adf8b1cf7706c8c48c&year=1&semester=1
 Content-Type:  application/json
 
+### get staff by depid
+
+GET  http://localhost:3000/user/staff/dept/663646030666c2aea17b217c
+Content-Type:  application/json
+### get all staffs
+GET  http://localhost:3000/user/staff/all 
+Content-Type:  application/json
 
 
 

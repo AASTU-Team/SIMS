@@ -639,6 +639,16 @@ export const getAllStaff = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+export const getStaffByDepId = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  console.log(id);
+  try {
+    const staffs: any = await Staff.find({ department_id: id });
+    res.status(200).json({ message: "success", data: staffs });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
 export const exportAllStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
