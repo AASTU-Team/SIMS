@@ -35,6 +35,7 @@ import { getStudentCourses } from "./user.controller";
 import { studentRegistration } from "./user.controller";
 import { ListAddCourses } from "./user.controller";
 import { Request, Response } from "express";
+import { getWithdrawalStatus } from "./user.controller";
 import { getDepartmentWithdrawalRequests } from "./user.controller";
 import { getRegistrarWithdrawalRequests } from "./user.controller";
 import { AcceptDepartmentWithdrawalRequest } from "./user.controller";
@@ -106,6 +107,7 @@ Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
+Studentrouter.get("/student/withdrawalStatus",getWithdrawalStatus);
 Studentrouter.get("/department/withdrawalRequests", getDepartmentWithdrawalRequests);
 Studentrouter.get("/registrar/withdrawalRequests", getRegistrarWithdrawalRequests);
 

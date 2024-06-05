@@ -199,7 +199,7 @@ export const registerStudent = async (req: Request, res: Response) => {
       });
 
       if (response.status === 201) {
-        const department = await Department.findOne({ name: data.department });
+     /*    const department = await Department.findOne({ name: data.department });
 
          let department_id = "";
 
@@ -208,13 +208,13 @@ export const registerStudent = async (req: Request, res: Response) => {
            console.log("department_id:", department_id);
        } else {
            console.log("Department not found");
-         }
+         } */
         const r = await response.json();
         console.log(r.message);
         const newStudent = await new Student({
           ...data,
           id: id,
-          department_id: department_id,
+        //  department_id: department_id,
         });
         await newStudent.save();
         const insertedIds: String[] = [];
@@ -2070,6 +2070,26 @@ export const WithdrawalRequest = async (req: Request, res: Response) => {
 
 
   return res.status(200).json({ message: "successfully submitted request" });
+};
+
+export const getWithdrawalStatus = async (req: Request, res: Response) => {
+  const id = req.body.id;
+
+  const withdrawal = await Withdrawal.findOne({stud_id: id});
+
+  if(!withdrawal)
+    {
+      return res.status(200).json({ message: false });
+    }
+
+
+  return res.status(200).json({ message: withdrawal.status });
+
+
+  
+
+
+
 };
 
 export const getDepartmentWithdrawalRequests = async (req: Request, res: Response) => {
