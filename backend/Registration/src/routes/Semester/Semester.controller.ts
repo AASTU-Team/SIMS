@@ -22,11 +22,23 @@ export const getSemesters = async (req: Request, res: Response) => {
   try {
     // use find({dep_id : id from fetch })
     const status = await Semester.find().lean();
+    const mydata:any = []
+
+    for(const dep of status)
+      {
+        const reg = await RegistrationStatus.findOne({semester:dep._id})
+        const add = await AddStatus.findOne({semester:dep._id})
+       
+        mydata.push({ ...dep, key: dep._id.toString(),addStatus:add.status,regStatus:reg.status })
+
+      }
+
+   
 
     // Add the 'key' property to each document
     const data = status.map((doc:any) => ({ ...doc, key: doc._id.toString() }));
 
-    res.status(200).json({ data });
+    res.status(200).json({ mydata });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }

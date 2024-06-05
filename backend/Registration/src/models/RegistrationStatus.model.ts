@@ -7,7 +7,7 @@ let RegistrationstatusSchema  = new mongoose.Schema({
     
     },
     semester: {
-        type: Array<mongoose.Schema.Types.ObjectId>,
+        type: mongoose.Schema.Types.ObjectId,
         required: false,
         ref: "Semester",
       }
