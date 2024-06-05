@@ -40,9 +40,14 @@ import { ListAddCourses } from "./user.controller";
 import { Request, Response } from "express";
 import { getWithdrawalStatus } from "./user.controller";
 import { getDepartmentWithdrawalRequests } from "./user.controller";
+import { getDepartmentEnrollmentRequests } from "./user.controller";
 import { getRegistrarWithdrawalRequests } from "./user.controller";
+import { getRegistrarEnrollmentRequests } from "./user.controller";
 import { AcceptDepartmentWithdrawalRequest } from "./user.controller";
+import { AcceptDepartmentEnrollmentRequest } from "./user.controller";
 import { AcceptRegistrarWithdrawalRequest } from "./user.controller";
+import { AcceptRegistrarEnrollmentRequest } from "./user.controller";
+import { RejectRegistrarEnrollmentRequest } from "./user.controller";
 import { RejectDepartmentWithdrawalRequest } from "./user.controller";
 import { RejectRegistrarWithdrawalRequest } from "./user.controller";
 
@@ -115,11 +120,18 @@ Studentrouter.get("/student/addDrop", getAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
 Studentrouter.get("/student/withdrawalStatus",getWithdrawalStatus);
+
 Studentrouter.get("/department/withdrawalRequests", getDepartmentWithdrawalRequests);
+Studentrouter.get("/department/enrollmentRequests", getDepartmentEnrollmentRequests);
 Studentrouter.get("/registrar/withdrawalRequests", getRegistrarWithdrawalRequests);
+Studentrouter.get("/registrar/enrollmentRequests", getRegistrarEnrollmentRequests);
 
 Studentrouter.post("/department/AcceptwithdrawalRequests", AcceptDepartmentWithdrawalRequest);
+Studentrouter.post("/department/AcceptenrollmentRequests", AcceptDepartmentEnrollmentRequest);
 Studentrouter.post("/registrar/AcceptwithdrawalRequests",AcceptRegistrarWithdrawalRequest);
+
+Studentrouter.post("/registrar/AcceptenrollmentRequests",AcceptRegistrarEnrollmentRequest);
+Studentrouter.post("/registrar/RejectenrollmentRequests",RejectRegistrarEnrollmentRequest);
 
 Studentrouter.post("/department/RejectwithdrawalRequests", RejectDepartmentWithdrawalRequest);
 Studentrouter.post("/registrar/RejectwithdrawalRequests",RejectRegistrarWithdrawalRequest);

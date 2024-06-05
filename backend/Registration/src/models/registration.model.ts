@@ -26,7 +26,7 @@ let registrationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Student", "Department","Registrar","Rejected"],
+    enum: ["Pending","Student", "Department","Registrar","Rejected"],
     required: false,
   },
   rejections: {

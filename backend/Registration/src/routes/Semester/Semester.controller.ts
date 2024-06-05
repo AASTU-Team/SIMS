@@ -11,6 +11,8 @@ let results: any = [];
 const Semester = require("../../models/Semesters.model");
 const AddStatus = require("../../models/AddStatus.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
+const Student = require("../../models/student.model");
+
 
 
 
@@ -171,12 +173,37 @@ export const updateStatus = async (req: Request, res: Response) => {
 export const deleteStatus = async (req: Request, res: Response) => {
   const { id } = req.params;
 
+
+  const semester:any = await Semester.findById(id)
+  
+
+
+
+  if(!semester)
+    {
+      return res.status(400).json({ message: "unable to find semester" });
+    }
+    const batchesAsStrings:string[] = semester.batches;
+    const batchesAsIntegers:number[] = batchesAsStrings.map(batch => parseInt(batch));
+    const semestersAsIneger = parseInt(semester.semester)
+
+    const students = await Student.find({
+      semester: semestersAsIneger,
+      year: { $in: batchesAsIntegers }
+    });
+    if(students.length > 0)
+      {
+
+      }
+  
+
+  
   try {
-    const deletedStatus = await Semester.findByIdAndDelete(id);
+   /*  const deletedStatus = await Semester.findByIdAndDelete(id);
     if (!deletedStatus) {
       return res.status(404).json({ message: "Not found" });
-    }
-    return res.status(200).json({ message: "success" });
+    } */
+    return res.status(200).json({ message: students });
   } catch (error: any) {
     console.log(error.message);
     return res.status(500).json({ message: error.message });
