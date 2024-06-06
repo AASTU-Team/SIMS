@@ -68,6 +68,7 @@ const assignSection = require("../../helper/assignSection");
 const validateRegistration = require("../../middlware/validateRegistration");
 const validateSRegistration = require("../../middlware/validateSRegistration");
 const checkRegistrationStatus = require("../../middlware/checkRegistrationStatus");
+const checkRegistrationStatus2 = require("../../middlware/checkRegistrationStatus2");
 
 const multer = require("multer");
 const csv = require("csv-parser");
