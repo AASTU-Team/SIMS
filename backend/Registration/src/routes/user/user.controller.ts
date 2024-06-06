@@ -1080,6 +1080,7 @@ export const getstudentRegistrationCourses = async (
   const courses: String[] = [];
   const CourseStatus: any[] = [];
   const regCourses: any[] = [];
+  const regCourses2: any[] = [];
   const total_credit: Number[] = [];
 
   const student = await Student.findById(student_id);
@@ -1181,6 +1182,12 @@ export const getstudentRegistrationCourses = async (
           const prerequisites = await Promise.all(prerequisitePromises);
           coursePreq = prerequisites;
         }
+        regCourses2.push({
+          courseID: course,
+          grade: "",
+          status: "Active",
+          isRetake: false,
+        });
 
         regCourses.push({
           courseID: course,
@@ -1205,7 +1212,7 @@ export const getstudentRegistrationCourses = async (
       stud_id: student_id,
       year: newyear,
       semester: newsemester,
-      courses: regCourses,
+      courses: regCourses2,
       registration_date: new Date(),
       total_credit: sum,
       status:"Pending"
@@ -1217,7 +1224,6 @@ export const getstudentRegistrationCourses = async (
     } catch (error) {
       console.error("Error saving registration:", error);
     } 
-
   
   } 
   return res.status(200).json({ message: regCourses });
