@@ -7,9 +7,8 @@ const RegistrationStatus = require("../models/RegistrationStatus.model")
 const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
 
 
-    const student_id = req.body.student_id
-
-  
+    const student_id = req.params.student_id
+    // console.log(student_id)
     const student = await Student.findById(student_id)
 
     if(!student)

@@ -52,7 +52,7 @@ export const createAddStatus = async (req: Request, res: Response) => {
   }
 };
 export const ActivateAddStatus = async (req: Request, res: Response) => {
-  const id = req.body.body;
+  const id = req.body.id;
 
   try {
 
