@@ -2295,7 +2295,7 @@ export const getDepartmentWithdrawalRequests = async (req: Request, res: Respons
     })
     .populate({
       path: "stud_id",
-      select: "name",
+      select: "name id phone email",
     })
     if (!withdrawal) {
       continue;
@@ -2335,7 +2335,7 @@ export const getDepartmentEnrollmentRequests = async (req: Request, res: Respons
     })
     .populate({
       path: "stud_id",
-      select: "name",
+      select: "name id phone email",
     })
     if (!withdrawal) {
       continue;
@@ -2356,7 +2356,7 @@ export const getRegistrarWithdrawalRequests = async (req: Request, res: Response
 
   const withdrawalRequests = await Withdrawal.find({status:"Department-Withdrawal"}).populate({
     path: "stud_id",
-    select: "name",
+    select: "name id phone email",
   })
 
   if(!withdrawalRequests)
@@ -2375,7 +2375,7 @@ export const getRegistrarEnrollmentRequests = async (req: Request, res: Response
 
   const withdrawalRequests = await Withdrawal.find({status:"Department-enroll"}).populate({
     path: "stud_id",
-    select: "name",
+    select: "name id phone email",
   })
 
   if(!withdrawalRequests)
