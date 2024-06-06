@@ -2252,6 +2252,31 @@ export const WithdrawalRequest = async (req: Request, res: Response) => {
   return res.status(200).json({ message: "successfully submitted request" });
 };
 
+export const EnrollmentRequest = async (req: Request, res: Response) => {
+  const id = req.body.id;
+  const reason = req.body.reason;
+  const data = req.body
+
+  const student = await Student.findById(id);
+
+  if (!student) {
+    return res.status(404).json({ message: "Student not found" });
+  }
+  if(student.status !== "Withdrawn")
+    {
+      return res.status(200).json({ message: "Cant Ask for Enrollment" });
+
+    }
+
+  const withdrawalRequest = await new Withdrawal({stud_id:id,reason:reason,status:"Student-enroll"});
+
+  await withdrawalRequest.save()
+
+
+
+  return res.status(200).json({ message: "successfully submitted request" });
+};
+
 export const getWithdrawalStatus = async (req: Request, res: Response) => {
   const id = req.body.id;
 
@@ -2288,7 +2313,7 @@ export const getDepartmentWithdrawalRequests = async (req: Request, res: Respons
         { status: "Student-Withdrawal",stud_id: id},
         { 
           stud_id:id,
-          status: "Rejected",
+          status: "Department-Withdrawal",
           "rejections.by": "Registrar"
         },
       ],
@@ -2325,9 +2350,9 @@ export const getDepartmentEnrollmentRequests = async (req: Request, res: Respons
   for (const id of Ids) {
     const withdrawal = await Withdrawal.findOne({
       $or: [
-        { status: "Registrar-withdrawal",stud_id: id},
+        { status: "Student-enroll",stud_id: id},
         { 
-          status: "Rejected",
+          status: "Department-enroll",
           stud_id:id,
           "rejections.by": "Registrar"
         },
@@ -2481,7 +2506,7 @@ if (highestCombination) {
 }
 
 
-  const updated = await Withdrawal.findOneAndUpdate({stud_id:id}, { status: "Registrar-withdrawal" });
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id}, { status: "Registrar-withdrawal",history:{"type":"Withdrawal","date":new Date()} });
   const updatedstudent = await Student.findByIdAndUpdate(id, { status: "Withdrawn"})
 
   if (!updated || !updatedstudent) {
@@ -2512,7 +2537,7 @@ export const AcceptRegistrarEnrollmentRequest = async (req: Request, res: Respon
 
 
 
-  const updated = await Withdrawal.findOneAndUpdate({stud_id:id}, { status: "Registrar-enroll" });
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id}, { status: "Registrar-enroll",history:{"type":"Enrollment","date":new Date()} });
   const updatedstudent = await Student.findByIdAndUpdate(id, { status: "Active"})
 
   if (!updated || !updatedstudent) {
@@ -2539,7 +2564,7 @@ export const RejectDepartmentWithdrawalRequest = async (req: Request, res: Respo
     errors.push(`Could not find student with id ${id.id}`);
   }
 
-  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Rejected", rejections: {
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Student-Withdrawal", rejections: {
     "by": "Department",
     "reason": id.reason
   }, });
@@ -2569,7 +2594,7 @@ export const RejectRegistrarWithdrawalRequest = async (req: Request, res: Respon
     errors.push(`Could not find student with id ${id.id}`);
   }
 
-  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Rejected", rejections: {
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Department-Withdrawal", rejections: {
     "by": "Registrar",
     "reason": id.reason
   }, });
@@ -2599,7 +2624,7 @@ export const RejectRegistrarEnrollmentRequest = async (req: Request, res: Respon
     errors.push(`Could not find student with id ${id.id}`);
   }
 
-  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Rejected", rejections: {
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Department-enroll", rejections: {
     "by": "Registrar",
     "reason": id.reason
   }, });
@@ -2628,7 +2653,7 @@ export const RejectDepartmentEnrollmentRequest = async (req: Request, res: Respo
     errors.push(`Could not find student with id ${id.id}`);
   }
 
-  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Rejected", rejections: {
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Student-enroll", rejections: {
     "by": "Department",
     "reason": id.reason
   }, });
