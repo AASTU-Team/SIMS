@@ -1073,7 +1073,6 @@ export const getstudentRegistrationCourses = async (
   res: Response
 ) => {
   const student_id = req.params.student_id;
-  console.log(student_id)
   let department_id = "";
   let type = "";
   let newyear = 0;
@@ -1163,6 +1162,7 @@ export const getstudentRegistrationCourses = async (
     for (const course of courses) {
       let coursePreq: any[] = [];
       const status = await checkPrerequisite(course, student_id);
+      console.log(status);
       CourseStatus.push({
         courseId: course,
         status: status,
@@ -1409,18 +1409,22 @@ export const getDepartmentRegistrationStatus = async (
   for (const id of ids) {
     const registrations = await Registration.findOne({
       $or: [
-        { status: "Student",stud_id:id },
-        { 
-          stud_id:id,
+        { status: "Student", stud_id: id },
+        {
+          stud_id: id,
           status: "Rejected",
-          "rejections.by": "Registrar"
+          "rejections.by": "Registrar",
         },
       ],
     })
+    .populate("stud_id", "name")
     .populate({
-      path: "stud_id",
-      select: "name",
-    })
+      path: "courses",
+      populate: {
+        path: "courseID",
+        select: "name credits type code lec lab tut hs",
+      },
+    });
     if (!registrations) {
       continue;
     }

@@ -197,6 +197,20 @@ export const deleteStatus = async (req: Request, res: Response) => {
           const regData = await Registration.findOne({stud_id:student._id,year: student.year,semester:student.semester});
           if(regData)
             {
+              const requestGrade = await fetch("http://localhost:3005/grade/grades-and-gpa",{
+                method:"Post",
+                body:JSON.stringify({
+                  stud_id:regData.stud_id,
+                  semester:regData.semester,
+                  year:regData.year,
+                  courses:regData.courses
+                 
+                })
+
+              })
+
+              const response = await requestGrade.json()
+              console.log(response)
               if(regData.GPA < 1.75)
                 {
                   continue
