@@ -6,21 +6,10 @@ const RegistrationStatus = require("../models/RegistrationStatus.model")
 
 const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
 
-  let student_id = ""
-
-
-  if (req.body.student_id) {
-     student_id = req.body.student_id;
  
-  } else {
+    const student_id = req.params.student_id;
  
-    if (req.params.student_id) {
-      student_id = req.params.student_id;
- 
-      // Neither request body nor request parameters have the student_id
-      return res.status(400).json({ message: "Student ID is required" });
-    }
-  }
+    
 
   
     const student = await Student.findById(student_id)
