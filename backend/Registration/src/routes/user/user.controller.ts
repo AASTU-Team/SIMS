@@ -1281,7 +1281,7 @@ export const studentRegistration = async (req: Request, res: Response) => {
     console.log("year", newyear);
     console.log("department", department_id);
  */
-    const curriculum = await Curriculum.findOne({
+   /*  const curriculum = await Curriculum.findOne({
       year: highestYear,
       semester: highestSemester,
       department_id: department_id,
@@ -1300,7 +1300,7 @@ export const studentRegistration = async (req: Request, res: Response) => {
       // if (course.semester === newsemester) {
       courses.push(course);
       // }
-    });
+    }); */
 
  /*    for (const course of courses) {
       const status = await checkPrerequisite(course, student_id);
@@ -1332,6 +1332,10 @@ export const studentRegistration = async (req: Request, res: Response) => {
       total_credit: sum,
       status: "Student",
     }); */
+
+    console.log("student",student._id)
+    console.log("year",highestYear)
+    console.log("semester",highestSemester)
 
    
 
