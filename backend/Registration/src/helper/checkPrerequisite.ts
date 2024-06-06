@@ -2,10 +2,9 @@ const Student = require("../models/student.model");
 const Curriculum = require("../models/curriculum.model");
 const Registration = require("../models/registration.model");
 const Course = require("../models/course.model");
-
-async function checkPrerequisite(course: String, student: String) {
-  const courseData = await Course.findById(course);
-  const registration = await Registration.find({ stud_id: student });
+async function checkPrerequisite(course: string, student: string) {
+  const courseData = await Course.findById(course).populate("prerequisites");
+  const studentRegistrations = await Registration.find({ stud_id: student, status: "Completed" }).populate("courseID");
 
   if (!courseData) {
     return false;
@@ -15,12 +14,15 @@ async function checkPrerequisite(course: String, student: String) {
     return true;
   }
 
-  const prerequisites: any[] = courseData.prerequisites;
-  const completedCourses = registration.filter((reg:any) => reg.status === "Completed").map((reg:any) => reg.courseID);
+  const completedCourseIds = studentRegistrations.map((reg:any) => reg.courseID._id.toString());
 
-  for (const prereq of prerequisites) {
-    if (!completedCourses.includes(prereq)) {
-      return false;
+  for (const prereq of courseData.prerequisites) {
+    if (!completedCourseIds.includes(prereq._id.toString())) {
+      // Check if the prerequisite course is available in the student's curriculum
+      const curriculum = await Curriculum.findOne({ student_id: student, course_id: prereq._id });
+      if (!curriculum) {
+        return false; // Return false if the prerequisite course is not found in the student's registration or curriculum
+      }
     }
   }
 
@@ -28,3 +30,4 @@ async function checkPrerequisite(course: String, student: String) {
 }
 
 module.exports = checkPrerequisite;
+
