@@ -8,7 +8,7 @@ const assignCourse = require("../../helper/assignCourse");
 const deleteCsv = require("../../helper/deleteCsv");
 const checkPrerequisite = require("../../helper/checkPrerequisite");
 const isCourseTaken = require("../../helper/isCourseTaken");
-const getPossibleAddCourses = require("../../helper/getPossibleAddCourses");
+const getCourseToAdd = require("../../helper/getCoursetoAdd");
 async function getCredit(Id: String): Promise<any> {
   const course = await Course.findById(Id);
   if (!course) {
@@ -1732,7 +1732,7 @@ export const addCourse = async ({
 
 export const ListAddCourses = async (req: Request, res: Response) => {
   const { student_id } = req.params;
-  res.status(200).send(await getPossibleAddCourses(student_id));
+  res.status(200).send(await getCourseToAdd(student_id));
 };
 
 function checkOverLoad(total_credit: Number, credits: Number, add: boolean) {
