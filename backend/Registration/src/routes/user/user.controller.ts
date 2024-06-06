@@ -1089,6 +1089,7 @@ export const getstudentRegistrationCourses = async (
 
   const highestYear =  student.year
   const highestSemester =  student.semester
+  let status = ""
 
 
   if (!student) {
@@ -1132,10 +1133,10 @@ export const getstudentRegistrationCourses = async (
     console.log("department", department_id);
 
     const RegData = await Registration.findOne({stud_id:student._id,year:highestYear,semester:highestSemester})
-  /*   if(RegData)
-      {
-        return res.status(200).json({message:[]})
-      } */
+   if(RegData)
+    {
+      status = RegData.status
+    }
 
     const curriculum = await Curriculum.findOne({
       year: highestYear,
@@ -1229,13 +1230,14 @@ export const getstudentRegistrationCourses = async (
       try {
         const savedRegistration = await registration.save();
         console.log("Registration saved successfully:", savedRegistration);
+        status = savedRegistration.status;
       } catch (error) {
         console.error("Error saving registration:", error);
       }
 
     }
   
-  return res.status(200).json({ message: regCourses });
+  return res.status(200).json({ message: regCourses,status:status });
 };
 
 export const studentRegistration = async (req: Request, res: Response) => {
