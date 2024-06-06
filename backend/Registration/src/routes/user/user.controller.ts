@@ -1240,6 +1240,24 @@ export const getstudentRegistrationCourses = async (
   return res.status(200).json({ message: regCourses,status:status });
 };
 
+export const getStudentRegistrationHistory = async (req: Request, res: Response) => {
+  const student_id = req.body.student_id;
+
+  const registrations = await Registration.find({stud_id:student_id})
+
+  
+  if (!registrations) {
+    return res.status(200).json({ message: [] });
+  }
+
+  return res.status(200).json({message:registrations})
+
+
+
+
+
+}
+
 export const studentRegistration = async (req: Request, res: Response) => {
   const student_id = req.body.student_id;
 

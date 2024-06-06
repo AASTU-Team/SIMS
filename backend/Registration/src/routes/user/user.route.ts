@@ -21,6 +21,7 @@ import { registerStudentCsv } from "./user.controller";
 import { uploadFile } from "./user.controller";
 import { getStudentProfile } from "./user.controller";
 import { getAllStaff } from "./user.controller";
+import { getStudentRegistrationHistory } from "./user.controller";
 import { getstudentRegistrationCourses } from "./user.controller";
 import { getDepartmentRegistrationStatus } from "./user.controller";
 import { confirmDepartmentRegistration } from "./user.controller";
@@ -108,6 +109,8 @@ Studentrouter.patch("/staff/update", updateStaff);
 Studentrouter.get("/student/courses/:student_id", getStudentCourses);
 Studentrouter.post("/student/register",checkRegistrationStatus, studentRegistration);
 Studentrouter.get("/student/registrationCourses/:student_id" ,checkRegistrationStatus ,getstudentRegistrationCourses
+);
+Studentrouter.get("/student/registrationStatus"  ,getStudentRegistrationHistory
 );
 Studentrouter.get("/student/addcourses/:student_id", ListAddCourses);
 
