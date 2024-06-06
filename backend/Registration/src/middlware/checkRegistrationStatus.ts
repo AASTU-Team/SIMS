@@ -32,6 +32,7 @@ const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
         const semesterDoc = await Semester.findOne({
             semester: semester,
             batches: { $regex: `\\b${year}\\b` },
+            program:student.type
            
           });
 
