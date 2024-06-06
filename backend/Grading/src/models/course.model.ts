@@ -1,16 +1,4 @@
 import mongoose from "mongoose";
-const assessmentsSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
-  name: {
-    type: String
-  },
-  value: {
-    type: Number
-  }
-});
 
 let courseSchema = new mongoose.Schema({
   name: {
@@ -47,19 +35,11 @@ let courseSchema = new mongoose.Schema({
     unique: true,
   },
   lec: {
-    type: Number,
+    type: String,
     required: true,
   },
   lab: {
-    type: Number,
-    required: true,
-  },
-  tut: {
-    type: Number,
-    required: true,
-  },
-  hs: {
-    type: Number,
+    type: String,
     required: true,
   },
   description: {
@@ -67,11 +47,6 @@ let courseSchema = new mongoose.Schema({
     required: false,
     default: "",
   },
-  assessments: {
-    type: [assessmentsSchema]
-  }
-
 });
 
-module.exports =
-  mongoose.models.Course || mongoose.model("Course", courseSchema);
+module.exports = mongoose.models.Course || mongoose.model("Course", courseSchema);

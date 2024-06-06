@@ -8,7 +8,7 @@ let withdrawalSchema = new mongoose.Schema({
     },
     status: {
       type: String,
-      enum: ['Student', 'Department', 'Registrar', 'Rejected'],
+      enum: ['Student-Withdrawal', 'Department-Withdrawal', 'Registrar-withdrawal','Student-enroll', 'Department-enroll', 'Registrar-enroll', 'Rejected'],
       required: true,
     },
     reason: {
