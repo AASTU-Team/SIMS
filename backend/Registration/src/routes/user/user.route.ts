@@ -51,6 +51,7 @@ import { AcceptRegistrarEnrollmentRequest } from "./user.controller";
 import { RejectRegistrarEnrollmentRequest } from "./user.controller";
 import { RejectDepartmentWithdrawalRequest } from "./user.controller";
 import { RejectRegistrarWithdrawalRequest } from "./user.controller";
+import { RejectDepartmentEnrollmentRequest } from "./user.controller";
 
 import { AcceptWithdrawalRequest } from "./user.controller";
 import { activateStudent } from "./user.controller";
@@ -138,6 +139,7 @@ Studentrouter.post("/registrar/AcceptenrollmentRequests",AcceptRegistrarEnrollme
 Studentrouter.post("/registrar/RejectenrollmentRequests",RejectRegistrarEnrollmentRequest);
 
 Studentrouter.post("/department/RejectwithdrawalRequests", RejectDepartmentWithdrawalRequest);
+Studentrouter.post("/department/RejectEnrollmentRequests", RejectDepartmentEnrollmentRequest);
 Studentrouter.post("/registrar/RejectwithdrawalRequests",RejectRegistrarWithdrawalRequest);
 
 

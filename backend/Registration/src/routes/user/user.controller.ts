@@ -2415,6 +2415,7 @@ export const AcceptDepartmentWithdrawalRequest = async (req: Request, res: Respo
 
   return res.status(200).json({ success: success,errors: errors });
 };
+
 export const AcceptDepartmentEnrollmentRequest = async (req: Request, res: Response) => {
   const ids:any = req.body.data
   console.log(ids)
@@ -2599,6 +2600,35 @@ export const RejectRegistrarEnrollmentRequest = async (req: Request, res: Respon
 
   const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Rejected", rejections: {
     "by": "Registrar",
+    "reason": id.reason
+  }, });
+
+  if (!updated) {
+    errors.push(`Could not update student with name ${student.name}`);
+    
+  }
+  else{
+    success.push(` updated student with name ${student.name}`);
+
+  }
+}
+
+  return res.status(200).json({ success: success,errors: errors });
+};
+export const RejectDepartmentEnrollmentRequest = async (req: Request, res: Response) => {
+  const ids:any = req.body.data;
+  const errors:any = []
+  const success:any = []
+
+  for(const id of ids) {
+  const student = await Student.findById(id.id);
+  let status: Boolean = false;
+  if (!student) {
+    errors.push(`Could not find student with id ${id.id}`);
+  }
+
+  const updated = await Withdrawal.findOneAndUpdate({stud_id:id.id}, { status: "Rejected", rejections: {
+    "by": "Department",
     "reason": id.reason
   }, });
 
