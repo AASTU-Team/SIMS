@@ -1390,7 +1390,7 @@ export const getDepartmentRegistrationStatus = async (
   req: Request,
   res: Response
 ) => {
-  const department = req.body.department;
+  const department = req.params.department;
   const ids: any[] = [];
   const pendingIds: any[] = [];
   const pendingStudents: any[] = [];
@@ -1636,7 +1636,7 @@ export const getRegistrarRegistrationStatus = async (
   req: Request,
   res: Response
 ) => {
-  const department = req.body.department;
+  const department = req.params.department;
   const ids: any[] = [];
   const pendingIds: any[] = [];
   const pendingStudents: any[] = [];

@@ -32,6 +32,7 @@ const checkRegistrationStatus2 = async(req:Request, res:Response, next:any) => {
         const semesterDoc = await Semester.findOne({
             semester: semester,
             batches: { $regex: `\\b${year}\\b` },
+            type:student.type
            
           });
 
@@ -40,6 +41,7 @@ const checkRegistrationStatus2 = async(req:Request, res:Response, next:any) => {
               message: "Semester not found"
             });
           }
+          console.log(semesterDoc)
 
           const status = await RegistrationStatus.findOne({semester: semesterDoc._id})
 
