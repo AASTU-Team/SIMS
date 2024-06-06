@@ -197,6 +197,10 @@ export const deleteStatus = async (req: Request, res: Response) => {
           const regData = await Registration.findOne({stud_id:student._id,year: student.year,semester:student.semester});
           if(regData)
             {
+              if(regData.GPA < 1.75)
+                {
+                  continue
+                }
               
             }
           let year = 0
