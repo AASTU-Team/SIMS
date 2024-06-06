@@ -4,10 +4,10 @@ const Semester = require("../models/Semesters.model")
 const RegistrationStatus = require("../models/RegistrationStatus.model")
 
 
-const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
+const checkRegistrationStatus2 = async(req:Request, res:Response, next:any) => {
 
  
-    const student_id = req.params.student_id
+    const student_id = req.body.student_id
  
     
 
@@ -72,4 +72,4 @@ const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
 
 }
 
-module.exports = checkRegistrationStatus
+module.exports = checkRegistrationStatus2
