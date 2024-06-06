@@ -1,11 +1,12 @@
 import React from 'react';
-import { Table, Space } from 'antd';
+import { Table, Space, Switch, Popconfirm } from 'antd';
 import type { TableColumnsType } from 'antd';
 import {StaffFields} from "../../type/staff";
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { getStaff } from '../../api/staff';
 import Loader from '../../components/Loader';
+import { QuestionCircleOutlined } from "@ant-design/icons";
 
 
 const StaffTable: React.FC = () =>
@@ -80,7 +81,21 @@ const StaffTable: React.FC = () =>
             >
               Edit
             </a>
-            <a className=" hover:text-red">Delete</a>
+            <Popconfirm
+              title="Delete the student"
+              description="Are you sure to delete this student?"
+              okText="Yes"
+              cancelText="No"
+              icon={<QuestionCircleOutlined style={{ color: "red" }} />}
+            >
+              <a className=" hover:text-red">Delete</a>
+            </Popconfirm>
+            <Switch
+              defaultChecked={record.status === "Active"}
+              onChange={(checked) => {
+                console.log(checked);
+              }}
+            />
           </Space>
         ),
       },

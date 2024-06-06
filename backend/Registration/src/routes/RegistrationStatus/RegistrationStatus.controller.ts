@@ -19,11 +19,7 @@ export const getRegistrationStatus = async (req: Request, res: Response) => {
   try {
     // use find({dep_id : id from fetch })
     const status: any = await RegistrationStatus.find()
-      .populate({
-        path: "department_id",
-        select: "name",
-      })
-     
+    
 
     res.status(200).json({ data: status });
   } catch (error: any) {
@@ -49,6 +45,65 @@ export const createRegistrationStatus = async (req: Request, res: Response) => {
     const newStatus = await new RegistrationStatus(data);
     await newStatus.save();
     return res.status(201).json({ message: "success", staus: newStatus });
+  } catch (error: any) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const ActivateRegistrationStatus = async (req: Request, res: Response) => {
+  const id = req.body.id;
+
+  try {
+
+    const RegStatus = await RegistrationStatus.findOne({  semester:id})
+
+    if(RegStatus)
+      {
+        RegStatus.status = "Active"
+        await RegStatus.save()
+        return res.status(200).json({ message: "success", staus: RegStatus });
+
+      }
+
+      else{
+     
+        return res.status(401).json({ message: "unable to update"});
+
+      }
+
+
+
+  
+  } catch (error: any) {
+    console.log(error.message);
+    return res.status(500).json({ message: error.message });
+  }
+};
+export const DeactivateRegistrationStatus = async (req: Request, res: Response) => {
+  const id = req.body.id;
+
+  try {
+
+    const RegStatus = await RegistrationStatus.findOne({  semester:id})
+
+    if(RegStatus)
+      {
+        RegStatus.status = "Inactive"
+        await RegStatus.save()
+        return res.status(200).json({ message: "success", staus: RegStatus });
+
+      }
+
+      else{
+   
+        return res.status(400).json({ message: "unable to find registration status" });
+
+      }
+
+
+
+  
   } catch (error: any) {
     console.log(error.message);
     return res.status(500).json({ message: error.message });

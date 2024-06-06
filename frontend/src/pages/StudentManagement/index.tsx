@@ -1,6 +1,6 @@
 import StudentTable from "./table";
 import { useState } from "react";
-import { UserAddOutlined, UploadOutlined, InboxOutlined } from "@ant-design/icons";
+import { UserAddOutlined, UploadOutlined, InboxOutlined,DownloadOutlined } from "@ant-design/icons";
 import { Button, Modal, Form, Upload, message } from "antd";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -96,6 +96,10 @@ export default function StudentManagement() {
             <UploadOutlined />
             Register Multiple Students
           </button>
+          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
+            <DownloadOutlined />
+            Export List
+          </button>
         </div>
       </div>
       <StudentTable />
@@ -140,19 +144,20 @@ export default function StudentManagement() {
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
         >
-            <Form.Item name="user_list" >
-              <Dragger {...props}>
-                <p className="ant-upload-drag-icon">
-                  <InboxOutlined />
-                </p>
-                <p className="ant-upload-text">
-                  Click or drag file to this area to upload
-                </p>
-                <p className="ant-upload-hint">
-                  Support for a single csv file upload. Strictly follow the template provided.
-                </p>
-              </Dragger>
-            </Form.Item>
+          <Form.Item name="user_list">
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag file to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Support for a single csv file upload. Strictly follow the
+                template provided.
+              </p>
+            </Dragger>
+          </Form.Item>
         </Form>
         {/* </div> */}
       </Modal>
