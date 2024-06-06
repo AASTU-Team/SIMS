@@ -1570,7 +1570,7 @@ export const rejectDepartmentRegistration = async (
         });
         if (registration) {
           console.log(registration);
-          registration.status = "Rejected";
+          registration.status = "Student";
           registration.rejections = {
             "by": "Department",
             "reason": id.reason
@@ -1606,7 +1606,7 @@ export const rejectDepartmentRegistration = async (
         });
         if (registration) {
           console.log(registration);
-          registration.status = "Rejected";
+          registration.status = "Student";
           registration.rejections = {
             "by": "Department",
             "reason": id.reason
@@ -1753,11 +1753,11 @@ export const confirmRegistrarRegistration = async (
       try {
         const registration = await Registration.findOne({
           stud_id: id,
-          status: "Student",
+          status: "Department",
         });
         if (registration) {
           console.log(registration);
-          registration.status = "Department";
+          registration.status = "Registrar";
           await registration.save();
           success.push(`updated student ${id}`);
         } else {
@@ -1802,7 +1802,7 @@ export const rejectRegistrarRegistration = async (
         });
         if (registration) {
           console.log(registration);
-          registration.status = "Rejected";
+          registration.status = "Department";
           registration.rejections = {
             "by": "Registrar",
             "reason": id.reason
