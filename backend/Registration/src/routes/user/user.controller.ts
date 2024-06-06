@@ -2272,7 +2272,7 @@ export const getWithdrawalStatus = async (req: Request, res: Response) => {
 };
 
 export const getDepartmentWithdrawalRequests = async (req: Request, res: Response) => {
-  const department = req.body.department;
+  const department = req.params.department;
   const Ids:any = []
   const Withdrawals:any = []
   const students = await Student.find({ department_id: department });
@@ -2312,7 +2312,7 @@ export const getDepartmentWithdrawalRequests = async (req: Request, res: Respons
 
 };
 export const getDepartmentEnrollmentRequests = async (req: Request, res: Response) => {
-  const department = req.body.department;
+  const department = req.params.department;
   const Ids:any = []
   const Withdrawals:any = []
   const students = await Student.find({ department_id: department });
