@@ -109,7 +109,7 @@ Studentrouter.patch("/staff/update", updateStaff);
 
 Studentrouter.get("/student/courses/:student_id", getStudentCourses);
 Studentrouter.post("/student/register",checkRegistrationStatus2, studentRegistration);
-Studentrouter.get("/student/registrationCourses" ,checkRegistrationStatus ,getstudentRegistrationCourses
+Studentrouter.get("/student/registrationCourses/:student_id" ,checkRegistrationStatus ,getstudentRegistrationCourses
 );
 Studentrouter.get("/student/registrationStatus"  ,getStudentRegistrationHistory
 );
@@ -144,7 +144,7 @@ Studentrouter.post("/registrar/RejectwithdrawalRequests",RejectRegistrarWithdraw
 
 Studentrouter.post("/students/activateStudent", activateStudent);
 
-Studentrouter.get("/department/getStudentStatus", getDepartmentRegistrationStatus);
+Studentrouter.get("/department/getStudentStatus/:department", getDepartmentRegistrationStatus);
 Studentrouter.post("/department/confirmStudentStatus", confirmDepartmentRegistration);
 Studentrouter.post("/department/rejectStudentStatus", rejectDepartmentRegistration);
 
