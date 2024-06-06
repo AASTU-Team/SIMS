@@ -123,7 +123,7 @@ Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
-Studentrouter.get("/student/withdrawalStatus",getWithdrawalStatus);
+Studentrouter.get("/student/withdrawalStatus/:id",getWithdrawalStatus);
 
 Studentrouter.get("/department/withdrawalRequests", getDepartmentWithdrawalRequests);
 Studentrouter.get("/department/enrollmentRequests", getDepartmentEnrollmentRequests);

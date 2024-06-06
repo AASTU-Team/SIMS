@@ -2246,7 +2246,7 @@ export const WithdrawalRequest = async (req: Request, res: Response) => {
 };
 
 export const getWithdrawalStatus = async (req: Request, res: Response) => {
-  const id = req.body.id;
+  const id = req.params.id;
 
   const withdrawal = await Withdrawal.findOne({stud_id: id});
 
