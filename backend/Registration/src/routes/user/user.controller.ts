@@ -1072,7 +1072,7 @@ export const getstudentRegistrationCourses = async (
   req: Request,
   res: Response
 ) => {
-  const student_id = req.body.student_id;
+  const student_id = req.params.student_id;
 
   let department_id = "";
   let type = "";
