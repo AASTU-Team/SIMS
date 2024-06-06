@@ -1540,14 +1540,13 @@ export const confirmDepartmentRegistration = async (
   }
 };
 
-
 export const rejectDepartmentRegistration = async (
   req: Request,
   res: Response
 ) => {
-  const department = req.body.department;
-  const isAll = req.body.isAll;
-  const data = req.body.data;
+  const department:any = req.body.department;
+  const isAll:Boolean = req.body.isAll;
+  const data:any[] = req.body.data;
 
   const ids: any[] = [];
   const errors: any[] = [];
@@ -1603,7 +1602,7 @@ export const rejectDepartmentRegistration = async (
       // console.log(id)
       try {
         const registration = await Registration.findOne({
-          stud_id: id,
+          stud_id: id.id,
           status: "Student",
         });
         if (registration) {
@@ -1657,6 +1656,13 @@ export const getRegistrarRegistrationStatus = async (
       path: "stud_id",
       select: "name",
     })
+    .populate({
+      path: "courses",
+      populate: {
+        path: "courseID",
+        select: "name credits type code lec lab tut hs",
+      },
+    });
     registrations.map((registration:any )=>{
       pendingIds.push(registration.stud_id);
 
@@ -1682,9 +1688,9 @@ export const confirmRegistrarRegistration = async (
   req: Request,
   res: Response
 ) => {
-  const department = req.body.department;
-  const isAll = req.body.isAll;
-  const data = req.body.data;
+  const department:any = req.body.department;
+  const isAll:any = req.body.isAll;
+  const data:any[] = req.body.data;
 
   const ids: any[] = [];
   const errors: any[] = [];
@@ -1779,7 +1785,7 @@ export const rejectRegistrarRegistration = async (
   res: Response
 ) => {
   const department = req.body.department;
-  const data = req.body.data;
+  const data:any = req.body.data;
 
   const ids: any[] = [];
   const errors: any[] = [];
@@ -1792,7 +1798,7 @@ export const rejectRegistrarRegistration = async (
       // console.log(id)
       try {
         const registration = await Registration.findOne({
-          stud_id: id,
+          stud_id: id.id,
           status: "Department",
         });
         if (registration) {
