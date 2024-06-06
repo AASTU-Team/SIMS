@@ -1143,7 +1143,7 @@ export const getstudentRegistrationCourses = async (
     });
 
     if (!curriculum) {
-      return res.status(404).json({ message: "Registration data not found" });
+      return res.status(200).json({ message: [] });
     }
 
     const allCourses: any[] = curriculum.courses;
@@ -1155,6 +1155,7 @@ export const getstudentRegistrationCourses = async (
       courses.push(course);
       // }
     });
+    let sum: number = 0;
 
     for (const course of courses) {
       let coursePreq: any[] = [];
@@ -1204,27 +1205,28 @@ export const getstudentRegistrationCourses = async (
         total_credit.push(value);
       //}
     }
-    let sum: number = 0;
+    
     total_credit.map((credit: any) => {
       sum += credit;
     });
-      const registration = await new Registration({
-      stud_id: student_id,
-      year: newyear,
-      semester: newsemester,
-      courses: regCourses2,
-      registration_date: new Date(),
-      total_credit: sum,
-      status:"Pending"
-    });
-
-    try {
-      const savedRegistration = await registration.save();
-      console.log("Registration saved successfully:", savedRegistration);
-    } catch (error) {
-      console.error("Error saving registration:", error);
-    } 
+   
   
+  } 
+  const registration = await new Registration({
+    stud_id: student_id,
+    year:highestYear,
+    semester: highestSemester,
+    courses: regCourses2,
+    registration_date: new Date(),
+    total_credit: sum,
+    status:"Pending"
+  });
+
+  try {
+    const savedRegistration = await registration.save();
+    console.log("Registration saved successfully:", savedRegistration);
+  } catch (error) {
+    console.error("Error saving registration:", error);
   } 
   return res.status(200).json({ message: regCourses });
 };
