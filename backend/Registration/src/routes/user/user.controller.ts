@@ -1128,6 +1128,12 @@ export const getstudentRegistrationCourses = async (
     console.log("year",highestYear);
     console.log("department", department_id);
 
+    const RegData = await Registration.findOne({stud_id:student._id,year:highestYear,semester:highestSemester})
+    if(RegData)
+      {
+        return res.status(200).json({message:[]})
+      }
+
     const curriculum = await Curriculum.findOne({
       year: highestYear,
       semester: highestSemester,

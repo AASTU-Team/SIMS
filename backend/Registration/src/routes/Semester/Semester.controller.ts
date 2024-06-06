@@ -12,6 +12,7 @@ const Semester = require("../../models/Semesters.model");
 const AddStatus = require("../../models/AddStatus.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
 const Student = require("../../models/student.model");
+const Registration = require("../../models/registration.model");
 
 
 
@@ -193,7 +194,13 @@ export const deleteStatus = async (req: Request, res: Response) => {
     });
     if(students.length > 0)
       {
-        students.map((student:any) =>{
+        for(const student of students){
+
+          const regData = await Registration.findOne({stud_id:student._id,year: student.year,semester:student.semester});
+          if(regData)
+            {
+              
+            }
           let year = 0
           let semester = 0
           if(student.semester == 1)
@@ -211,7 +218,7 @@ export const deleteStatus = async (req: Request, res: Response) => {
             student.save()
 
           
-        })
+        }
 
       }
   
