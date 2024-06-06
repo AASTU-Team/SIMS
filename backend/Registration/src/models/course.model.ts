@@ -69,7 +69,8 @@ let courseSchema = new mongoose.Schema({
   },
   assessments: {
     type: [assessmentsSchema]
-  }
+  },
+  maxNumberOfStudents: Number,
 
 });
 
