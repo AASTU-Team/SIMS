@@ -6,8 +6,21 @@ const RegistrationStatus = require("../models/RegistrationStatus.model")
 
 const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
 
+  let student_id = ""
 
-    const student_id = req.body.student_id
+
+  if (req.body.student_id) {
+     student_id = req.body.student_id;
+ 
+  } else {
+ 
+    if (req.params.student_id) {
+      student_id = req.params.student_id;
+ 
+      // Neither request body nor request parameters have the student_id
+      return res.status(400).json({ message: "Student ID is required" });
+    }
+  }
 
   
     const student = await Student.findById(student_id)
@@ -45,14 +58,14 @@ const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
           if(!status)
           {
             return res.status(404).json({
-              message: "Registration Status not found"
+              message: " Status not Found"
             });
           }
 
           if(status.status == "Inactive")
             {
                 return res.status(200).json({
-                  message: "Registration Status is Inactive"
+                  message: "Inactive"
                 });
             }
 
