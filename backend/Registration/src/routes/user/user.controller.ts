@@ -1132,10 +1132,10 @@ export const getstudentRegistrationCourses = async (
     console.log("department", department_id);
 
     const RegData = await Registration.findOne({stud_id:student._id,year:highestYear,semester:highestSemester})
-    if(RegData)
+  /*   if(RegData)
       {
         return res.status(200).json({message:[]})
-      }
+      } */
 
     const curriculum = await Curriculum.findOne({
       year: highestYear,
@@ -1214,22 +1214,27 @@ export const getstudentRegistrationCourses = async (
    
   
   } 
-  const registration = await new Registration({
-    stud_id: student_id,
-    year:highestYear,
-    semester: highestSemester,
-    courses: regCourses2,
-    registration_date: new Date(),
-    total_credit: sum,
-    status:"Pending"
-  });
+  if(!RegData)
+    {
+      const registration = await new Registration({
+        stud_id: student_id,
+        year:highestYear,
+        semester: highestSemester,
+        courses: regCourses2,
+        registration_date: new Date(),
+        total_credit: sum,
+        status:"Pending"
+      });
+    
+      try {
+        const savedRegistration = await registration.save();
+        console.log("Registration saved successfully:", savedRegistration);
+      } catch (error) {
+        console.error("Error saving registration:", error);
+      }
 
-  try {
-    const savedRegistration = await registration.save();
-    console.log("Registration saved successfully:", savedRegistration);
-  } catch (error) {
-    console.error("Error saving registration:", error);
-  } 
+    }
+  
   return res.status(200).json({ message: regCourses });
 };
 
