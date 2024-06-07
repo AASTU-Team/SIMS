@@ -71,11 +71,11 @@ Content-Type:  application/json
 
  
 ### assign teacher 
-PATCH  http://localhost:3000/assignment/6662f79e4df9464947df03f3
+PATCH  http://localhost:3000/assignment/666368c86dcdaa0caa6fe71a
 Content-Type:  application/json
 
 {
-  "instructor_id" : "664217adf8b1cf7706c8c48c"
+  "instructor_id" : null
 }
 
 ### get curriculum
