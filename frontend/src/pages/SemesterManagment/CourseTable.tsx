@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { getBatchCourses } from "../../api/registration";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
+import Loader from "../../components/Loader";
 
 type BatchCoursesProps = {
   semesterId: string;
@@ -14,32 +15,7 @@ type BatchCoursesProps = {
   type:string;
 };
 
-const data = [
-  {
-    key: "1",
-    name: "Data Structure",
-    code: "CS-301",
-    lec: "3",
-    lab: "1",
-    tut: "0",
-    hs: "0",
-    category: "Core",
-    option: "Regular",
-    credit: "4",
-  },
-  {
-    key: "2",
-    name: "Data Structure",
-    code: "CS-301",
-    lec: "3",
-    lab: "1",
-    tut: "0",
-    hs: "0",
-    category: "Core",
-    option: "Regular",
-    credit: "4",
-  },
-];
+
 
 export default function CourseTable(state:BatchCoursesProps) {
 //   console.log(state)
@@ -55,7 +31,7 @@ export default function CourseTable(state:BatchCoursesProps) {
         state.type
       ),
   });
-  console.log(query)
+  // console.log(query)
   const columns: TableColumnsType<CourseFields> = [
     {
       title: "Course Name",
@@ -116,18 +92,27 @@ export default function CourseTable(state:BatchCoursesProps) {
   ];
   return (
     <div className="pt-1 flex flex-col gap-5">
+      {query.isPending ? (
+        <div className="h-auto">
+          <Loader />
+        </div>
+      ) : query.isError ? (
+        <>{`${query.error}`}</>
+      ) : (
         <Table
-            columns={columns}
-            dataSource={data}
-            scroll={{ x: 1300 }}
-            expandable={{
-                expandedRowRender: (record:CourseFields) => (
-                    <div className="p-2 bg-white">
-                        <SectionDetails semester={state} course={record}/>
-                    </div>
-                ),
-            }}
+          columns={columns}
+          rowKey={(record) => record._id || ""}
+          dataSource={query?.data?.data?.data || []}
+          scroll={{ x: 1300 }}
+          expandable={{
+            expandedRowRender: (record: CourseFields) => (
+              <div className="p-2 bg-white">
+                <SectionDetails semester={state} course={record} />
+              </div>
+            ),
+          }}
         />
+      )}
     </div>
   );
 }

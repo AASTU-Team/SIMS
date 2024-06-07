@@ -153,13 +153,10 @@ export default function SemesterOption({
           <Popconfirm
             title="Delete the student"
             description="Are you sure to delete this student?"
-            onConfirm={() =>{
-              deleteSemester(semester?._id || "")
+            onConfirm={() => {
+              deleteSemester(semester?._id || "");
               queryClient.refetchQueries({ queryKey: ["semester"] });
-            }
-              
-            }
-              
+            }}
             okText="Yes"
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
@@ -195,9 +192,9 @@ export default function SemesterOption({
             <Switch
               checkedChildren="Open"
               unCheckedChildren="Closed"
-              defaultChecked={semester.regStatus === true}
+              defaultChecked={semester.regStatus === "Active"}
               onChange={() => {
-                if (semester?.regStatus === true) {
+                if (semester?.regStatus === "Active") {
                   regDeactivateMutation.mutate(semester?._id || "");
                   queryClient.refetchQueries({ queryKey: ["semester"] });
                 } else {
@@ -213,9 +210,9 @@ export default function SemesterOption({
             <Switch
               checkedChildren="Open"
               unCheckedChildren="Closed"
-              defaultChecked={semester.addStatus === true}
+              defaultChecked={semester.addStatus === "Active"}
               onChange={() => {
-                if (semester?.addStatus === true) {
+                if (semester?.addStatus === "Active") {
                   addDeactivateMutation.mutate(semester?._id || "");
                   queryClient.refetchQueries({ queryKey: ["semester"] });
                 } else {
