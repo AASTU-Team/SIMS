@@ -1,7 +1,5 @@
 import express from "express";
 
-
-
 import {
   addCourse,
   getTemplate,
@@ -29,7 +27,6 @@ import { rejectDepartmentRegistration } from "./user.controller";
 import { getRegistrarRegistrationStatus } from "./user.controller";
 import { confirmRegistrarRegistration } from "./user.controller";
 import { rejectRegistrarRegistration } from "./user.controller";
-
 
 import { getAllStudent } from "./user.controller";
 import { getStudentByDepartment } from "./user.controller";
@@ -111,10 +108,11 @@ Studentrouter.patch("/staff/update", updateStaff);
 
 Studentrouter.get("/student/courses/:student_id", getStudentCourses);
 Studentrouter.post("/student/register", studentRegistration);
-Studentrouter.get("/student/registrationCourses/:student_id"  ,getstudentRegistrationCourses
+Studentrouter.get(
+  "/student/registrationCourses/:student_id",
+  getstudentRegistrationCourses
 );
-Studentrouter.get("/student/registrationStatus"  ,getStudentRegistrationHistory
-);
+Studentrouter.get("/student/registrationStatus", getStudentRegistrationHistory);
 Studentrouter.get("/student/addcourses/:student_id", ListAddCourses);
 
 // Studentrouter.post("/student/dropcourse/:id", dropCourse);
@@ -125,45 +123,98 @@ Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
-Studentrouter.get("/student/withdrawalStatus/:id",getWithdrawalStatus);
+Studentrouter.get("/student/withdrawalStatus/:id", getWithdrawalStatus);
 
-Studentrouter.get("/department/withdrawalRequests/:department", getDepartmentWithdrawalRequests);
-Studentrouter.get("/department/enrollmentRequests/:department", getDepartmentEnrollmentRequests);
-Studentrouter.get("/registrar/withdrawalRequests", getRegistrarWithdrawalRequests);
-Studentrouter.get("/registrar/enrollmentRequests", getRegistrarEnrollmentRequests);
+Studentrouter.get(
+  "/department/withdrawalRequests/:department",
+  getDepartmentWithdrawalRequests
+);
+Studentrouter.get(
+  "/department/enrollmentRequests/:department",
+  getDepartmentEnrollmentRequests
+);
+Studentrouter.get(
+  "/registrar/withdrawalRequests",
+  getRegistrarWithdrawalRequests
+);
+Studentrouter.get(
+  "/registrar/enrollmentRequests",
+  getRegistrarEnrollmentRequests
+);
 
-Studentrouter.post("/department/AcceptwithdrawalRequests", AcceptDepartmentWithdrawalRequest);
-Studentrouter.post("/department/AcceptenrollmentRequests", AcceptDepartmentEnrollmentRequest);
-Studentrouter.post("/registrar/AcceptwithdrawalRequests",AcceptRegistrarWithdrawalRequest);
+Studentrouter.post(
+  "/department/AcceptwithdrawalRequests",
+  AcceptDepartmentWithdrawalRequest
+);
+Studentrouter.post(
+  "/department/AcceptenrollmentRequests",
+  AcceptDepartmentEnrollmentRequest
+);
+Studentrouter.post(
+  "/registrar/AcceptwithdrawalRequests",
+  AcceptRegistrarWithdrawalRequest
+);
 
-Studentrouter.post("/registrar/AcceptenrollmentRequests",AcceptRegistrarEnrollmentRequest);
-Studentrouter.post("/registrar/RejectenrollmentRequests",RejectRegistrarEnrollmentRequest);
+Studentrouter.post(
+  "/registrar/AcceptenrollmentRequests",
+  AcceptRegistrarEnrollmentRequest
+);
+Studentrouter.post(
+  "/registrar/RejectenrollmentRequests",
+  RejectRegistrarEnrollmentRequest
+);
 
-Studentrouter.post("/department/RejectwithdrawalRequests", RejectDepartmentWithdrawalRequest);
-Studentrouter.post("/department/RejectEnrollmentRequests", RejectDepartmentEnrollmentRequest);
-Studentrouter.post("/registrar/RejectwithdrawalRequests",RejectRegistrarWithdrawalRequest);
-
-
+Studentrouter.post(
+  "/department/RejectwithdrawalRequests",
+  RejectDepartmentWithdrawalRequest
+);
+Studentrouter.post(
+  "/department/RejectEnrollmentRequests",
+  RejectDepartmentEnrollmentRequest
+);
+Studentrouter.post(
+  "/registrar/RejectwithdrawalRequests",
+  RejectRegistrarWithdrawalRequest
+);
 
 Studentrouter.post("/students/activateStudent", activateStudent);
 
-Studentrouter.get("/department/getStudentStatus/:department", getDepartmentRegistrationStatus);
-Studentrouter.post("/department/confirmStudentStatus", confirmDepartmentRegistration);
-Studentrouter.post("/department/rejectStudentStatus", rejectDepartmentRegistration);
+Studentrouter.get(
+  "/department/getStudentStatus/:department",
+  getDepartmentRegistrationStatus
+);
+Studentrouter.post(
+  "/department/confirmStudentStatus",
+  confirmDepartmentRegistration
+);
+Studentrouter.post(
+  "/department/rejectStudentStatus",
+  rejectDepartmentRegistration
+);
 
-Studentrouter.get("/registrar/getStudentStatus", getRegistrarRegistrationStatus);
-Studentrouter.post("/registrar/confirmStudentStatus", confirmRegistrarRegistration);
-Studentrouter.post("/registrar/rejectStudentStatus", rejectRegistrarRegistration);
+Studentrouter.get(
+  "/registrar/getStudentStatus",
+  getRegistrarRegistrationStatus
+);
+Studentrouter.post(
+  "/registrar/confirmStudentStatus",
+  confirmRegistrarRegistration
+);
+Studentrouter.post(
+  "/registrar/rejectStudentStatus",
+  rejectRegistrarRegistration
+);
 
 Studentrouter.get("/template", getTemplate);
 
 Studentrouter.post("/student/test", async (req: Request, res: Response) => {
-  const { department, year, semester, max } = req.body;
+  const { department, year, semester, max, type } = req.body;
   const a = await assignSection({
     department,
     year,
     semester,
     max,
+    type,
   });
   if (a.success) {
     res.status(200).json(a);
