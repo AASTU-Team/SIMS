@@ -22,6 +22,13 @@ export const studentSideBarData = [
   },
   {
     index: 3,
+    label: "Grades",
+    icon: "student",
+    link: "/myGrades",
+    role: "",
+  },
+  {
+    index: 4,
     label: "Schedule",
     icon: "calendar",
     link: "/mySchedule",

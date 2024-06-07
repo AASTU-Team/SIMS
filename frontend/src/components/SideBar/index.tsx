@@ -169,7 +169,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
 
       <div className="custom-scrollbar scrollbar-none flex flex-col overflow-y-auto duration-300 ease-linear">
         {/* <!-- Sidebar Menu --> */}
-        <nav className="mt-3 px-4 py-4 lg:mt-9 lg:pl-2 pr-6">
+        <nav className="mt-3 pr-4 py-4 lg:mt-9 lg: pr-6">
           {/* <!-- Menu Group --> */}
           <div>
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
@@ -184,10 +184,10 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
                       <Link
                         key={item.index}
                         to={item.link}
-                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 text-md  duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
                           pathname.includes(item.link) &&
                           item.link != "/" &&
-                          "bg-graydark dark:bg-meta-4"
+                          "bg-graydark dark:bg-meta-4 border-l-2 border-white"
                         }`}
                       >
                         {Icon.map((icon) => {
