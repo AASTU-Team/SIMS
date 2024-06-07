@@ -5,7 +5,7 @@ import {
   getAllRooms,
   getRoomById,
   updateRoom,
-  createRooms
+  createRooms,
 } from "./room.controller";
 
 const Roomrouter = express.Router();
@@ -15,6 +15,7 @@ const Roomrouter = express.Router();
 Roomrouter.post("/", createRoom);
 Roomrouter.post("/createRooms", createRooms);
 Roomrouter.get("/", getAllRooms);
+// Roomrouter.get('/available' , getAvailableRooms)
 Roomrouter.get("/:roomId", getRoomById);
 Roomrouter.patch("/:roomId", updateRoom);
 Roomrouter.delete("/:roomId", deleteRoom);

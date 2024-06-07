@@ -1,0 +1,7 @@
+{
+  "extends": "./tsconfig.json", // Inherit from main tsconfig
+  "compilerOptions": {
+    "module": "commonjs", // Use commonjs for Jest compatibility
+    "target": "esnext" // Maintain esnext target for tests
+  }
+}
