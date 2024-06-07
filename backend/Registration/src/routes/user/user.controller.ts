@@ -198,7 +198,7 @@ export const registerStudent = async (req: Request, res: Response) => {
         }),
       });
 
-      if (response.status === 201) {
+      if (response.status === 201 && response.ok) {
      /*    const department = await Department.findOne({ name: data.department });
 
          let department_id = "";
@@ -251,7 +251,7 @@ export const registerStudent = async (req: Request, res: Response) => {
         console.log(r.message);
         return res
           .status(400)
-          .json({ message: "An error happend please try again" });
+          .json({ message: r.message });
       }
     } catch (error: any) {
       console.log(error.message);
@@ -536,19 +536,19 @@ function validateStudent(student: any) {
     status: Joi.string().optional(),
     year: Joi.number().integer(),
     semester: Joi.number(),
-    CGPA: Joi.number(),
+    CGPA: Joi.number().optional(),
     //admission_date: Joi.date().format('YYYY-MM-DD').withMessage('Admission date must be in the format YYYY-MM-DD'),
     //grad_date: Joi.date().format('YYYY-MM-DD').withMessage('Graduation date must be in the format YYYY-MM-DD'),
     contact: Joi.string(),
     address: Joi.string(),
     emergencycontact_name: Joi.string().regex(/^[A-Za-z\s]+$/),
     emergencycontact_relation: Joi.string(),
-    phone: Joi.string().regex(/^(\+\d{12}|\d{10})$/),
+    phone: Joi.string().regex(/^(\+\d{12}|\d{10}|\d{9})$/),
     birthday: Joi.date(),
     admission_date: Joi.date(),
     grad_date: Joi.date(),
     //emergencycontact_phone: Joi.string().regex(/^\+\d{12}$/).withMessage('Emergency contact phone number must start with "+" and be followed by 12 digits'),
-    emergencycontact_phone: Joi.string().regex(/^(\+\d{12}|\d{10})$/),
+    emergencycontact_phone: Joi.string().regex(/^(\+\d{12}|\d{10}|\d{9})$/),
   });
 
   return schema.validate(student);
@@ -1095,6 +1095,11 @@ export const getstudentRegistrationCourses = async (
   if (!student) {
     return res.status(404).json({ message: "student not found" });
   }
+  if(student.status !== "Active")
+    {
+      return res.status(200).json({ message:"Student is not Active" });
+
+    }
   department_id = student.department_id;
   type = student.type;
 
