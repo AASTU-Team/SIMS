@@ -4,6 +4,7 @@ import {
   getAttendance,
   registerAttendance,
   editAttendance,
+  deleteAttendance,
 } from "./attendance.controller";
 import { getInstructorAttendance } from "./attendance.controller";
 
@@ -11,10 +12,12 @@ const Attendancerouter = express.Router();
 
 Attendancerouter.post("/new", registerAttendance);
 
-Attendancerouter.get("/instructor", getInstructorAttendance);
+Attendancerouter.post("/instructor", getInstructorAttendance);
 
-Attendancerouter.get("/student", getAttendance);
+Attendancerouter.post("/student", getAttendance);
 
 Attendancerouter.patch("/attendance", editAttendance);
+
+Attendancerouter.delete("/", deleteAttendance);
 
 module.exports = Attendancerouter;
