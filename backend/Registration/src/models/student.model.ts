@@ -37,7 +37,13 @@ let studentSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Active", "Inactive", "Completed", "Withdrawn","Pending-Withdrawal"],
+    enum: [
+      "Active",
+      "Inactive",
+      "Completed",
+      "Withdrawn",
+      "Pending-Withdrawal",
+    ],
     required: false,
   },
   year: {
@@ -58,7 +64,7 @@ let studentSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["Undergraduate", "Masters","PhD"],
+    enum: ["Undergraduate", "Masters", "PhD"],
     required: false,
   },
   address: {
@@ -77,10 +83,10 @@ let studentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  CGPA:{
-  type:Number,
-  required:false
-  }
+  CGPA: {
+    type: Number,
+    required: false,
+  },
 });
 
 module.exports =
