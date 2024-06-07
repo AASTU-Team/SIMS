@@ -11,11 +11,11 @@ POST http://localhost:3000/user/student/addDrop/6646788517b2c61fd5e52d84
 Content-Type:  application/json
 
 {
-   "add" : ["662802ac728d90164b677588" ,"664b13d72fa1ab9ef543688c" ]  ,
-   "drop" : ["663a03d879c454a6075ec31d"]
+   "add" : ["662802ac728d90164b677588" ]  ,
+   "drop" : [ ]
 }
 ### 15 department : fetch add and drop requests should use auth to get depid 
-GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&status=pending
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=10&status=pending
 Content-Type:  application/json
 ### get the number course id 
 GET   http://localhost:3000/user/student/numberofstudent/662802ac728d90164b677588
@@ -25,11 +25,11 @@ POST http://localhost:3000/user/student/stausUpdate
 Content-Type:  application/json
 
 {
-  "addDrop_id" : "665f0191ec73504a0ad4c78c",
+  "addDrop_id" : "666242d40217c188336ce84c",
   "status" : "Accept",
   "assignSec" : [
-    {"course_id" : "662802ac728d90164b677588" , "section_id" : "665cc8fd8191e76e0532e368"},
-    {"course_id" : "664b13d72fa1ab9ef543688c" , "section_id" : "665cc8fd8191e76e0532e368"}
+    {"course_id" : "662802ac728d90164b677588" , "section_id" : "665cc8fd8191e76e0532e368"}
+    //{"course_id" : "664b13d72fa1ab9ef543688c" , "section_id" : "665cc8fd8191e76e0532e368"}
   ]
 }
 ### 17 registrar : get accepted req 
@@ -94,6 +94,15 @@ Content-Type:  application/json
   "name" : "m",
   "year"  : 1 ,
   "semester" : 1
+}
+
+### get students list wiht seciton
+POST http://localhost:3000/assignment/teacher
+Content-Type:  application/json
+
+{
+  "instructor_id" : "664217adf8b1cf7706c8c48c",
+  "course_id":"662802ac728d90164b677588"
 }
 
 

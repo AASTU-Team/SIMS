@@ -6,6 +6,7 @@ import {
   getAssignmentByInstId,
   getAssignmentBycourse,
   updateAssignment,
+  getTeachersAssignment,
 } from "./assignment.controller";
 
 const Assignmentrouter = express.Router();
@@ -13,6 +14,7 @@ const Assignmentrouter = express.Router();
 Assignmentrouter.post("/register", createSchedule);
 
 Assignmentrouter.get("/course", getAssignmentBycourse);
+Assignmentrouter.post("/teacher", getTeachersAssignment);
 Assignmentrouter.get("/:id", getAssignmentById);
 
 Assignmentrouter.get("/instructor/:id", getAssignmentByInstId);
