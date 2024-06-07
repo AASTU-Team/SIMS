@@ -78,7 +78,7 @@ export default function StudentManagement() {
   };
 
   return (
-    <div className="max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+    <div className="max-w-screen-3xl p-4 md:p-6 2xl:p-10">
       <div className="flex justify-between">
         <div className="text-title-md">Student Management</div>
         <div className="flex gap-2">

@@ -62,7 +62,10 @@ export default function EditStudent() {
             Edit Student
           </h3>
 
-          <button  onClick={()=>form.submit()} className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90">
+          <button
+            onClick={() => form.submit()}
+            className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
+          >
             {EditStudentMutation.isPending ? (
               <div className="flex items-center justify-center bg-transparent">
                 <div className="h-5 w-5 animate-spin rounded-full border-2 border-solid border-white border-t-transparent"></div>
@@ -237,21 +240,6 @@ export default function EditStudent() {
             </div>
 
             <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
-              <Form.Item>
-                <div>
-                  <label
-                    className="mb-3 block text-sm font-medium text-black dark:text-white"
-                    htmlFor="profile_pic"
-                  >
-                    Profile Picture
-                  </label>
-                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
-                    <Upload>
-                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
-                  </div>
-                </div>
-              </Form.Item>
               <Form.Item<StudentFields>
                 name="address"
                 rules={[
@@ -277,21 +265,98 @@ export default function EditStudent() {
               </Form.Item>
               <Form.Item<StudentFields>
                 name="year"
-                rules={[{ required: true, message: "Please input the Year!" }]}
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the year!",
+                  },
+                ]}
               >
                 <div>
                   <label
                     className="mb-3 block text-sm font-medium text-black dark:text-white"
                     htmlFor="year"
                   >
-                    Year
+                    Batch Year
                   </label>
-                  <Input
-                    className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                    defaultValue={formValue.year}
-                    placeholder="Enter the address"
-                    type="number"
-                  />
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-3 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder="Select year"
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("year", value);
+                      }}
+                      defaultValue={formValue.year}
+                      options={[
+                        {
+                          value: "1",
+                          label: "First Year",
+                        },
+                        {
+                          value: "2",
+                          label: "Second Year",
+                        },
+                        {
+                          value: "3",
+                          label: "Third Year",
+                        },
+                        {
+                          value: "4",
+                          label: "Fourth Year",
+                        },
+                        {
+                          value: "5",
+                          label: "Fifth Year",
+                        },
+                      ]}
+                    />
+                  </div>
+                </div>
+              </Form.Item>
+              <Form.Item<StudentFields>
+                name="semester"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the semester!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="semester"
+                  >
+                    Semester
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-3 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder="Select semester"
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("semester", value);
+                      }}
+                      defaultValue={formValue.semester}
+                      options={[
+                        {
+                          value: "1",
+                          label: "First Semester",
+                        },
+                        {
+                          value: "2",
+                          label: "Second Semester",
+                        },
+                        {
+                          value: "3",
+                          label: "Third Semester",
+                        },
+                      ]}
+                    />
+                  </div>
                 </div>
               </Form.Item>
             </div>
@@ -436,6 +501,67 @@ export default function EditStudent() {
                           : []
                       }
                     />
+                  </div>
+                </div>
+              </Form.Item>
+              <Form.Item<StudentFields>
+                name="type"
+                rules={[
+                  {
+                    required: true,
+                    message: "Please select the program type!",
+                  },
+                ]}
+              >
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="type"
+                  >
+                    Program Type
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Select
+                      showSearch
+                      placeholder={"Select Program Type"}
+                      optionFilterProp="children"
+                      filterOption={filterOption}
+                      onChange={(value) => {
+                        form.setFieldValue("type", value);
+                      }}
+                      defaultValue={formValue.type}
+                      options={[
+                        {
+                          value: "Undergraduate",
+                          label: "Undergraduate",
+                        },
+                        {
+                          value: "Masters",
+                          label: "Masters Degree",
+                        },
+                        {
+                          value: "PhD",
+                          label: "PhD",
+                        },
+                      ]}
+                    />
+                  </div>
+                </div>
+              </Form.Item>
+            </div>
+            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+              <Form.Item>
+                <div>
+                  <label
+                    className="mb-3 block text-sm font-medium text-black dark:text-white"
+                    htmlFor="profile_pic"
+                  >
+                    Profile Picture
+                  </label>
+                  <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
+                    <Upload>
+                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
+                    </Upload>
                   </div>
                 </div>
               </Form.Item>
