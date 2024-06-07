@@ -64,7 +64,8 @@ Content-Type:  application/json
 	"student_id":"66279e2fda5951ab06556ed8"
 }
 
-### Get stud Attendance
+### delete attendance
+
 DELETE  http://localhost:6000/attendance
 Content-Type:  application/json
 
