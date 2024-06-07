@@ -15,20 +15,27 @@ const CourseTable: React.FC = () => {
       queryFn: getCourse,
     });
   // console.log(query)
-  const columns: TableColumnsType<CourseFields> = [
+  const columns: TableColumnsType = [
     {
       title: "Course Name",
-      width: 150,
+      width: 250,
       dataIndex: "name",
       key: "name",
       fixed: "left",
       sorter: true,
     },
+
+    {
+      title: "Code",
+      dataIndex: "code",
+      key: "code",
+      width: 150,
+    },
     {
       title: "Department",
       dataIndex: "department_name",
       key: "department_name",
-      width: 150,
+      width: 250,
     },
     {
       title: "Credits",
@@ -37,32 +44,9 @@ const CourseTable: React.FC = () => {
       width: 150,
     },
     {
-      title: "Prerequisites",
-      dataIndex: "prerequisites",
-      key: "prerequisites",
-      width: 150,
-      render: (prerequisites: CourseFields[]) => 
-          {return prerequisites.length > 0 ? (
-            <ul>
-              {prerequisites.map((prerequisite) => (
-                <li key={prerequisite?.code}>{prerequisite?.name}</li>
-              ))}
-            </ul>
-          ) : (
-            <p>No Prerequisites</p>
-          )
-        }
-    },
-    {
       title: "Type",
       dataIndex: "type",
       key: "type",
-      width: 150,
-    },
-    {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
       width: 150,
     },
     {
@@ -75,12 +59,6 @@ const CourseTable: React.FC = () => {
       title: "Lab",
       dataIndex: "lab",
       key: "lab",
-      width: 150,
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
       width: 150,
     },
     {
@@ -106,7 +84,7 @@ const CourseTable: React.FC = () => {
   return (
     <div className="shadow-lg py-4 ">
       {query.isPending ? (
-        <div className='h-auto'>
+        <div className="h-auto">
           <Loader />
         </div>
       ) : query.isError ? (
@@ -116,6 +94,30 @@ const CourseTable: React.FC = () => {
           columns={columns}
           dataSource={query?.data?.data?.data || []} // Fix: Access the 'data' property of the resolved data
           scroll={{ x: 1300 }}
+          rowKey={(record) => record._id || ""}
+          expandable={{
+            expandedRowRender: (record: CourseFields) => {
+              return (
+                <div className="p-2 bg-white flex gap-20 overflow-y-scroll">
+                  <div>
+                    <h3 className="font-semibold">Prerequisites</h3>
+                    <ul>
+                      {record?.prerequisites?.map((course) => (
+                        <li key={course._id} className="flex gap-1">
+                          <span key={course._id}>&#8226;</span>
+                          {course.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Description</h3>
+                    <p>{record.description}</p>
+                  </div>
+                </div>
+              );
+            },
+          }}
         />
       )}
     </div>
