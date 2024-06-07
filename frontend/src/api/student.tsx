@@ -93,6 +93,13 @@ export const updateStudent = async (data: StudentFields) => {
   return await client.patch(`/student/update?id=${id}`, data);
 }
 
+export const activateStudent = async (data: StudentFields) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  const id = data._id;
+  return await client.patch(`/student/update?id=${id}`, data);
+};
+
 export const deleteStudent = async (data:StudentDeleteFields) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
@@ -109,8 +116,17 @@ export const downloadTemplate = async () => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
   const response = await client.get("/template", { responseType: "blob" });
+  console.log(response)
   const filename = getFilenameFromUrl("/template.csv"); 
   saveFile(response.data, filename);
+};
+
+export const exportStudent = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  const response = await client.get("/student/all/export",{responseType:"blob"});
+  console.log(response)
+  saveFile(response.data, "students.csv");
 };
 
 const getFilenameFromUrl = (url: string) => {
@@ -127,4 +143,53 @@ const saveFile = (data: Blob, filename: string) => {
   link.click();
   document.body.removeChild(link);
   window.URL.revokeObjectURL(url);
+};
+
+export const getRegisteredCourse = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`student/registrationCourses/${id}`);
+};
+
+export const confirmRegistration = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`student/register/`, { student_id: id });
+};
+
+export const getEnrolledCourse = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`student/courses/${id}`);
+};
+
+
+export const getAddableCourse = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`student/addcourses/${id}`);
+};
+
+export const sendAddDropRequest = async (id:string,addedCourses:string[],droppedCourses:string[]) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`student/addDrop/${id}`, { addedCourses,droppedCourses });
+};
+
+export const sendWithdrawalRequest = async (id: string,reason:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/student/withdrawalRequest`, { id: id, reason:reason });
+};
+
+export const getWithdrawalStatus = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/student/withdrawalStatus/${id}`);
+};
+
+export const sendReadmissionRequest = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`student/register/`, { student_id: id });
 };

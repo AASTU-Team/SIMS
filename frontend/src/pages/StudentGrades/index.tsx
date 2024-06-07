@@ -1,18 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
-import { Table } from "antd";
-import type { TableColumnsType } from "antd";
-import { getStudent } from "../../api/student";
-import Loader from "../../components/Loader";
-import CourseDetails from "./CourseDetails";
+import AttendanceTable from "./table";
+import { useState } from "react";
+import { Select, type TableColumnsType } from "antd";
 
-export default function StudentGrades() {
-  const query = useQuery({
-    queryKey: ["student"],
-    queryFn: getStudent,
-  });
-  const columns: TableColumnsType = [
+export default function AttendanceManagement() {
+  const [records, setRecords] = useState<TableColumnsType>([]);
+
+  const columns = [
     {
-      title: "Full Name",
+      title: "Student Name",
       width: 150,
       dataIndex: "name",
       key: "name",
@@ -20,72 +15,87 @@ export default function StudentGrades() {
       sorter: true,
     },
     {
-      title: "ID",
+      title: "Student ID",
       width: 150,
       dataIndex: "id",
       key: "id",
       fixed: "left",
       sorter: true,
     },
-    {
-      title: "Enrolled Course",
-      dataIndex: "course",
-      key: "course",
-      fixed: "left",
-      width: 250,
-    },
-    {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      width: 250,
-    },
-    {
-      title: "Phone",
-      dataIndex: "phone",
-      key: "phone",
-      width: 150,
-    },
-    {
-      title: "Department",
-      dataIndex: "department_name",
-      key: "department_name",
-      width: 150,
-    },
-    {
-      title: "Year",
-      dataIndex: "year",
-      key: "year",
-      width: 150,
-    },
   ];
+
+
+
   return (
-    <div className="max-w-screen-2xl p-2 md:p-6 2xl:p-10">
+    <div className="max-w-screen-3xl p-4 md:p-6 2xl:p-10">
       <div className="flex justify-between">
-        <div className="text-title-md">Student Management</div>
-      </div>
-      <div className="shadow-lg py-4 ">
-        {query.isPending ? (
-          <div className="h-auto">
-            <Loader />
-          </div>
-        ) : query.isError ? (
-          <>{`${query.error}`}</>
-        ) : (
-          <Table
-            columns={columns}
-            dataSource={query?.data?.data?.message || []} // Fix: Access the 'data' property of the resolved data
-            scroll={{ x: 1300 }}
-            expandable={{
-              expandedRowRender: () => (
-                <div className="p-2 bg-white">
-                  <CourseDetails/>
-                </div>
-              ),
-            }}
+        <div className="text-title-md">Student Grades</div>
+        <div className="flex gap-4 items-start justify-start">
+          <Select
+            showSearch
+            placeholder="Select Course"
+            optionFilterProp="children"
+            className=" h-10 w-80"
+            options={[
+              {
+                value: "Undergraduate",
+                label: "Bachelors Degree",
+              },
+              {
+                value: "Masters",
+                label: "Masters Degree",
+              },
+              {
+                value: "PhD",
+                label: "PhD",
+              },
+            ]}
           />
-        )}
+          <Select
+            showSearch
+            placeholder="Select Section"
+            optionFilterProp="children"
+            className=" h-10 w-50"
+            options={[
+              {
+                value: "Undergraduate",
+                label: "Bachelors Degree",
+              },
+              {
+                value: "Masters",
+                label: "Masters Degree",
+              },
+              {
+                value: "PhD",
+                label: "PhD",
+              },
+            ]}
+          />
+          <Select
+            showSearch
+            placeholder="Select Admission Type"
+            optionFilterProp="children"
+            mode="multiple"
+            className=" h-10 w-50"
+            options={[
+              {
+                value: "Regular",
+                label: "Regular",
+              },
+              {
+                value: "Add",
+                label: "Add",
+              },
+            ]}
+          />
+        </div>
       </div>
+      <AttendanceTable
+        columns={[
+          ...columns.map((column) => ({ ...column, fixed: undefined })),
+          ...records,
+        ]}
+      />
     </div>
   );
 }

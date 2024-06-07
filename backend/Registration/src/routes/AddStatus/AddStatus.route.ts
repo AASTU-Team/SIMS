@@ -16,7 +16,7 @@ const AddStatusrourer = express.Router();
 AddStatusrourer.get("/", getAddStatus);
 AddStatusrourer.get("/:id", getStatusById);
 AddStatusrourer.post("/create", createAddStatus);
-AddStatusrourer.post("activate", ActivateAddStatus);
+AddStatusrourer.post("/activate", ActivateAddStatus);
 AddStatusrourer.patch("/deactivate", DeactivateAddStatus);
 
 AddStatusrourer.patch("/:id", updateStatus);

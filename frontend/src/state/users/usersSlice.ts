@@ -7,7 +7,10 @@ interface UserState {
     email: string,
     role: string,
     roles:string[],
-    id: string
+    id: string,
+    _id:string,
+    department:string,
+
 }
 
 const initialState: UserState = {
@@ -15,7 +18,9 @@ const initialState: UserState = {
     email: "loading",
     role: "loading",
     roles:[],
-    id: "loading"
+    id: "loading",
+    _id: "loading",
+    department: "loading"
 }
 
 export const userSlice = createSlice({
@@ -24,7 +29,7 @@ export const userSlice = createSlice({
   initialState,
   reducers: {
     setUser: (state, action: PayloadAction<UserState>) => {
-      console.log(action.payload)
+      // console.log(action.payload)
       state= action.payload
       return state
     },

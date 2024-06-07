@@ -831,9 +831,9 @@ export const deleteStudent = async (req: Request, res: Response) => {
   }
 };
 export const deleteStaff = async (req: Request, res: Response) => {
-  const staff = req.body.staff_id;
-  const email = req.body.email;
-
+  const staff = req.query.staff_id
+  const email = req.query.email;
+  console.log(staff,email)
   try {
     try {
       const response: any = await fetch("http://localhost:5000/auth/delete", {
@@ -1073,7 +1073,6 @@ export const getstudentRegistrationCourses = async (
   res: Response
 ) => {
   const student_id = req.params.student_id;
-
   let department_id = "";
   let type = "";
   let newyear = 0;
@@ -2278,7 +2277,7 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
 };
 
 export const getWithdrawalStatus = async (req: Request, res: Response) => {
-  const id = req.body.id;
+  const id = req.params.id;
 
   const withdrawal = await Withdrawal.findOne({stud_id: id});
 
@@ -2298,7 +2297,7 @@ export const getWithdrawalStatus = async (req: Request, res: Response) => {
 };
 
 export const getDepartmentWithdrawalRequests = async (req: Request, res: Response) => {
-  const department = req.body.department;
+  const department = req.params.department;
   const Ids:any = []
   const Withdrawals:any = []
   const students = await Student.find({ department_id: department });
@@ -2338,7 +2337,7 @@ export const getDepartmentWithdrawalRequests = async (req: Request, res: Respons
 
 };
 export const getDepartmentEnrollmentRequests = async (req: Request, res: Response) => {
-  const department = req.body.department;
+  const department = req.params.department;
   const Ids:any = []
   const Withdrawals:any = []
   const students = await Student.find({ department_id: department });
@@ -2556,7 +2555,7 @@ export const RejectDepartmentWithdrawalRequest = async (req: Request, res: Respo
   const ids:any = req.body.data;
   const errors:any = []
   const success:any = []
-
+  
   for(const id of ids) {
   const student = await Student.findById(id.id);
   let status: Boolean = false;

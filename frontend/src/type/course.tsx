@@ -4,7 +4,7 @@ export type CourseFields = {
     department_id?: string;
     instructors?: string[];
     credits?: number;
-    prerequisites?: string[];
+    prerequisites?: CourseFields[];
     type?: string;
     code?: string;
     lec?: string;
@@ -12,7 +12,9 @@ export type CourseFields = {
     tut?: string;
     option?:string;
     hs?:string;
+    class?:string;
     description?: string;
+    assessments?: Assessments[];
     
 };
 
