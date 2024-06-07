@@ -8,6 +8,10 @@ const Joi = require("joi");
 let results: any = [];
 
 const Section = require("../../models/section.model");
+const Course = require("../../models/course.model");
+const {
+  assignSectionSchedule,
+} = require("../assignment/assignment.controller");
 
 export const getSections = async (req: Request, res: Response) => {
   // fetch dep id from the auth
@@ -34,13 +38,36 @@ export const getSections = async (req: Request, res: Response) => {
 // };
 
 export const createSection = async (req: Request, res: Response) => {
-  const data = req.body;
+  const data = req.body.data;
+  const courseData = req.body.courseData;
   try {
     const sec = await Section.find(data);
     if (sec.length) {
       return res.send("section exists");
     }
     const newSection = await new Section(data);
+
+    // create assignmnet for section
+    const course = await Course.findById(courseData.course_id);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
+    }
+    if (course.lab) {
+      await assignSectionSchedule({
+        course_id: courseData.course_id,
+        section_id: newSection._id,
+        Lab_Lec: "Lab",
+        year: data.year,
+        semester: data.semester,
+      });
+    }
+    await assignSectionSchedule({
+      course_id: courseData.course_id,
+      section_id: newSection._id,
+      Lab_Lec: "Lec",
+      year: data.year,
+      semester: data.semester,
+    });
     await newSection.save();
     return res.status(201).json({ message: "success", section: newSection });
   } catch (error: any) {
@@ -80,3 +107,33 @@ export const createSection = async (req: Request, res: Response) => {
 //     return res.status(500).json({ message: error.message });
 //   }
 // };
+// async function getCourses(
+//   department: String,
+//   year: Number,
+//   semester: Number,
+//   type: string
+// ) {
+//   console.log(department, year, semester, type);
+//   const curriculums: any = await Curriculum.findOne({
+//     department_id: department,
+//     year,
+//     semester,
+//     type,
+//   }).populate("courses");
+//   const addition: any[] = [];
+//   const courses: any[] = curriculums.courses.map((data: any) => {
+//     console.log(data);
+//     console.log(data._id);
+//     if (data.lab) {
+//       addition.push({ courses_id: data._id.toString(), Lab_Lec: "Lec" });
+//       addition.push({ courses_id: data._id.toString(), Lab_Lec: "Lab" });
+//     } else {
+//       addition.push(
+//         addition.push({ courses_id: data._id.toString(), Lab_Lec: "Lec" })
+//       );
+//     }
+//   });
+
+//   return addition;
+//   // console.log(curriculums[0].courses);
+// }
