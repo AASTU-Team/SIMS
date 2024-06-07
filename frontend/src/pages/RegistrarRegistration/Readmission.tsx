@@ -8,62 +8,44 @@ import {
   notification,
 } from "antd";
 import type { FormProps, TableColumnsType } from "antd";
-import RegistrationSlip from "./RegistrationSlip";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import {
-  confirmAllRegistrationRegistrar,
-  confirmRegistrationRegistrar,
-  getRegistrationRegistrar,
-  rejectRegistrationRegistrar,
-} from "../../api/registration";
 import Loader from "../../components/Loader";
 import { RegistrationFields } from "../../type/registration";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
+import {  acceptReadmissionRequestsReg, getRegistrarReadmission, rejectReadmissionRequestsReg } from "../../api/registration";
 
-export default function Registration() {
+export default function Readmission() {
   const [form] = useForm();
-  const [rejectId, setRejectId] = useState<string>("");
+  const [rejectId,setRejectId] = useState<string>("")
 
   const query = useQuery({
-    queryKey: ["studentRegisteredRegistrar"],
-    queryFn: () => getRegistrationRegistrar(),
+    queryKey: ["studentReadRegistrar"],
+    queryFn: () => getRegistrarReadmission(),
   });
   console.log(query);
 
   const ApproveRequestMutation = useMutation({
-    mutationKey: ["approveRequestRegistrar"],
-    mutationFn: (id: string) => confirmRegistrationRegistrar(id),
+    mutationKey: ["approveReadRegistrar"],
+    mutationFn: (id: string) => acceptReadmissionRequestsReg(id),
     onError: () => {
-      notification.error({ message: "Registration Not Successful" });
+      notification.error({ message: "Request Not Approved" });
     },
     onSuccess: () => {
-      notification.success({ message: "Registration Successful" });
-      query.refetch();
-      form.resetFields();
-    },
-  });
-  const ApproveAllRequestMutation = useMutation({
-    mutationKey: ["approveAllRequestRegistrar"],
-    mutationFn: () => confirmAllRegistrationRegistrar(),
-    onError: () => {
-      notification.error({ message: "Registration Not Successful" });
-    },
-    onSuccess: () => {
-      notification.success({ message: "Registration Successful" });
+      notification.success({ message: "Request Approved" });
       query.refetch();
       form.resetFields();
     },
   });
   const RejectRequestMutation = useMutation({
-    mutationKey: ["rejectRequestDepartment"],
+    mutationKey: ["rejectReadDep"],
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-      rejectRegistrationRegistrar(id, reason),
+      rejectReadmissionRequestsReg(id, reason),
     onError: () => {
-      notification.error({ message: "Registration Reject Successfully" });
+      notification.error({ message: "Request Reject Unsuccessfully" });
     },
     onSuccess: () => {
-      notification.success({ message: "Registration Rejected Successfully" });
+      notification.success({ message: "Request Rejected Successfully" });
       query.refetch();
       form.resetFields();
     },
@@ -71,10 +53,7 @@ export default function Registration() {
   const onFinish: FormProps["onFinish"] = (values) => {
     // console.log(values,rejectId);
 
-    RejectRequestMutation.mutate({
-      id: rejectId,
-      reason: values.rejection_reason,
-    });
+    RejectRequestMutation.mutate({id:rejectId,reason:values.rejection_reason})
     form.resetFields();
     setOpen(false);
   };
@@ -89,47 +68,21 @@ export default function Registration() {
     },
     {
       title: "ID",
-      width: 150,
+      width: 100,
       dataIndex: "id",
       key: "id",
       sorter: true,
     },
     {
-      title: "Program",
-      dataIndex: "type",
-      key: "type",
-      width: 100,
+      title: "Email",
+      dataIndex: "email",
+      key: "email",
+      width: 150,
     },
     {
-      title: "Year",
-      dataIndex: "year",
-      key: "year",
-      width: 70,
-    },
-    {
-      title: "Semester",
-      dataIndex: "semester",
-      key: "semester",
-      width: 70,
-    },
-    {
-      title: "Total Credit",
-      dataIndex: "total_credit",
-      key: "total_credit",
-      width: 70,
-    },
-    {
-      title: "Date of Registration",
-      dataIndex: "registration_date",
-      key: "registration_date",
-      render: (date: string) => {
-        const d = new Date(date);
-        const formattedDate = `${("0" + d.getDate()).slice(-2)}-${(
-          "0" +
-          (d.getMonth() + 1)
-        ).slice(-2)}-${d.getFullYear()}`;
-        return <span>{formattedDate}</span>;
-      },
+      title: "Phone Number",
+      dataIndex: "phone",
+      key: "phone",
       width: 150,
     },
     {
@@ -137,7 +90,7 @@ export default function Registration() {
       key: "operation",
       fixed: "right",
       width: 200,
-      render: (text, record: RegistrationFields) => (
+      render: (text, record:RegistrationFields) => (
         <div className="font-semibold flex gap-3">
           <Popconfirm
             title="Approve Request"
@@ -171,39 +124,23 @@ export default function Registration() {
   const [open, setOpen] = useState(false);
   if (
     query.isSuccess &&
-    query.data?.data?.message !== "No pending registrations"
+    query.data?.data?.requests
   ) {
-    for (let i = 0; i < query.data.data.registrations.length; i++) {
+    for (let i = 0; i < (query.data?.data?.requests?.length || 0); i++) {
       data.push({
         key: i,
-        _id: query.data?.data?.students[i]?._id,
-        name: query.data?.data?.students[i]?.name,
-        id: query.data?.data?.students[i]?.id,
-        type: query.data.data.students[i].type,
-        year: query.data.data.registrations[i].year,
-        semester: query.data.data.registrations[i].semester,
-        total_credit: query.data.data.registrations[i].total_credit,
-        registration_date: query.data.data.registrations[i].registration_date,
-        courses: query.data.data.registrations[i].courses,
+        _id: query.data?.data?.requests[i]?.stud_id?._id,
+        name: query.data?.data?.requests[i]?.stud_id?.name,
+        id: query.data?.data?.requests[i]?.stud_id?.id,
+        email: query.data?.data?.requests[i]?.stud_id?.email,
+        phone: query.data?.data?.requests[i]?.stud_id?.phone,
+        reason: query.data?.data?.requests[i]?.reason,
       });
     }
   }
 
   return (
     <div className="pt-2">
-      <div className="flex justify-end">
-        <Popconfirm
-          title="Approve All Request"
-          description="Are you sure to approve all the request?"
-          onConfirm={() => ApproveAllRequestMutation.mutate()}
-          okText="Confirm"
-          cancelText="No"
-        >
-          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray mb-2 hover:bg-opacity-90 ">
-            Approve All Requests
-          </button>
-        </Popconfirm>
-      </div>
       {query.isPending ? (
         <div className="">
           <Loader />
@@ -216,9 +153,10 @@ export default function Registration() {
           dataSource={data || []}
           scroll={{ x: 1300 }}
           expandable={{
-            expandedRowRender: (record: RegistrationFields) => (
-              <div className="p-1 bg-white">
-                <RegistrationSlip details={record.courses} />
+            expandedRowRender: (record) => (
+              <div>
+                <h3 className="font-semibold">Reason of Withdrawal</h3>
+                <p>{record.reason}</p>
               </div>
             ),
           }}

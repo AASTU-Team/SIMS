@@ -2,7 +2,8 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import Registration from "./Registration";
 import AddDrop from "./AddDrop";
-import WithDrawalReadmit from "./WithdrawalReadmit";
+import Withdrawal from "./Withdrawal";
+import Readmission from "./Readmission";
 
 const items: TabsProps["items"] = [
   {
@@ -17,14 +18,19 @@ const items: TabsProps["items"] = [
   },
   {
     key: "3",
-    label: "Withdrawal and Readmission",
-    children: <WithDrawalReadmit />,
+    label: "Withdrawal Requests",
+    children: <Withdrawal />,
+  },
+  {
+    key: "4",
+    label: "Readmission Requests",
+    children: <Readmission />,
   },
 ];
 
 export default function RegistrarRegistration() {
   return (
-    <div className="max-w-screen-2xl p-2 md:p-2 2xl:p-5">
+    <div className="max-w-screen-3xl p-2 md:p-2 2xl:p-5">
       <Tabs defaultActiveKey="1" items={items} size="large" />
     </div>
   );
