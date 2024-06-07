@@ -19,7 +19,7 @@ async function assignSection({
 }: AssignSection): Promise<{ success: boolean; message: any }> {
   try {
     // Get students based on department, year, and semester
-    const dept = await Department.findOne({ name: department });
+    const dept = await Department.findById(department);
     console.log(dept);
     if (!dept) {
       throw new Error("Department not found");
