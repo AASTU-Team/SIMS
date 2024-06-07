@@ -65,6 +65,10 @@ Content-Type:  application/json
 GET  http://localhost:3000/assignment/course?id=662802ac728d90164b677588&year=1&semester=1
 Content-Type:  application/json
 
+### 
+GET  http://localhost:3000/assignment/course?id=662802ac728d90164b677588&&year=1&semester=1&sections=true
+Content-Type:  application/json
+
  
 ### assign teacher 
 PATCH  http://localhost:3000/assignment/6660153088ec2ceb7defb8b0
@@ -105,6 +109,14 @@ Content-Type:  application/json
   "course_id":"662802ac728d90164b677588"
 }
 
+####
+POST  http://localhost:3000/user/student/test
+Content-Type:  application/json
 
-
-
+{
+    "department":"663646030666c2aea17b217c",
+    "year":1,
+    "semester":1,
+    "max":2,
+    "type" : "Undergraduate"
+}

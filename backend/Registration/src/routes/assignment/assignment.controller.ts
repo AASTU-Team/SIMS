@@ -145,7 +145,26 @@ export const deleteAssignment = async (req: Request, res: Response) => {
   }
 };
 export const getAssignmentBycourse = async (req: Request, res: Response) => {
-  const { id, year, semester } = req.query;
+  const { id, year, semester, sections } = req.query;
+  if (sections) {
+    const assignment = await Assignment.find({
+      course_id: id,
+      year: Number(year),
+      semester: Number(semester),
+    }).populate("section_id", "name");
+    if (!assignment) {
+      return res.status(200).json({ message: [] });
+    }
+    const section: any[] = [];
+    const sectionData: any[] = [];
+    assignment.forEach((assign: any) => {
+      if (!section.includes(assign.section_id._id)) {
+        section.push(assign.section_id._id);
+        sectionData.push(assign.section_id);
+      }
+    });
+    return res.send(sectionData);
+  }
   console.log(id, year, semester);
   try {
     const assignment = await Assignment.find({
@@ -166,9 +185,11 @@ export const getAssignmentBycourse = async (req: Request, res: Response) => {
           section_id: element.section_id._id,
         });
         if (!count || !count.numberOfStudent) {
-          count = 0;
+          const elementn = element.toObject();
+          return { ...elementn, count: 0 };
         }
         const elementn = element.toObject();
+        console.log(count);
         return { ...elementn, count: count.numberOfStudent.length };
       })
     );
@@ -257,3 +278,31 @@ async function roomConflict(room_id: any, start_time: any) {
     return false;
   }
 }
+export const assignSectionSchedule = async (data: any) => {
+  // console.log({ course_id,
+  //   section_id,
+  //   instructor_id,
+  //   Lab_Lec,
+  //   year,
+  //   semester})
+  const assignments = data;
+  console.log(assignments);
+  try {
+    if (assignments) {
+      const exist = await Assignment.find(assignments);
+      console.log(exist);
+      if (exist.length) {
+        return;
+      }
+    }
+    const newschedule = await Assignment.create(assignments);
+    newschedule.save();
+
+    if (!newschedule) {
+      return;
+    }
+    return;
+  } catch (error) {
+    return;
+  }
+};

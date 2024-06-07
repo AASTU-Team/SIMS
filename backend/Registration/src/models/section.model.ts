@@ -6,8 +6,9 @@ let sectionSchema = new mongoose.Schema({
     required: false,
   },
   department: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: false,
+    ref: "Department",
   },
   year: {
     type: Number,
@@ -17,12 +18,10 @@ let sectionSchema = new mongoose.Schema({
     type: Number,
     required: false,
   },
-
- /*  assignment_ids: {
-    type: mongoose.Schema.Types.ObjectId,
+  type: {
+    type: String,
     required: false,
-    ref: "Assignment",
-  }, */
+  },
 });
 
 module.exports =
