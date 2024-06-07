@@ -1,10 +1,10 @@
 import React from 'react';
-import { Table, Space, Switch, Popconfirm } from 'antd';
+import { Table, Space, Switch, Popconfirm, notification } from 'antd';
 import type { TableColumnsType } from 'antd';
 import {StaffFields} from "../../type/staff";
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { getStaff } from '../../api/staff';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import { deleteStaff, getStaff } from '../../api/staff';
 import Loader from '../../components/Loader';
 import { QuestionCircleOutlined } from "@ant-design/icons";
 
@@ -16,6 +16,19 @@ const StaffTable: React.FC = () =>
         queryKey: ["staff"],
         queryFn: getStaff,
       });
+    const DeleteStaffMutations = useMutation({
+        mutationKey: ["deleteStaff"],
+        mutationFn: ({id,email}:{id:string,email:string}) => deleteStaff(id,email),
+        onError: () => {
+          notification.error({ message: "Staff Delete Unsuccessfully" });
+        },
+        onSuccess: () => {
+          notification.success({ message: "Staff Deleted Successfully" });
+          query.refetch()
+        },
+      });
+
+    
     // console.log(query.data?.data)
     const columns: TableColumnsType<StaffFields> = [
       {
@@ -71,7 +84,7 @@ const StaffTable: React.FC = () =>
         title: "Action",
         key: "operation",
         fixed: "right",
-        width: 180,
+        width: 200,
         render: (text, record) => (
           <Space size="middle" className="px-4 font-semibold">
             <a
@@ -86,6 +99,7 @@ const StaffTable: React.FC = () =>
               description="Are you sure to delete this student?"
               okText="Yes"
               cancelText="No"
+              onConfirm={()=>DeleteStaffMutations.mutate({id:record?._id || "", email: record?.email || ""})}
               icon={<QuestionCircleOutlined style={{ color: "red" }} />}
             >
               <a className=" hover:text-red">Delete</a>
