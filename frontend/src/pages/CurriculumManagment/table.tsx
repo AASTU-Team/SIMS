@@ -1,11 +1,11 @@
 import React from 'react';
 import { Table, Space } from 'antd';
 import type { TableColumnsType } from 'antd';
-import {CurriculumFields} from "../../type/curriculum";
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { useQuery } from '@tanstack/react-query';
 import { getCurriculum } from '../../api/curriculum';
+import { CourseFields } from '../../type/course';
 
 // const data: CurriculumFields[] = [
 //   {
@@ -34,7 +34,8 @@ const CurriculumTable: React.FC = () => {
     queryKey: ["curriculum"],
     queryFn: getCurriculum
   })
-  const columns: TableColumnsType<CurriculumFields> = [
+  // console.log(query.data?.data?.data)
+  const columns: TableColumnsType = [
     {
       title: "Name",
       dataIndex: "name",
@@ -63,6 +64,12 @@ const CurriculumTable: React.FC = () => {
       title: "Year",
       dataIndex: "year",
       key: "year",
+      sorter: true,
+    },
+    {
+      title: "Program Type",
+      dataIndex: "type",
+      key: "type",
       sorter: true,
     },
     {
@@ -96,13 +103,16 @@ const CurriculumTable: React.FC = () => {
           columns={columns}
           dataSource={query?.data?.data?.data || []}
           expandable={{
-            expandedRowRender: (record) => (
-              <div className="p-2 bg-white flex">
+            expandedRowRender: (record:{courses:CourseFields[],description:string}) => {return (
+              <div className="p-2 bg-white flex gap-20 overflow-y-scroll">
                 <div>
                   <h3 className="font-semibold">Courses</h3>
                   <ul>
                     {record?.courses?.map((course) => (
-                      <li >{course}</li>
+                      <li key={course._id} className='flex gap-1'>
+                        <span>&#8226;</span> 
+                        {course.name}
+                      </li>
                     ))}
                   </ul>
                 </div>
@@ -111,7 +121,7 @@ const CurriculumTable: React.FC = () => {
                   <p>{record.description}</p>
                 </div>
               </div>
-            ),
+            );},
           }}
         />
       )}

@@ -47,7 +47,7 @@ export default function AddCurriculum() {
     option?: { label: string; value: string }
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
   return (
-    <div className="max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+    <div className="max-w-screen-3xl p-4 md:p-6 2xl:p-10">
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex justify-between border-b border-stroke px-7 py-4 dark:border-strokedark">
           <h3 className="font-medium text-lg text-black dark:text-white">
