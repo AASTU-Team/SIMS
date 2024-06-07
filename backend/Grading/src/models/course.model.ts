@@ -35,11 +35,19 @@ let courseSchema = new mongoose.Schema({
     unique: true,
   },
   lec: {
-    type: String,
+    type: Number,
     required: true,
   },
   lab: {
-    type: String,
+    type: Number,
+    required: true,
+  },
+  tut: {
+    type: Number,
+    required: true,
+  },
+  hs: {
+    type: Number,
     required: true,
   },
   description: {
@@ -47,6 +55,12 @@ let courseSchema = new mongoose.Schema({
     required: false,
     default: "",
   },
+  assessments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Assessment",
+  }],
+
 });
 
-module.exports = mongoose.models.Course || mongoose.model("Course", courseSchema);
+const Course = mongoose.models.Course || mongoose.model("Course", courseSchema);
+export default Course;
