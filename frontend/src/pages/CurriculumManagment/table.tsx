@@ -1,7 +1,6 @@
 import React from 'react';
 import { Table, Space } from 'antd';
 import type { TableColumnsType } from 'antd';
-import {CurriculumFields} from "../../type/curriculum";
 import { useNavigate } from 'react-router-dom';
 import Loader from '../../components/Loader';
 import { useQuery } from '@tanstack/react-query';
@@ -35,7 +34,8 @@ const CurriculumTable: React.FC = () => {
     queryKey: ["curriculum"],
     queryFn: getCurriculum
   })
-  const columns: TableColumnsType<CurriculumFields> = [
+  // console.log(query.data?.data?.data)
+  const columns: TableColumnsType = [
     {
       title: "Name",
       dataIndex: "name",
@@ -67,21 +67,10 @@ const CurriculumTable: React.FC = () => {
       sorter: true,
     },
     {
-      title: "Courses",
-      dataIndex: "courses",
-      key: "courses",
-      render: (courses: CourseFields[]) => (
-        <ul>
-          {courses.map((course) => (
-            <li key={course.code}>{course.name}</li>
-          ))}
-        </ul>
-      ),
-    },
-    {
-      title: "Description",
-      dataIndex: "description",
-      key: "description",
+      title: "Program Type",
+      dataIndex: "type",
+      key: "type",
+      sorter: true,
     },
     {
       title: "Action",
@@ -104,7 +93,7 @@ const CurriculumTable: React.FC = () => {
   return (
     <div className="shadow-lg py-4 ">
       {query.isPending ? (
-        <div className='h-auto'>
+        <div className="h-auto">
           <Loader />
         </div>
       ) : query.isError ? (
@@ -112,7 +101,28 @@ const CurriculumTable: React.FC = () => {
       ) : (
         <Table
           columns={columns}
-          dataSource={query?.data?.data?.data || []} 
+          dataSource={query?.data?.data?.data || []}
+          expandable={{
+            expandedRowRender: (record:{courses:CourseFields[],description:string}) => {return (
+              <div className="p-2 bg-white flex gap-20 overflow-y-scroll">
+                <div>
+                  <h3 className="font-semibold">Courses</h3>
+                  <ul>
+                    {record?.courses?.map((course) => (
+                      <li key={course._id} className='flex gap-1'>
+                        <span>&#8226;</span> 
+                        {course.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <h3 className="font-semibold">Description</h3>
+                  <p>{record.description}</p>
+                </div>
+              </div>
+            );},
+          }}
         />
       )}
     </div>

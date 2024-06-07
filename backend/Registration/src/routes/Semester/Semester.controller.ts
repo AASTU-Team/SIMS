@@ -36,8 +36,6 @@ export const getSemesters = async (req: Request, res: Response) => {
 
       }
 
-   
-
     // Add the 'key' property to each document
     //const data = status.map((doc:any) => ({ ...doc, key: doc._id.toString() }));
 

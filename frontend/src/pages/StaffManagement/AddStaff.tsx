@@ -321,25 +321,29 @@ export default function AddStaff() {
                           label: "Curriculum Management",
                         },
                         {
+                          value: "attendance",
+                          label: "Student Attendance",
+                        },
+                        {
                           value: "departmentMan",
                           label: "Department Management",
                         },
                         {
                           value: "studentGrade",
-                          label: "Student Grade Management"
+                          label: "Student Grade Management",
                         },
                         {
                           value: "semesterMan",
-                          label: "Semester Management"
+                          label: "Semester Management",
                         },
                         {
                           value: "studentDepReg",
-                          label: "Department Office"
+                          label: "Department Office",
                         },
                         {
                           value: "studentReg",
-                          label: "Registrar Office"
-                        }
+                          label: "Registrar Office",
+                        },
                       ]}
                     />
                   </div>

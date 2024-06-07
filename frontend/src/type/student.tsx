@@ -17,6 +17,8 @@ export interface StudentFields {
   emergencycontact_relation: string;
   status: string;
   department_name?:string;
+  type?:string;
+  semester?:number;
 }
 
 export interface StudentDeleteFields {

@@ -1,10 +1,13 @@
-import { Table } from "antd";
+import {  Table } from "antd";
 import type { TableColumnsType } from "antd";
 import { CourseFields } from "../../type/course";
-import { SlipDetails } from "../../type/registration";
 
 
-export default function RegistrationSlip( {details}: {details: SlipDetails}) {
+
+
+export default function RegistrationSlip({data}:{data:CourseFields[]}) {
+  
+  // console.log(query)
     const columns: TableColumnsType<CourseFields> = [
       {
         title: "Course Name",
@@ -64,31 +67,13 @@ export default function RegistrationSlip( {details}: {details: SlipDetails}) {
       },
     ]; 
   return (
-    <div className="pt-1 flex flex-col gap-5">
-      <div className="flex justify-start mx-3 gap-10 text-2md font-bold ">
-        <div>
-          Stream: <span className="underline">{details?.stream}</span>
-        </div>
-        <div>
-          Admission Classification:{" "}
-          <span className="underline">{details?.classification}</span>
-        </div>
-
-        <div>
-          Program: <span className="underline">{details?.program}</span>
-        </div>
-        <div>
-          Academic Year: <span className="underline">{details?.ac_year}</span>
-        </div>
-
-        <div>
-          Year: <span className="underline">{details?.year}</span>
-        </div>
-        <div>
-          Semester: <span className="underline">{details?.sem}</span>
-        </div>
-      </div>
-      <Table columns={columns} dataSource={[]} scroll={{ x: 1300 }} />
+    <div className="flex flex-col pt-5">
+      
+        <Table
+          columns={columns}
+          dataSource={data} 
+          scroll={{ x: 1300 }}
+        />
       
     </div>
   );

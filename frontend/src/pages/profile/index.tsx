@@ -53,7 +53,7 @@ export default function Profile() {
   };
 
   return (
-    <div className="mx-10 max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+    <div className="mx-10 max-w-screen-3xl p-4 md:p-6 2xl:p-10">
       <Breadcrumb pageName="Profile" />
 
       <div className="grid grid-cols-5 gap-8">

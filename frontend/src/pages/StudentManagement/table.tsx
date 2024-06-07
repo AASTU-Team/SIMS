@@ -16,7 +16,7 @@ const StudentTable: React.FC = () =>
         queryKey: ["student"],
         queryFn: getStudent,
       });
-    console.log(query);
+    console.log(query?.data?.data);
     const DeleteStudentMutation = useMutation({
         mutationKey: ["addStudent"],
         mutationFn: (value: StudentDeleteFields) => deleteStudent(value),
@@ -150,13 +150,24 @@ const StudentTable: React.FC = () =>
             >
               <a className=" hover:text-red">Delete</a>
             </Popconfirm>
+          </div>
+        ),
+      },
+      {
+        title: "Status",
+        key: "operation",
+        fixed: "right",
+        width: 150,
+        render: (text, record) => (
+          <div className="flex gap-4 px-4 font-semibold">
             <Switch
               checkedChildren="Active"
               unCheckedChildren="Inactive"
               defaultChecked={record.status === "Active"}
               onChange={(checked) => {
                 console.log(checked);
-              }}/>
+              }}
+            />
           </div>
         ),
       },
