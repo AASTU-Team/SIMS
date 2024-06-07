@@ -44,7 +44,8 @@ const options: ApexOptions = {
   },
 
   xaxis: {
-    categories: ["M", "T", "W", "T", "F", "S", "S"],
+    categories: ["A", "B", "C", "D", "E", "F", "G", "H"],
+    
   },
   legend: {
     position: "top",
@@ -73,12 +74,12 @@ const ChartTwo: React.FC = () => {
   const [state, setState] = useState<ChartTwoState>({
     series: [
       {
-        name: "Sales",
-        data: [44, 55, 41, 67, 22, 43, 65],
+        name: "Section Average",
+        data: [44, 55, 41, 67, 22, 43, 21, 49],
       },
       {
-        name: "Revenue",
-        data: [13, 23, 20, 8, 13, 27, 15],
+        name: "Course Average",
+        data: [13, 23, 20, 8, 13, 27, 33, 12],
       },
     ],
   });
@@ -90,12 +91,13 @@ const ChartTwo: React.FC = () => {
   };
   handleReset;
 
+  const courses =["Internet Programming","Object Oriented Programming"]
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white p-7.5 shadow-default dark:border-strokedark dark:bg-boxdark xl:col-span-4">
       <div className="mb-4 justify-between gap-4 sm:flex">
         <div>
           <h4 className="text-xl font-semibold text-black dark:text-white">
-            Profit this week
+            Section Analytics
           </h4>
         </div>
         <div>
@@ -105,12 +107,14 @@ const ChartTwo: React.FC = () => {
               id="#"
               className="relative z-20 inline-flex appearance-none bg-transparent py-1 pl-3 pr-8 text-sm font-medium outline-none"
             >
-              <option value="" className="dark:bg-boxdark">
-                This Week
-              </option>
-              <option value="" className="dark:bg-boxdark">
-                Last Week
-              </option>
+              {
+                courses.map((course) => (
+                  <option value={course} className="dark:bg-boxdark">
+                    {course}
+                  </option>
+                ))
+              }
+              
             </select>
             <span className="absolute right-3 top-1/2 z-10 -translate-y-1/2">
               <svg
