@@ -554,7 +554,7 @@ function validateStudent(student: any) {
   return schema.validate(student);
 }
 
-export const getAllStudent = async (req: Request, res: Response) => {
+/* export const getAllStudent = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
@@ -569,6 +569,45 @@ export const getAllStudent = async (req: Request, res: Response) => {
     // console.log(myStudents);
 
     res.status(200).json({ message: myStudents });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+}; */
+export const getAllStudent = async (req: Request, res: Response) => {
+  try {
+    const { year, semester, search } = req.query;
+    const filter: any = {};
+
+    if (year) {
+      filter.year = year;
+    }
+
+    if (semester) {
+      filter.semester = semester;
+    }
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { id: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const students = await Student.find(filter).populate({
+      path: "department_id",
+      select: "name",
+    });
+
+    const myStudents = students.map((student: any) => {
+      return {
+        ...student.toObject(),
+        department_name: student.department_id?.name,
+        department_id: student.department_id?._id,
+      };
+    });
+
+    res.status(200).json({message:myStudents});
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -633,7 +672,52 @@ export const exportAllStudent = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
-export const getAllStaff = async (req: Request, res: Response) => {
+
+export const exportLogFile = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    
+    const filePath = path.join("./exports", "app.log");
+
+  
+
+    // Read the CSV file contents
+    fs.readFile(filePath, (err: any, data: any) => {
+      if (err) {
+        console.error("Error reading Log file:", err);
+        res.status(500).json({ error: "Error exporting data" });
+        return;
+      }
+
+      // Create a Blob object from the CSV data
+  
+
+      // Set the necessary headers to trigger a download
+      res.setHeader("Content-Disposition", "attachment; filename=app.log");
+      res.setHeader("Content-Type", "text/csv");
+      const file = path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+
+        "exports",
+        "app.log"
+      );
+      console.log(__dirname);
+      res.download(file);
+
+      // Send the Blob in the response
+      // res.status(200).send({data:blob});
+    });
+
+    // console.log(myStudents);
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+/* export const getAllStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
@@ -644,6 +728,45 @@ export const getAllStaff = async (req: Request, res: Response) => {
         department_name: staff.department_id?.name,
       };
     });
+    res.status(200).json({ message: myStaff });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+}; */
+export const getAllStaff = async (req: Request, res: Response) => {
+  try {
+    const { year, department_id, search } = req.query;
+    const filter: any = {};
+
+    if (year) {
+      filter.birthday = { $gte: new Date(Number(year) - 1, 0, 1), $lte: new Date(Number(year), 11, 31) };
+    }
+
+    if (department_id) {
+      filter.department_id = department_id;
+    }
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { phone: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const staff = await Staff.find(filter).populate({
+      path: "department_id",
+      select: "name",
+    });
+
+    const myStaff = staff.map((person: any) => {
+      return {
+        ...person.toObject(),
+        department_name: person.department_id?.name,
+        department_id: person.department_id?._id,
+      };
+    });
+
     res.status(200).json({ message: myStaff });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
