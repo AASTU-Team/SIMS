@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import mongoose, { Document, Schema, Types } from "mongoose";
-import Joi from "joi";
+import Joi, { number } from "joi";
 const NumberOfStudent = require("../../models/numberOfStudent.model");
 
 interface AssignmentI {
@@ -104,6 +104,31 @@ export const updateAssignment = async (req: Request, res: Response) => {
     return res.status(500).json({ error: "An error occurred" });
   }
 };
+
+export const getTeachersAssignment = async (req: Request, res: Response) => {
+  const { id, course_id } = req.body;
+  try {
+    const assignment = await Assignment.find({ instructor_id: id, course_id });
+    const data = await Promise.all(
+      assignment.map(async (assign: any) => {
+        // fetch student data using course from num using course and section
+        const secstudent = await NumberOfStudent.find({
+          section_id: assign.section_id.toString(),
+          course_id,
+        }).populate("numberOfStudent", "name email");
+        return secstudent;
+      })
+    );
+    if (!assignment || !data) {
+      return res.status(200).json({ message: [] });
+    }
+    return res.json(data);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "An error occurred" });
+  }
+};
+
 export const deleteAssignment = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
@@ -120,9 +145,14 @@ export const deleteAssignment = async (req: Request, res: Response) => {
   }
 };
 export const getAssignmentBycourse = async (req: Request, res: Response) => {
-  const { id } = req.params;
+  const { id, year, semester } = req.query;
+  console.log(id, year, semester);
   try {
-    const assignment = await Assignment.find({ course_id: id })
+    const assignment = await Assignment.find({
+      course_id: id,
+      year: Number(year),
+      semester: Number(semester),
+    })
       .populate("instructor_id", "name")
       .populate("section_id", "name");
     if (!assignment) {

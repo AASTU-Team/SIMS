@@ -6,7 +6,6 @@ let assignmentSchema = new mongoose.Schema({
     required: false,
     ref: "Course",
   },
-
   instructor_id: {
     type: mongoose.Schema.Types.ObjectId,
     required: false,
@@ -19,6 +18,14 @@ let assignmentSchema = new mongoose.Schema({
   },
   Lab_Lec: {
     type: String,
+    required: false,
+  },
+  year: {
+    type: Number,
+    required: false,
+  },
+  semester: {
+    type: Number,
     required: false,
   },
 });
