@@ -109,6 +109,7 @@ export const getTeachersAssignment = async (req: Request, res: Response) => {
   const { id, course_id } = req.body;
   try {
     const assignment = await Assignment.find({ instructor_id: id, course_id });
+    console.log(assignment);
     const data = await Promise.all(
       assignment.map(async (assign: any) => {
         // fetch student data using course from num using course and section
@@ -202,11 +203,12 @@ export const getAssignmentBycourse = async (req: Request, res: Response) => {
 };
 export const getAssignmentByInstId = async (req: Request, res: Response) => {
   const { id } = req.params;
-  console.log(id);
   try {
-    const assignment = await Assignment.find({ instructor_id: id });
+    const assignment = await Assignment.find({ instructor_id: id }).populate(
+      "course_id"
+    );
     if (!assignment) {
-      return res.status(404).json({ error: "Assignment not found" });
+      return res.status(200).json({ message: [] });
     }
     return res.status(200).json(assignment);
   } catch (e) {
