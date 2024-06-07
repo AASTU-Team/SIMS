@@ -1,16 +1,4 @@
 import mongoose from "mongoose";
-const assessmentsSchema = new mongoose.Schema({
-  id: {
-    type: String,
-    required: true
-  },
-  name: {
-    type: String
-  },
-  value: {
-    type: Number
-  }
-});
 
 let courseSchema = new mongoose.Schema({
   name: {
@@ -67,11 +55,12 @@ let courseSchema = new mongoose.Schema({
     required: false,
     default: "",
   },
-  assessments: {
-    type: [assessmentsSchema]
-  }
+  assessments: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Assessment",
+  }],
 
 });
 
-module.exports =
-  mongoose.models.Course || mongoose.model("Course", courseSchema);
+const Course = mongoose.models.Course || mongoose.model("Course", courseSchema);
+export default Course;
