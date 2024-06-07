@@ -126,8 +126,8 @@ Studentrouter.get("/student/addDrop", getAddDrop);
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
 Studentrouter.get("/student/withdrawalStatus/:id",getWithdrawalStatus);
 
-Studentrouter.get("/department/withdrawalRequests", getDepartmentWithdrawalRequests);
-Studentrouter.get("/department/enrollmentRequests", getDepartmentEnrollmentRequests);
+Studentrouter.get("/department/withdrawalRequests/:department", getDepartmentWithdrawalRequests);
+Studentrouter.get("/department/enrollmentRequests/:department", getDepartmentEnrollmentRequests);
 Studentrouter.get("/registrar/withdrawalRequests", getRegistrarWithdrawalRequests);
 Studentrouter.get("/registrar/enrollmentRequests", getRegistrarEnrollmentRequests);
 

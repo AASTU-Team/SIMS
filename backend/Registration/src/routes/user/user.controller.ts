@@ -2530,7 +2530,7 @@ export const RejectDepartmentWithdrawalRequest = async (req: Request, res: Respo
   const ids:any = req.body.data;
   const errors:any = []
   const success:any = []
-
+  
   for(const id of ids) {
   const student = await Student.findById(id.id);
   let status: Boolean = false;
