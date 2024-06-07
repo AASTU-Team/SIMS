@@ -27,6 +27,18 @@ let withdrawalSchema = new mongoose.Schema({
       },
       
     },
+    history: {
+      type: {
+        type: String,
+        enum: ['Withdrawal', 'Enrollment'],
+        required: false,
+      },
+    date: {
+        type: Date,
+        required: false,
+      },
+      
+    },
   });
 
 module.exports = mongoose.models.withdrawal || mongoose.model("withdrawal", withdrawalSchema);

@@ -40,6 +40,7 @@ import { studentRegistration } from "./user.controller";
 import { ListAddCourses } from "./user.controller";
 import { Request, Response } from "express";
 import { getWithdrawalStatus } from "./user.controller";
+import { EnrollmentRequest } from "./user.controller";
 import { getDepartmentWithdrawalRequests } from "./user.controller";
 import { getDepartmentEnrollmentRequests } from "./user.controller";
 import { getRegistrarWithdrawalRequests } from "./user.controller";
