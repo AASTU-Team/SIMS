@@ -137,3 +137,158 @@ export const getBatchCourses = async (staff_id:string,year:number,semester:numbe
   setHeaderToken(access_token);
   return await client.get(`curriculum/spec?id=${staff_id}&year=${year}&semester=${semester}&type=${type}`);
 };
+
+export const getRegistrationDepartment = async (id:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/user/department/getStudentStatus/${id}`);
+};
+
+export const confirmRegistrationDepartment = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/department/confirmStudentStatus/`, {
+    data: [id],
+    isAll: false,
+  });
+};
+
+export const rejectRegistrationDepartment = async (id: string,reason:string,department:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/department/rejectStudentStatus/`, {
+    data: [{id:id,reason:reason}],
+    isAll: false,
+    department:department
+  });
+};
+
+export const confirmAllRegistrationDepartment = async (department:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/department/confirmStudentStatus/`, {
+    isAll: true,
+    department:department
+  });
+};
+
+export const getRegistrationRegistrar = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/user/registrar/getStudentStatus/`);
+};
+
+export const confirmRegistrationRegistrar = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/registrar/confirmStudentStatus/`, {
+    data: [id],
+    isAll: false,
+  });
+};
+
+export const rejectRegistrationRegistrar = async (
+  id: string,
+  reason: string
+) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/registrar/rejectStudentStatus/`, {
+    data: [{ id: id, reason: reason }] });
+};
+
+export const confirmAllRegistrationRegistrar = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/registrar/confirmStudentStatus/`, {
+    isAll: true,
+  });
+};
+
+export const getDepartmentWithdrawal = async (department:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/user/department/withdrawalRequests/${department}`);
+};
+
+export const getDepartmentReadmission = async (department: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/user/department/enrollmentRequests/${department}`);
+};
+
+export const getRegistrarWithdrawal = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/user/registrar/withdrawalRequests/`);
+};
+
+export const getRegistrarReadmission = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/user/registrar/enrollmentRequests/`);
+};
+
+export const acceptWithdrawalRequestsDep = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/department/AcceptwithdrawalRequests`, {
+    data: [id],
+  });
+};
+
+export const acceptReadmissionRequestsDep = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/department/AcceptenrollmentRequests`, {
+    data: [id],
+  });
+};
+
+export const acceptWithdrawalRequestsReg = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/registrar/AcceptwithdrawalRequests`, {
+    data: [id],
+  });
+};
+
+export const acceptReadmissionRequestsReg = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/registrar/AcceptenrollmentRequests`, {
+    data: [id],
+  });
+};
+
+export const rejectWithdrawalRequestsDep = async (id: string, reason:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/department/RejectwithdrawalRequests`, {
+    data: [{id,reason}]
+  });
+};
+
+export const rejectReadmissionRequestsDep = async (id: string,reason:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/department/RejectEnrollmentRequests`, {
+    data: [{ id, reason }],
+  });
+};
+
+export const rejectWithdrawalRequestsReg = async (id: string,reason:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/registrar/AcceptwithdrawalRequests`, {
+    data: [{ id, reason }],
+  });
+};
+
+export const rejectReadmissionRequestsReg = async (id: string,reason:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/user/registrar/RejectenrollmentRequests`, {
+    data: [{ id, reason }],
+  });
+};

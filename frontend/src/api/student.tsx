@@ -148,5 +148,48 @@ const saveFile = (data: Blob, filename: string) => {
 export const getRegisteredCourse = async (id: string) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.get(`student/registrationCourses/${id}`,);
+  return await client.get(`student/registrationCourses/${id}`);
+};
+
+export const confirmRegistration = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`student/register/`, { student_id: id });
+};
+
+export const getEnrolledCourse = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`student/courses/${id}`);
+};
+
+
+export const getAddableCourse = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`student/addcourses/${id}`);
+};
+
+export const sendAddDropRequest = async (id:string,addedCourses:string[],droppedCourses:string[]) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`student/addDrop/${id}`, { addedCourses,droppedCourses });
+};
+
+export const sendWithdrawalRequest = async (id: string,reason:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/student/withdrawalRequest`, { id: id, reason:reason });
+};
+
+export const getWithdrawalStatus = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/student/withdrawalStatus/${id}`);
+};
+
+export const sendReadmissionRequest = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`student/register/`, { student_id: id });
 };
