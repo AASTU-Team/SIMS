@@ -13,7 +13,8 @@ interface UserState {
     role: string,
     roles:string[],
     id: string,
-    _id:string
+    _id:string,
+    department:string,
 }
 
 export default function ProtectedRoutes({ children }: { children: React.ReactNode }) {
@@ -44,7 +45,8 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
     role: user?.role?.includes("student")? "Student" : "Staff",
     roles: user?.role,
     id: user?.user?.id,
-    _id:user?.user?._id
+    _id:user?.user?._id,
+    department: user?.user?.department_id
   }
   
   dispatch(setUser(state))
