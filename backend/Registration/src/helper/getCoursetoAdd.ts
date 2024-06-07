@@ -2,6 +2,7 @@ const Student = require("../models/student.model");
 const Curriculum = require("../models/curriculum.model");
 const Registration = require("../models/registration.model");
 const checkPrerequisite = require("./checkPrerequisite");
+const Course = require("../models/course.model");
 
 async function getCourseToAdd(StudentID: String): Promise<any> {
   const student_id = StudentID;
@@ -57,7 +58,8 @@ async function getCourseToAdd(StudentID: String): Promise<any> {
         PossibleCourse.push(course);
       }
     }
-    return PossibleCourse;
+    const coursesMain = await Course.find({ _id: { $in: PossibleCourse } });
+    return coursesMain;
   }
 }
 
