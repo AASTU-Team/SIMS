@@ -1,42 +1,84 @@
 // import { useQuery } from "@tanstack/react-query";
-import { Table, Popconfirm, Modal,Form,Select } from "antd";
+import { Table, Popconfirm, Modal,Form,Select, notification } from "antd";
 import type { TableColumnsType } from "antd";
 import { CourseFields } from "../../type/course";
 import { QuestionCircleOutlined } from "@ant-design/icons";
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getCourse } from "../../api/course";
+import { useEffect, useState } from "react";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { getAddableCourse, getEnrolledCourse, sendAddDropRequest } from "../../api/student";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import Loader from "../../components/Loader";
 
 const { confirm } = Modal;
 
-const showConfirm = () => {
-  confirm({
-    title: "Are you sure you want to register?",
-    icon: <ExclamationCircleFilled />,
-    content:
-      "Make sure all the details are correct. Any problems can be addressed at the registrar office.",
-    onOk() {
-      console.log("OK");
-    },
-    onCancel() {
-      console.log("Cancel");
-    },
-  });
-};
 
 export default function AddDrop() {
-  //   const query = useQuery({
-  //     queryKey: ["myCourse"],
-  //     queryFn: ?,
-  //   });
+  const user = useSelector((state: RootState) => state.user);
+  const query = useQuery({
+      queryKey: ["myEnrolledCourse"],
+      queryFn: ()=>getEnrolledCourse(user._id)
+    });
+
   const [enrolledCourses, setEnrolledCourses] = useState<CourseFields[]>([]);
   const [addDropCourses, setAddDropCourses] = useState<CourseFields[]>([]);
+   const addDropMutation = useMutation({
+     mutationKey: ["addDropCourses"],
+     mutationFn: () => {
+        const add = addDropCourses?.filter((course) => course.class === "Add")?.map((course) => course._id).filter((course) => course !== undefined);
+        const drop = addDropCourses
+          ?.filter((course) => course.class === "Drop")
+          ?.map((course) => course._id)
+          .filter((course) => course !== undefined);
+        return sendAddDropRequest(user._id, add , drop);
+     },
+     onError: () => {
+       notification.error({ message: "Registration Unsuccessful" });
+     },
+     onSuccess: () => {
+       notification.success({ message: "Registration Successfully" });
+     },
+   });
+  useEffect(() => {
+    if (query.isSuccess) {
+      setEnrolledCourses(query?.data?.data?.message || []);
+      setAddDropCourses([])
+    }
+  }, [query.isSuccess, query.data]);
+  const showConfirm = () => {
+    confirm({
+      title: "Are you sure you want to register?",
+      icon: <ExclamationCircleFilled />,
+      content:
+        "Make sure all the details are correct. Any problems can be addressed at the registrar office.",
+      onOk() {
+        addDropMutation.mutate();
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
   const [open,setOpen] = useState(false)
   const courseQuery = useQuery({
-      queryKey: ["course"],
-      queryFn: getCourse,
+      queryKey: ["addableCourse"],
+      queryFn: ()=> getAddableCourse(user._id),
     });
+  const dropCourse = (id: string) => {
+    const droppedCourse = enrolledCourses.filter((course)=>course._id===id)
+    droppedCourse[0].class = "Drop"
+    setEnrolledCourses(enrolledCourses.filter((course)=>course._id!==id))
+    setAddDropCourses([...addDropCourses,...droppedCourse])
+  }
+
+  const removeCourse = (id: string) => {
+    const droppedCourse = addDropCourses.filter((course) => course._id === id);
+    droppedCourse[0].class = "Drop";
+    setAddDropCourses(addDropCourses.filter((course) => course._id !== id));
+    setEnrolledCourses([...enrolledCourses, ...droppedCourse]);
+  };
   const filterOption = (
         input: string,
         option?: { label: string; value: string }
@@ -109,7 +151,7 @@ export default function AddDrop() {
           <Popconfirm
             title="Drop the course"
             description="Are you sure to drop this course?"
-            onConfirm={() => console.log(text, record)}
+            onConfirm={() => dropCourse(record._id || "")}
             okText="Yes"
             cancelText="No"
             icon={<QuestionCircleOutlined style={{ color: "red" }} />}
@@ -179,6 +221,12 @@ export default function AddDrop() {
        width: 70,
      },
      {
+       title: "Type",
+       dataIndex: "class",
+       key: "class",
+       width: 100,
+     },
+     {
        title: "Action",
        key: "operation",
        fixed: "right",
@@ -188,7 +236,7 @@ export default function AddDrop() {
            <Popconfirm
              title="Remove the course"
              description="Are you sure to remove this course?"
-             onConfirm={() => console.log(text, record)}
+             onConfirm={() =>removeCourse(record._id || "")}
              okText="Yes"
              cancelText="No"
              icon={<QuestionCircleOutlined style={{ color: "red" }} />}
@@ -199,7 +247,21 @@ export default function AddDrop() {
        ),
      },
    ];
+   if(query.isPending){
+    return (
+      <div className="h-auto">
+            <Loader/>
+          </div>
+    )
+   }
+   if(query.isError){
+      return (
+        <div>{`${query.error}`}</div>
+      )
+   }
 
+   
+   
   return (
     <div className="pt-1 flex flex-col gap-5">
       <div className="flex flex-col gap-4">
@@ -214,7 +276,11 @@ export default function AddDrop() {
             </button>
           </div>
         </div>
-        <Table columns={columns} dataSource={enrolledCourses} scroll={{ x: 1300 }} />
+          <Table
+            columns={columns}
+            dataSource={enrolledCourses} // Fix: Access the 'data' property of the resolved data
+            scroll={{ x: 1300 }}
+          />
       </div>
       <div className="flex flex-col gap-4">
         <div className="flex justify-between">
@@ -228,7 +294,11 @@ export default function AddDrop() {
             </button>
           </div>
         </div>
-        <Table columns={addDrop} dataSource={addDropCourses} scroll={{ x: 1300 }} />
+        <Table
+          columns={addDrop}
+          dataSource={addDropCourses}
+          scroll={{ x: 1300 }}
+        />
       </div>
       <Modal
         centered

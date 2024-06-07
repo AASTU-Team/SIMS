@@ -12,6 +12,7 @@ const Semester = require("../../models/Semesters.model");
 const AddStatus = require("../../models/AddStatus.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
 const Student = require("../../models/student.model");
+const Registration = require("../../models/registration.model");
 
 
 
@@ -34,8 +35,6 @@ export const getSemesters = async (req: Request, res: Response) => {
         data.push({ ...dep, key: dep._id.toString(),addStatus:add.status,regStatus:reg.status })
 
       }
-
-   
 
     // Add the 'key' property to each document
     //const data = status.map((doc:any) => ({ ...doc, key: doc._id.toString() }));
@@ -193,7 +192,31 @@ export const deleteStatus = async (req: Request, res: Response) => {
     });
     if(students.length > 0)
       {
-        students.map((student:any) =>{
+        for(const student of students){
+
+          const regData = await Registration.findOne({stud_id:student._id,year: student.year,semester:student.semester});
+          if(regData)
+            {
+              const requestGrade = await fetch("http://localhost:3005/grade/grades-and-gpa",{
+                method:"Post",
+                body:JSON.stringify({
+                  stud_id:regData.stud_id,
+                  semester:regData.semester,
+                  year:regData.year,
+                  courses:regData.courses
+                 
+                })
+
+              })
+
+              const response = await requestGrade.json()
+              console.log(response)
+              if(regData.GPA < 1.75)
+                {
+                  continue
+                }
+              
+            }
           let year = 0
           let semester = 0
           if(student.semester == 1)
@@ -211,7 +234,7 @@ export const deleteStatus = async (req: Request, res: Response) => {
             student.save()
 
           
-        })
+        }
 
       }
   

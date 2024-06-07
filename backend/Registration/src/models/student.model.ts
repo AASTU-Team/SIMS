@@ -77,6 +77,10 @@ let studentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  CGPA:{
+  type:Number,
+  required:false
+  }
 });
 
 module.exports =

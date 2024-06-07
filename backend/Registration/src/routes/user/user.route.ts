@@ -21,6 +21,7 @@ import { registerStudentCsv } from "./user.controller";
 import { uploadFile } from "./user.controller";
 import { getStudentProfile } from "./user.controller";
 import { getAllStaff } from "./user.controller";
+import { getStudentRegistrationHistory } from "./user.controller";
 import { getstudentRegistrationCourses } from "./user.controller";
 import { getDepartmentRegistrationStatus } from "./user.controller";
 import { confirmDepartmentRegistration } from "./user.controller";
@@ -39,6 +40,7 @@ import { studentRegistration } from "./user.controller";
 import { ListAddCourses } from "./user.controller";
 import { Request, Response } from "express";
 import { getWithdrawalStatus } from "./user.controller";
+import { EnrollmentRequest } from "./user.controller";
 import { getDepartmentWithdrawalRequests } from "./user.controller";
 import { getDepartmentEnrollmentRequests } from "./user.controller";
 import { getRegistrarWithdrawalRequests } from "./user.controller";
@@ -50,6 +52,7 @@ import { AcceptRegistrarEnrollmentRequest } from "./user.controller";
 import { RejectRegistrarEnrollmentRequest } from "./user.controller";
 import { RejectDepartmentWithdrawalRequest } from "./user.controller";
 import { RejectRegistrarWithdrawalRequest } from "./user.controller";
+import { RejectDepartmentEnrollmentRequest } from "./user.controller";
 
 import { AcceptWithdrawalRequest } from "./user.controller";
 import { activateStudent } from "./user.controller";
@@ -67,6 +70,7 @@ const assignSection = require("../../helper/assignSection");
 const validateRegistration = require("../../middlware/validateRegistration");
 const validateSRegistration = require("../../middlware/validateSRegistration");
 const checkRegistrationStatus = require("../../middlware/checkRegistrationStatus");
+const checkRegistrationStatus2 = require("../../middlware/checkRegistrationStatus2");
 
 const multer = require("multer");
 const csv = require("csv-parser");
@@ -106,8 +110,10 @@ Studentrouter.patch("/student/update", updateStudent);
 Studentrouter.patch("/staff/update", updateStaff);
 
 Studentrouter.get("/student/courses/:student_id", getStudentCourses);
-Studentrouter.post("/student/register",checkRegistrationStatus, studentRegistration);
-Studentrouter.get("/student/registrationCourses" ,checkRegistrationStatus ,getstudentRegistrationCourses
+Studentrouter.post("/student/register", studentRegistration);
+Studentrouter.get("/student/registrationCourses/:student_id"  ,getstudentRegistrationCourses
+);
+Studentrouter.get("/student/registrationStatus"  ,getStudentRegistrationHistory
 );
 Studentrouter.get("/student/addcourses/:student_id", ListAddCourses);
 
@@ -119,10 +125,10 @@ Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
-Studentrouter.get("/student/withdrawalStatus",getWithdrawalStatus);
+Studentrouter.get("/student/withdrawalStatus/:id",getWithdrawalStatus);
 
-Studentrouter.get("/department/withdrawalRequests", getDepartmentWithdrawalRequests);
-Studentrouter.get("/department/enrollmentRequests", getDepartmentEnrollmentRequests);
+Studentrouter.get("/department/withdrawalRequests/:department", getDepartmentWithdrawalRequests);
+Studentrouter.get("/department/enrollmentRequests/:department", getDepartmentEnrollmentRequests);
 Studentrouter.get("/registrar/withdrawalRequests", getRegistrarWithdrawalRequests);
 Studentrouter.get("/registrar/enrollmentRequests", getRegistrarEnrollmentRequests);
 
@@ -134,13 +140,14 @@ Studentrouter.post("/registrar/AcceptenrollmentRequests",AcceptRegistrarEnrollme
 Studentrouter.post("/registrar/RejectenrollmentRequests",RejectRegistrarEnrollmentRequest);
 
 Studentrouter.post("/department/RejectwithdrawalRequests", RejectDepartmentWithdrawalRequest);
+Studentrouter.post("/department/RejectEnrollmentRequests", RejectDepartmentEnrollmentRequest);
 Studentrouter.post("/registrar/RejectwithdrawalRequests",RejectRegistrarWithdrawalRequest);
 
 
 
 Studentrouter.post("/students/activateStudent", activateStudent);
 
-Studentrouter.get("/department/getStudentStatus", getDepartmentRegistrationStatus);
+Studentrouter.get("/department/getStudentStatus/:department", getDepartmentRegistrationStatus);
 Studentrouter.post("/department/confirmStudentStatus", confirmDepartmentRegistration);
 Studentrouter.post("/department/rejectStudentStatus", rejectDepartmentRegistration);
 

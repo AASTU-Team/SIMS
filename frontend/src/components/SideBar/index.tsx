@@ -10,6 +10,7 @@ import StaffIcon from "../../assets/sidebar/StaffIcon";
 import {InsertRowLeftOutlined,CalendarOutlined, BookOutlined, ProfileOutlined } from "@ant-design/icons";
 import { staffSideBarData, studentSideBarData } from "./data";
 import CalendarIcon from "../../assets/sidebar/CalendarIcon";
+import "../../App.css"
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -18,45 +19,55 @@ interface SidebarProps {
 
 const Icon = [
   {
+    index: 0,
     name: "home",
-    component: <DashboardIcon />,
+    component: <DashboardIcon key="0" />,
   },
   {
+    index: 1,
     name: "student",
-    component: <StudentIcon />,
+    component: <StudentIcon key="1" />,
   },
   {
+    index: 2,
     name: "user",
-    component: <StaffIcon />,
+    component: <StaffIcon key="2" />,
   },
   {
+    index: 3,
     name: "staff",
-    component: <StaffIcon />,
+    component: <StaffIcon key="3" />,
   },
   {
+    index: 4,
     name: "book",
-    component: <BookOutlined />,
+    component: <BookOutlined key="4" />,
   },
   {
+    index: 5,
     name: "plans",
-    component: <ProfileOutlined />,
+    component: <ProfileOutlined key="5" />,
   },
   {
+    index: 6,
     name: "building",
-    component: <ProfileOutlined />,
+    component: <ProfileOutlined key="6" />,
   },
   {
+    index: 7,
     name: "room",
-    component: <InsertRowLeftOutlined />,
+    component: <InsertRowLeftOutlined key="7" />,
   },
   {
+    index: 8,
     name: "semester",
-    component: <CalendarOutlined />,
+    component: <CalendarOutlined key="8" />,
   },
   {
+    index: 9,
     name: "calendar",
-    component: <CalendarIcon/>
-  }
+    component: <CalendarIcon key="9" />,
+  },
 ];
 
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
@@ -112,7 +123,7 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-9999 flex h-screen w-70 flex-col overflow-y-hidden bg-boxdark duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
+      className={`absolute left-0 top-0 z-9999 flex h-screen w-75  flex-col overflow-y-hidden bg-boxdark duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
         sidebarOpen ? "translate-x-0" : "-translate-x-full"
       }`}
     >
@@ -156,9 +167,9 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
       </div>
       {/* <!-- SIDEBAR HEADER --> */}
 
-      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
+      <div className="custom-scrollbar scrollbar-none flex flex-col overflow-y-auto duration-300 ease-linear">
         {/* <!-- Sidebar Menu --> */}
-        <nav className="mt-3 px-4 py-4 lg:mt-9 lg:pl-2 pr-6">
+        <nav className="mt-3 pr-4 py-4 lg:mt-9 lg: pr-6">
           {/* <!-- Menu Group --> */}
           <div>
             <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
@@ -166,32 +177,32 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
             </h3>
 
             <ul className="mb-6 flex flex-col gap-1.5">
-              {
-                data.map((item, index) => {
-                  if (user.roles.includes(item.role) || item.role === "") {
-                    return (
-                      <li key={index}>
-                        <Link
-                          to={item.link}
-                          className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                            pathname.includes(item.link) && item.link!="/"&&
-                            "bg-graydark dark:bg-meta-4"
-                          }`}
-                        >
-                          {Icon.map((icon) => {
-                            if (item.icon === icon.name) {
-                              return icon.component;
-                            }})}
+              {data.map((item) => {
+                if (user.roles.includes(item.role) || item.role === "") {
+                  return (
+                    <li key={item.index}>
+                      <Link
+                        key={item.index}
+                        to={item.link}
+                        className={`group relative flex items-center gap-2.5 rounded-sm px-4 py-2 font-medium text-bodydark1 text-md  duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
+                          pathname.includes(item.link) &&
+                          item.link != "/" &&
+                          "bg-graydark dark:bg-meta-4 border-l-2 border-white"
+                        }`}
+                      >
+                        {Icon.map((icon) => {
+                          if (item.icon === icon.name) {
+                            return icon.component;
+                          }
+                        })}
 
-                          {item.label}
-                        </Link>
-                      </li>
-                    );
-                  }
-                  return null;
-                })
-              }
- 
+                        {item.label}
+                      </Link>
+                    </li>
+                  );
+                }
+                return null;
+              })}
             </ul>
           </div>
         </nav>

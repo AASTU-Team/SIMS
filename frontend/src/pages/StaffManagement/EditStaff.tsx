@@ -235,6 +235,11 @@ export default function EdditStaff() {
                         value: "curriculum",
                         label: "Curriculum Management",
                       },
+
+                      {
+                        value: "attendance",
+                        label: "Student Attendance",
+                      },
                       {
                         value: "departmentMan",
                         label: "Department Management",

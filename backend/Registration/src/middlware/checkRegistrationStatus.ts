@@ -6,8 +6,10 @@ const RegistrationStatus = require("../models/RegistrationStatus.model")
 
 const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
 
-
-    const student_id = req.body.student_id
+ 
+    const student_id = req.params.student_id
+ 
+    
 
   
     const student = await Student.findById(student_id)
@@ -30,6 +32,7 @@ const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
         const semesterDoc = await Semester.findOne({
             semester: semester,
             batches: { $regex: `\\b${year}\\b` },
+            program:student.type
            
           });
 
@@ -45,14 +48,14 @@ const checkRegistrationStatus = async(req:Request, res:Response, next:any) => {
           if(!status)
           {
             return res.status(404).json({
-              message: "Registration Status not found"
+              message: " Status not Found"
             });
           }
 
           if(status.status == "Inactive")
             {
                 return res.status(200).json({
-                  message: "Registration Status is Inactive"
+                  message: "Inactive"
                 });
             }
 

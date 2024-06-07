@@ -1,3 +1,5 @@
+import { CourseFields } from "./course";
+
 export interface SlipDetails {
   stream?: string;
   classification?: string;
@@ -20,6 +22,9 @@ export interface SemesterDetails {
   end_date?: string;
   academic_year?: string;
   status?: string;
+  _id?:string;
+  addStatus?:string;
+  regStatus?:string;
 }
 
 export interface SectionFields {
@@ -27,4 +32,20 @@ export interface SectionFields {
   name: string;
   enrolled: string;
   staff?:string;
+}
+
+export interface RegistrationFields {
+  key: number;
+  name: string;
+  email?: string;
+  phone?: string;
+  reason?:string;
+  id?: string;
+  type?: string;
+  year?: number;
+  semester?: number;
+  total_credit?: number;
+  registration_date?: string;
+  courses?: { courseID: CourseFields }[];
+  _id: string;
 }

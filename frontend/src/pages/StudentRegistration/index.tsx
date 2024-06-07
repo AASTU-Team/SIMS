@@ -37,7 +37,7 @@ const items: TabsProps["items"] = [
 
 export default function StudentRegistration() {
   return (
-    <div className="max-w-screen-2xl p-4 md:p-5 2xl:p-8">
+    <div className="max-w-screen-3xl p-4 md:p-5 2xl:p-8">
       <Tabs defaultActiveKey="1" items={items}  size="large" />
     </div>
   )

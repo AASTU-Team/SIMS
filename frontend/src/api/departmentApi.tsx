@@ -67,3 +67,6 @@ export const deleteDepartment = async (id: string) => {
   setHeaderToken(access_token);
   return await client.delete(`/${id}`);
 }
+
+
+

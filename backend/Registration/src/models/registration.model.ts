@@ -73,6 +73,11 @@ let registrationSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
+  GPA:{
+    type: Number,
+    required: false,
+   
+  }
 });
 
 module.exports =

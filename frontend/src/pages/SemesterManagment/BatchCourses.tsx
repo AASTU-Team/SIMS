@@ -6,7 +6,9 @@ import CourseTable from "./CourseTable";
 type BatchCoursesProps = {
     semesterId: string;
     batch: string;
-    semester: string;}
+    semester: string;
+    type:string;
+  }
 
 export default function BatchCourses() {
     const {state}: {state:BatchCoursesProps} = useLocation();

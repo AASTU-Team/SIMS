@@ -45,6 +45,10 @@ const validateRegistration = [
     .isNumeric()
     .withMessage('semester must be a number'),
 
+    body('CGPA')
+    .isNumeric()
+    .withMessage('CGPA must be a number'),
+
     body('admission_date')
     .isDate({ format: 'YYYY-MM-DD' })
     .withMessage('addmission date must be in the format YYYY-MM-DD'),

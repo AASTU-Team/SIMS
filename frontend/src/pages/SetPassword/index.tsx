@@ -23,6 +23,7 @@ const SetPassword: React.FC = () => {
         title: "Password Changed Successfully",
         content: "Click the button below to go to the sign in page.",
         okText: "Go to Sign In",
+        style: { margin: "0 auto"},
         onOk: () => {
           router('/signin');
         }

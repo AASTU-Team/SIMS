@@ -29,12 +29,14 @@ export default function AddCourse() {
        onSuccess: () => {
          notification.success({ message: "Course Created Successfully" });
          form.resetFields();
+         setAssessments([]);
          courseQuery.refetch();
        },
      });
   
   const onFinish: FormProps<CourseFields>["onFinish"] = (values) => {
     console.log("Success:", values);
+    values.assessments = assessments;
     AddCourseMuations.mutate(values);
   };
 
@@ -77,6 +79,7 @@ export default function AddCourse() {
   
   const setAssessmentValue = () => {
     const sum = assessments.reduce((total, assessment) => total + (assessment.value || 0), 0);
+    console.log("Sum",sum)
     form.setFieldValue("assessment", sum);
     console.log(form.getFieldValue("assessment"))
   }
@@ -518,6 +521,7 @@ export default function AddCourse() {
                             className=" rounded-lg w-60 border border-stroke bg-transparent py-1 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                             id={assessment.id}
                             value={assessment?.value || ""}
+                            onBlur={() => setAssessmentValue()}
                             onChange={(event) => {
                               const inputId = event.currentTarget.id;
                               const inputValue = Number(event.currentTarget.value); // Convert the inputValue to a number
