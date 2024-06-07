@@ -17,8 +17,9 @@ const validateRegistration = [
   .isDate({ format: 'YYYY-MM-DD' })
   .withMessage('Birthday must be in the format YYYY-MM-DD'),
   body('phone')
-  .matches(/^(\+\d{12}|\d{10})$/)
-  .withMessage('Phone number must be 10 digits or start with "+" and be followed by 12 digits'),
+  .matches(/^(\+\d{12}|\d{10}|\d{9})$/)
+  .withMessage('Phone number must be 10 digits, 9 digits, or start with "+" and be followed by 12 digits'),
+
   body('gender')
   .isIn(['MALE', 'FEMALE'])
   .withMessage('Gender must be either "male" or "female"'),
@@ -47,7 +48,8 @@ const validateRegistration = [
 
     body('CGPA')
     .isNumeric()
-    .withMessage('CGPA must be a number'),
+    .withMessage('CGPA must be a number')
+    .optional(),
 
     body('admission_date')
     .isDate({ format: 'YYYY-MM-DD' })
@@ -60,7 +62,8 @@ const validateRegistration = [
     body('contact')
    
     .isString()
-    .withMessage('contact must be a string'),
+    .withMessage('contact must be a string')
+    .optional(),
 
     body('address')
    
@@ -77,8 +80,8 @@ const validateRegistration = [
     .withMessage(' must be a string'),
 
     body('emergencycontact_phone')
-    .matches(/^(\+\d{12}|\d{10})$/)
-    .withMessage('Phone number must be 10 digits or start with "+" and be followed by 12 digits'),
+    .matches(/^(\+\d{12}|\d{10}|\d{9})$/)
+    .withMessage('Phone number must be 10 digits, 9 digits, or start with "+" and be followed by 12 digits'),
     
 
 

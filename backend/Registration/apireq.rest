@@ -71,7 +71,7 @@ Content-Type:  application/json
 
  
 ### assign teacher 
-PATCH  http://localhost:3000/assignment/6660153088ec2ceb7defb8b0
+PATCH  http://localhost:3000/assignment/6662f79e4df9464947df03f3
 Content-Type:  application/json
 
 {
@@ -84,7 +84,7 @@ Content-Type:  application/json
 
 ### get staff by depid
 
-GET  http://localhost:3000/user/staff/dept/663646030666c2aea17b217c
+GET  http://localhost:3000/user/staff/dept/663646030666c2aea17b217c?inst=true
 Content-Type:  application/json
 ### get all staffs
 GET  http://localhost:3000/user/staff/all 
@@ -95,18 +95,23 @@ POST  http://localhost:3000/section/create
 Content-Type:  application/json
 
 {
-  "name" : "m",
+  "data" : {
+  "name" : "N",
   "year"  : 1 ,
-  "semester" : 1
-}
+  "semester" : 1,
+  "type" : "Undergraduate"},
+  "courseData" : {
+    "course_id" : "662802ac728d90164b677588"
+  }
+  }
 
-### get students list wiht seciton
+### get students list wiht seciton id is inst id
 POST http://localhost:3000/assignment/teacher
 Content-Type:  application/json
 
 {
-  "instructor_id" : "664217adf8b1cf7706c8c48c",
-  "course_id":"662802ac728d90164b677588"
+  "id" : "664217adf8b1cf7706c8c48c",
+  "course_id":"6633753421c6431fbbd36514"
 }
 
 ####
@@ -120,3 +125,13 @@ Content-Type:  application/json
     "max":2,
     "type" : "Undergraduate"
 }
+### get staff by depid
+
+GET  http://localhost:3000/user/staff/dept/663646030666c2aea17b217c
+Content-Type:  application/json
+
+
+### get list of courses for teacher 
+GET  http://localhost:3000/assignment/instructor/66636b758cb6b6bc394fbc60
+Content-Type:  application/json
+
