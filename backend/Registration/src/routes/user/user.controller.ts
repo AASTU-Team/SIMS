@@ -1,4 +1,4 @@
-import { response } from "app";
+import { response, search } from "app";
 import { Request, Response } from "express";
 import { any } from "joi";
 import mongoose, { Mongoose } from "mongoose";
@@ -651,9 +651,16 @@ export const getAllStaff = async (req: Request, res: Response) => {
 };
 export const getStaffByDepId = async (req: Request, res: Response) => {
   const { id } = req.params;
+  const { inst } = req.query;
+  const search: any = {
+    department_id: id,
+  };
+  if (inst) {
+    search["isInstructor"] = inst;
+  }
   console.log(id);
   try {
-    const staffs: any = await Staff.find({ department_id: id });
+    const staffs: any = await Staff.find(search);
     res.status(200).json({ message: "success", data: staffs });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
