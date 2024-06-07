@@ -4,6 +4,7 @@ let addDropSchema = new mongoose.Schema({
   stud_id: {
     type: mongoose.Schema.Types.ObjectId,
     required: true,
+    ref: "Student",
   },
   courseToAdd: {
     type: Array<mongoose.Schema.Types.ObjectId>,

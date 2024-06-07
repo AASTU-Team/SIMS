@@ -1914,14 +1914,13 @@ export const getAddDrop = async (req: Request, res: Response) => {
     .sort({ status: -1, createdAt: 1 })
     .skip(skip)
     .limit(limit)
-    .populate("courseToAdd", "_id name code")
-    .populate("courseToDrop", "_id name code")
-    .populate("stud_id", "_id name email")
-    .populate("department_id", "_id name")
-    .populate({ path: "courseToAddWithSec.course_id", select: "_id name code" })
+    .populate("stud_id")
+    .populate("courseToAdd")
+    .populate("courseToDrop")
+    .populate("department_id")
+    .populate({ path: "courseToAddWithSec.course_id" })
     .populate({
       path: "courseToAddWithSec.section_id",
-      select: "_id name code",
     });
   console.log(addDrop);
   if (!addDrop) {
