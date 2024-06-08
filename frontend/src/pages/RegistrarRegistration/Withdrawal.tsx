@@ -160,7 +160,10 @@ export default function Withdrawal() {
                   <h3 className="font-semibold">Reason of Withdrawal</h3>
                   <p>{record.reason}</p>
                 </div>
-                <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
+                <button
+                  onClick={() => getWithdrawalRequestFile(record._id)}
+                  className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+                >
                   <DownloadOutlined />
                   Download Attached Document
                 </button>
