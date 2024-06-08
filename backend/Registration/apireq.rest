@@ -11,8 +11,8 @@ POST http://localhost:3000/user/student/addDrop/6646788517b2c61fd5e52d84
 Content-Type:  application/json
 
 {
-   "add" : ["662802ac728d90164b677588" ]  ,
-   "drop" : [ ]
+   "add" : ["663a03d879c454a6075ec31d" ]  ,
+   "drop" : ["662802ac728d90164b677588"]
 }
 ### 15 department : fetch add and drop requests should use auth to get depid 
 GET  http://localhost:3000/user/student/addDrop?skip=0&limit=10&status=pending
@@ -25,10 +25,10 @@ POST http://localhost:3000/user/student/stausUpdate
 Content-Type:  application/json
 
 {
-  "addDrop_id" : "666242d40217c188336ce84c",
+  "addDrop_id" : "6664d35bc108aa3394aea698",
   "status" : "Accept",
   "assignSec" : [
-    {"course_id" : "662802ac728d90164b677588" , "section_id" : "665cc8fd8191e76e0532e368"}
+    {"course_id" : "663a03d879c454a6075ec31d" , "section_id" : "6662ea643198a2ca6afd2fee"}
     //{"course_id" : "664b13d72fa1ab9ef543688c" , "section_id" : "665cc8fd8191e76e0532e368"}
   ]
 }
@@ -40,7 +40,7 @@ POST http://localhost:3000/user/student/stausUpdateRegistrar
 Content-Type:  application/json
 
 {
-  "addDrop_id" : "665f0191ec73504a0ad4c78c",
+  "addDrop_id" : "6664d35bc108aa3394aea698",
   "status" : "accept"
 }
 ### 17 dept : get rejected req from registrar
@@ -111,7 +111,7 @@ Content-Type:  application/json
 
 {
   "id" : "664217adf8b1cf7706c8c48c",
-  "course_id":"6633753421c6431fbbd36514"
+  "course_id":"663a03d879c454a6075ec31d"
 }
 
 ####
@@ -161,3 +161,5 @@ Content-Type:  application/json
 ###  reg get all req that are pending
 GET  http://localhost:3000/user/student/addDrop?skip=0&limit=10&registrarStatus=pending
 Content-Type:  application/json
+
+

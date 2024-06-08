@@ -2016,7 +2016,7 @@ export const addDropCourse = async (req: Request, res: Response) => {
     }
   }
   // fuction to check prerequisit
-  add.forEach(async (element: any) => {
+  for (const element of add) {
     const checked = await checkPrerequisite(element, student_id);
     if (!checked) {
       const course = await Course.findById(element);
@@ -2024,7 +2024,16 @@ export const addDropCourse = async (req: Request, res: Response) => {
         .status(403)
         .send({ message: "You have to take the prerequisite first", course });
     }
-  });
+  }
+  // add.forEach(async (element: any) => {
+  //   const checked = await checkPrerequisite(element, student_id);
+  //   if (!checked) {
+  //     const course = await Course.findById(element);
+  //     return res
+  //       .status(403)
+  //       .send({ message: "You have to take the prerequisite first", course });
+  //   }
+  // });
   const dropdata = [];
   drop.forEach((element: any) => {
     const found = registrationData.courses.find((course: any) => {
@@ -2034,6 +2043,7 @@ export const addDropCourse = async (req: Request, res: Response) => {
       dropdata.push("1");
     }
   });
+  console.log(drop);
   if (dropdata.length) {
     return res.status(400).send({ message: "course not found" });
   }
@@ -2132,8 +2142,10 @@ export const dropCourse = async ({
     course_id: course,
   });
   if (number) {
-    if (number.numberOfStudent.includes(id)) {
-      const index = number.numberOfStudent.indexOf(id);
+    const index = number.numberOfStudent.find((item: any) => {
+      return item.student.toString() == id;
+    });
+    if (index) {
       number.numberOfStudent.splice(index, 1);
       await number.save();
     }
@@ -2185,7 +2197,8 @@ export const addCourse = async ({
   if (!updatedRegistration) {
     return { error: "Registration not found" };
   }
-  await incStudentNumber(section_id, course_id, id);
+  const isOutOfBatch = true;
+  await incStudentNumber(section_id, course_id, id, isOutOfBatch);
   return { message: "success", data: course_id };
 };
 

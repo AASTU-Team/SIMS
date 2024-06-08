@@ -117,7 +117,7 @@ export const getTeachersAssignment = async (req: Request, res: Response) => {
           section_id: assign.section_id.toString(),
           course_id,
         })
-          .populate("numberOfStudent", "id name email")
+          .populate("numberOfStudent.student", "id name email")
           .populate("section_id");
         console.log(secstudent);
         return secstudent;

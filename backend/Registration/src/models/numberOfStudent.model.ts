@@ -1,3 +1,4 @@
+import { required } from "joi";
 import mongoose from "mongoose";
 
 let numberOfStudentSchema = new mongoose.Schema({
@@ -11,11 +12,19 @@ let numberOfStudentSchema = new mongoose.Schema({
     required: false,
     ref: "Section",
   },
-  numberOfStudent: {
-    type: mongoose.Schema.Types.Array,
-    required: false,
-    ref: "Student",
-  },
+  numberOfStudent: [
+    {
+      student: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: false,
+        ref: "Student",
+      },
+      isOutOfBatch: {
+        type: Boolean,
+        default: false,
+      },
+    },
+  ],
 });
 
 module.exports =
