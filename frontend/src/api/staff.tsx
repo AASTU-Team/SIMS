@@ -76,3 +76,10 @@ export const deleteStaff = async (id: string, email: string) => {
   setHeaderToken(access_token);
   return await client.delete(`/staff/delete/?staff_id=${id}&email=${email}`);
 };
+
+
+export const getStaffDep = async (id:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/staff/dept/${id}?inst=true`);
+};
