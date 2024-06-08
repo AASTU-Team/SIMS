@@ -16,88 +16,184 @@ interface edit {
 export const registerAttendance = async (req: Request, res: Response) => {
   const data = req.body;
 
-  //const course_id = data.course_id
-  const course_name = data.course_name;
+  const course_id = data.course_id;
   const instructor_id = data.instructor_id;
   const date = data.date;
-  const attendance: Attendance2[] = data.attendance;
+  // const attendance: Attendance2[] = data.attendance;
 
-  const course = await Course.findOne({ name: data.course_name });
+  const course = await Course.findById(course_id);
 
   if (!course) {
     return res.status(400).json({ message: "Course not found" });
   }
 
-  const course_id = course._id.toString();
-
-  const current_attendance = await Attendacne.find({
-    course_id: course_id,
-    //student_id: student_id,
-  });
-
-  const newArray = [];
-  let updatesMade = false;
-
-  // Asynchronous loop using for...of
-  for (const item of attendance) {
-    let student_id = item.student_id;
-    let status = item.status;
-
-    const currentAttendance = await Attendacne.findOne({
+  for (const attend of data.attendance) {
+    if (
+      attend.status !== "Present" &&
+      attend.status !== "Absent" &&
+      attend.status !== "Late" &&
+      attend.status !== "Excused"
+    ) {
+      return res.status(400).json({ message: "Invalid attendance status" });
+    }
+    const current_attendance = await Attendacne.findOne({
       course_id: course_id,
-      student_id: item.student_id,
+      student_id: attend.student_id,
+      instructor_id: instructor_id,
     });
-
-    if (currentAttendance) {
+    console.log(current_attendance);
+    if (current_attendance) {
       const updatedAttendance = await Attendacne.findOneAndUpdate(
-        { course_id, student_id },
+        {
+          course_id,
+          instructor_id: instructor_id,
+          student_id: attend.student_id,
+        },
         {
           $push: {
             attendances: {
               date: date,
-              status: status,
+              status: attend.status,
             },
           },
         },
         { new: true }
       );
-
-      console.log("Updated attendance:", updatedAttendance);
-      updatesMade = true;
-      //return res.status(200).json({ message: "Attendance registered successfully" });
     } else {
-      newArray.push({
+      const newAttendance = new Attendacne({
         course_id: course_id,
         instructor_id: instructor_id,
-        student_id: item.student_id,
+        student_id: attend.student_id,
         attendances: [
           {
             date: date,
-            status: item.status,
+            status: attend.status,
           },
         ],
       });
+      console.log(newAttendance);
+      await newAttendance.save();
     }
   }
+  // data.attendance.forEach(async (attend: any) => {
+  //   if (
+  //     attend.status !== "Present" &&
+  //     attend.status !== "Absent" &&
+  //     attend.status !== "Late" &&
+  //     attend.status !== "Excused"
+  //   ) {
+  //     return res.status(400).json({ message: "Invalid attendance status" });
+  //   }
+  //   const current_attendance = await Attendacne.find({
+  //     course_id: course_id,
+  //     student_id: attend.student_id,
+  //   });
+  //   if (current_attendance) {
+  //     const updatedAttendance = await Attendacne.findOneAndUpdate(
+  //       {
+  //         course_id,
+  //         instructor_id: instructor_id,
+  //         student_id: attend.student_id,
+  //       },
+  //       {
+  //         $push: {
+  //           attendances: {
+  //             date: date,
+  //             status: attend.status,
+  //           },
+  //         },
+  //       },
+  //       { new: true }
+  //     );
+  //   } else {
+  //     const newAttendance = new Attendacne({
+  //       course_id: course_id,
+  //       instructor_id: instructor_id,
+  //       student_id: attend.student_id,
+  //       attendances: [
+  //         {
+  //           date: date,
+  //           status: attend.status,
+  //         },
+  //       ],
+  //     });
+  //     await newAttendance.save();
+  //   }
+  // });
 
-  if (updatesMade) {
-    console.log("Attendance updated successfully");
-    return res.status(200).json({ message: "Attendance updated successfully" });
-  } else {
-    Attendacne.insertMany(newArray)
-      .then((result) => {
-        console.log("Inserted", result.length, "attendance records");
-        return res
-          .status(200)
-          .json({ message: "Attendance registered successfully" });
-      })
-      .catch((error) => {
-        console.error("Error inserting attendance records:", error);
-        return res
-          .status(500)
-          .json({ message: "Error inserting attendance records" });
-      });
-  }
+  return res
+    .status(200)
+    .json({ message: "Attendance registered successfully" });
+
+  // const current_attendance = await Attendacne.find({
+  //   course_id: course_id,
+  //   student_id: student_id,
+  // });
+
+  // const newArray = [];
+  // let updatesMade = false;
+
+  // Asynchronous loop using for...of
+  // for (const item of attendance) {
+  //   let student_id = item.student_id;
+  //   let status = item.status;
+
+  //   const currentAttendance = await Attendacne.findOne({
+  //     course_id: course_id,
+  //     student_id: item.student_id,
+  //   });
+
+  //   if (currentAttendance) {
+  //     const updatedAttendance = await Attendacne.findOneAndUpdate(
+  //       { course_id, student_id },
+  //       {
+  //         $push: {
+  //           attendances: {
+  //             date: date,
+  //             status: status,
+  //           },
+  //         },
+  //       },
+  //       { new: true }
+  //     );
+
+  //     console.log("Updated attendance:", updatedAttendance);
+  //     updatesMade = true;
+  //     //return res.status(200).json({ message: "Attendance registered successfully" });
+  //   } else {
+  //     newArray.push({
+  //       course_id: course_id,
+  //       instructor_id: instructor_id,
+  //       student_id: item.student_id,
+  //       attendances: [
+  //         {
+  //           date: date,
+  //           status: item.status,
+  //         },
+  //       ],
+  //     });
+  //   }
+  // }
+
+  // if (updatesMade) {
+  //   console.log("Attendance updated successfully");
+  //   return res.status(200).json({ message: "Attendance updated successfully" });
+  // } else {
+  //   Attendacne.insertMany(newArray)
+  //     .then((result) => {
+  //       console.log("Inserted", result.length, "attendance records");
+  //       return res
+  //         .status(200)
+  //         .json({ message: "Attendance registered successfully" });
+  //     })
+
+  // catch((error) => {
+  //   console.error("Error inserting attendance records:", error);
+  //   return res
+  //     .status(500)
+  //     .json({ message: "Error inserting attendance records" });
+  // });
+  // }
 };
 export const getInstructorAttendance = async (req: Request, res: Response) => {
   const data = req.body;
@@ -145,11 +241,14 @@ export const editAttendance = async (req: Request, res: Response) => {
       if (!student) {
         throw new Error(`Student with ID ${attendance_id} not found`);
       }
-      attendances.forEach(({ date, status }: any) => {
-        const attendanceIndex = student.attendances.findIndex((att) => {
+      attendances.forEach(({ date, status, _id }: any) => {
+        const attendanceIndex = student.attendances.findIndex((att: any) => {
           const newdate = new Date(date);
-          console.log(att.date.getTime(), new Date(date));
-          return att.date.getTime() === new Date(date).getTime();
+          console.log(att.date.getTime(), new Date(date), _id, att._id);
+          return (
+            att.date.getTime() === new Date(date).getTime() &&
+            att._id.toString() === _id
+          );
         });
         console.log(attendanceIndex);
         if (attendanceIndex !== -1) {
@@ -171,5 +270,36 @@ export const editAttendance = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error(error.message);
+  }
+};
+
+export const deleteAttendance = async (req: Request, res: Response) => {
+  try {
+    const { course_id, instructor_id, date } = req.body;
+
+    // Find the attendance document that matches the provided course_id, instructor_id
+    const attendance = await Attendacne.updateMany(
+      {
+        course_id,
+        instructor_id,
+      },
+      {
+        $pull: {
+          attendances: {
+            date: new Date(date),
+          },
+        },
+      },
+      { new: true }
+    );
+
+    if (!attendance) {
+      return res.status(404).json({ message: "Attendance not found" });
+    }
+
+    res.json({ message: "Attendance deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

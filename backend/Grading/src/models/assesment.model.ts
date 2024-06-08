@@ -1,37 +1,20 @@
-import mongoose from "mongoose";
+  import mongoose, { Schema, Document } from 'mongoose';
 
-const assessmentSchema = new mongoose.Schema({
-  course_id: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Course",
-    required: true
-  },
-  title: {
-    type: String,
-    required: true
-  },
-  description: {
-    type: String,
-    optional: true
-  },
-  max_score: {
-    type: Number,
-    required: true
-  },
-  due_date: {
-    type: Date,
-    optional: true
-  },
-  is_submittable: {
-    type: Boolean,
-    required: true,
-    default: false
-  },
-  creation_date: {
-    type: Date,
-    default: Date.now
+  interface AssessmentDocument extends Document {
+    name: string;
+    value: number;
   }
-});
 
-const Assessment = mongoose.models.Assessment || mongoose.model("Assessment", assessmentSchema);
-export default Assessment;
+  const assessmentSchema = new Schema<AssessmentDocument>({
+    name: {
+      type: String,
+      required: true,
+    },
+    value: {
+      type: Number,
+      required: true,
+    },
+  });
+
+  const Assessment = mongoose.model<AssessmentDocument>('Assessment', assessmentSchema);
+  export default Assessment;
