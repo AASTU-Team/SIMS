@@ -22,7 +22,7 @@ type BatchCoursesProps = {
 export default function CourseTable(state:BatchCoursesProps) {
   const user = useSelector((state: RootState) => state.user);
   const [open, setOpen] = useState(false);
-  console.log(state)
+  // console.log("state",state)
   const [form] = Form.useForm();
 
   const allocateSectionMutation = useMutation({
@@ -60,6 +60,7 @@ export default function CourseTable(state:BatchCoursesProps) {
         state.type
       ),
   });
+
   // console.log(query)
   const columns: TableColumnsType<CourseFields> = [
     {
