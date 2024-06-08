@@ -12,6 +12,7 @@ import {
   getStaffByDepId,
   getNumberOfStudents,
   acceptRejectRegistrar,
+  getActiveAddDrop,
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
@@ -60,6 +61,9 @@ import { updateStaff } from "./user.controller";
 import { getStaffByDepartment } from "./user.controller";
 import { exportAllStudent, exportAllStaff } from "./user.controller";
 
+import { exportLogFile } from "./user.controller";
+//import { getAllStaff2 } from "./user.controller";
+
 const assignSection = require("../../helper/assignSection");
 
 // const assignSection = require("../../helper/assignFreshmanCourse");
@@ -76,6 +80,9 @@ const fs = require("fs");
 const upload = multer({ dest: "uploads/" });
 
 const Studentrouter = express.Router();
+
+Studentrouter.get("/exportLogFile", exportLogFile);
+//Studentrouter.get("/getFilterStaffs", getAllStaff2);
 
 // Register a student
 
@@ -121,6 +128,7 @@ Studentrouter.post("/student/addDrop/:student_id", addDropCourse);
 Studentrouter.post("/student/stausUpdate", acceptReject);
 Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
+Studentrouter.get("/student/activeAddDrop/:stud_id", getActiveAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
 Studentrouter.get("/student/withdrawalStatus/:id", getWithdrawalStatus);

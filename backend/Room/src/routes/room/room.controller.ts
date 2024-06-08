@@ -10,7 +10,7 @@ export const registerRoom = async (req: Request, res: Response) => {
 export const createRoom = async (req: Request, res: Response) => {
   try {
     const rooms = [req.body];
-    console.log("ROOMS",rooms);
+    console.log("ROOMS", rooms);
     if (!rooms) {
       return res.status(400).send({ message: "data cant be empty" });
     }
@@ -44,7 +44,7 @@ export const createRoom = async (req: Request, res: Response) => {
   }
 };
 
-export const createRooms = async (req:Request, res:Response) => {
+export const createRooms = async (req: Request, res: Response) => {
   const { block, rooms, start_with } = req.body;
 
   const schema = Joi.object({
@@ -71,10 +71,14 @@ export const createRooms = async (req:Request, res:Response) => {
 
     const createdRooms = await Room.create(roomData);
 
-    return res.status(200).json({ message: 'Rooms created successfully.', rooms: createdRooms });
+    return res
+      .status(200)
+      .json({ message: "Rooms created successfully.", rooms: createdRooms });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'An error occurred while creating rooms.' });
+    return res
+      .status(500)
+      .json({ message: "An error occurred while creating rooms." });
   }
 };
 
@@ -139,6 +143,66 @@ export const deleteRoom = async (req: Request, res: Response) => {
     }
 
     return res.status(200).json({ message: "Room deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+// export const getAvailableRooms = async (req: Request, res: Response) => {
+//   try {
+//     const rooms = await Room.find({ isAvailable: true });
+
+//     return res.status(200).json({ rooms });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+// export const assignRoom = async (req: Request, res: Response) => {
+//   try {
+//     const { roomId } = req.params;
+//     const { studentId } = req.body;
+
+//     // Optional: Validate input data (using a library like Joi or Zod)
+
+//     const updatedRoom = await Room.findByIdAndUpdate(
+//       roomId,
+//       { studentId, isAvailable: false },
+//       { new: true } // Return the updated document
+//     );
+
+//     if (!updatedRoom) {
+//       return res.status(404).json({ message: "Room not found" });
+//     }
+
+//     return res
+//       .status(200)
+//       .json({ message: "Room assigned successfully", room: updatedRoom });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ message: "Internal server error" });
+//   }
+// };
+export const requestRoom = async (req: Request, res: Response) => {
+  try {
+    const { roomId } = req.params;
+    const { studentId } = req.body;
+
+    // Optional: Validate input data (using a library like Joi or Zod)
+
+    const updatedRoom = await Room.findByIdAndUpdate(
+      roomId,
+      { studentId, isRequested: true },
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedRoom) {
+      return res.status(404).json({ message: "Room not found" });
+    }
+
+    return res
+      .status(200)
+      .json({ message: "Room requested successfully", room: updatedRoom });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });

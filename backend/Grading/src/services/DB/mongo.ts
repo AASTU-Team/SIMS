@@ -8,6 +8,7 @@ export = async function mongo(): Promise<void> {
     console.log(`MongoDB connection error: ${err}`);
   });
   console.log(process.env.MONGODB_URI);
+  console.log(`mongodb+srv://${process.env.MONGOUSER}:${process.env.MONGOPASS}@cluster0.gpom6d9.mongodb.net/${process.env.MONGODB}?retryWrites=true&w=majority`)
   await mongoose.connect(
     process.env.MONGODB_URI ||
       `mongodb+srv://${process.env.MONGOUSER}:${process.env.MONGOPASS}@cluster0.gpom6d9.mongodb.net/${process.env.MONGODB}?retryWrites=true&w=majority`,

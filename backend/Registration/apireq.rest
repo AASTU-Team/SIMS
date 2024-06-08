@@ -71,11 +71,11 @@ Content-Type:  application/json
 
  
 ### assign teacher 
-PATCH  http://localhost:3000/assignment/6662f79e4df9464947df03f3
+PATCH  http://localhost:3000/assignment/666368c86dcdaa0caa6fe71a
 Content-Type:  application/json
 
 {
-  "instructor_id" : "664217adf8b1cf7706c8c48c"
+  "instructor_id" : null
 }
 
 ### get curriculum
@@ -135,3 +135,29 @@ Content-Type:  application/json
 GET  http://localhost:3000/assignment/instructor/66636b758cb6b6bc394fbc60
 Content-Type:  application/json
 
+### check active add drop
+
+GET  http://localhost:3000/user/student/activeAddDrop/6646788517b2c61fd5e52d84
+Content-Type:  application/json
+
+
+###  stud get all req
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&stud_id=6646788517b2c61fd5e52d84
+Content-Type:  application/json
+
+###  reg get all req
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=10
+Content-Type:  application/json
+
+
+###  dep get all req
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=10&department_id=663646030666c2aea17b217c
+Content-Type:  application/json
+
+###  dep get all req
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=10&department_id=663646030666c2aea17b217c&status=pending
+Content-Type:  application/json
+
+###  reg get all req that are pending
+GET  http://localhost:3000/user/student/addDrop?skip=0&limit=10&registrarStatus=pending
+Content-Type:  application/json
