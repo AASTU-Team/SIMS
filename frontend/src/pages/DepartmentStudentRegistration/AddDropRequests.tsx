@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCourse } from "../../api/course";
 import { ExclamationCircleFilled } from "@ant-design/icons";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SectionDropDown from "./SectionDropDown";
 import { createSection } from "../../api/registration";
 import { acceptAddDropDep } from "../../api/student";
@@ -15,9 +15,10 @@ const { confirm } = Modal;
 
 
 export default function AddDropRequests() {
+  const router = useNavigate();
    const queryClient= useQueryClient();
    const [form] = Form.useForm();
-   const { state }:{state:{courseToAdd:CourseFields[],courseToDrop:CourseFields[], year:number,semester:number,type:string,_id:string}} = useLocation();
+   const { state }:{state:{courseToAdd:CourseFields[],courseToDrop:CourseFields[], year:number,semester:number,type:string,addDrop_id:string}} = useLocation();
    console.log("State",state);
   const [assignment,setAssignment] = useState<{section_id:string,course_id:string}[]>([]);
   console.log(assignment)
@@ -43,13 +44,19 @@ export default function AddDropRequests() {
    });
      const ApproveRequestMuation = useMutation({
        mutationKey: ["approveAddDropRequestDep"],
-       mutationFn: ()=>acceptAddDropDep(state._id,assignment),
+       mutationFn: ()=>acceptAddDropDep(state.addDrop_id,assignment),
        onError: () => {
          notification.error({ message: "Request Approval Failed" });
        },
        onSuccess: () => {
-         notification.success({
-           message: "Request Approval Successful",
+         Modal.success({
+           title: "Request Approval Successful",
+           content: "Click the button below to go to back.",
+           okText: "Go to Department Request",
+           style: { margin: "0 auto" },
+           onOk: () => {
+             router("/studentDepReg");
+           },
          });
        },
      });
