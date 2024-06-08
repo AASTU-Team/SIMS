@@ -9,6 +9,11 @@ let dormroomSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  capaciy:{
+    type: Number,
+    required: false,
+
+  }
 });
 
 module.exports = mongoose.models.Dormroom || mongoose.model("Dormroom", dormroomSchema);
