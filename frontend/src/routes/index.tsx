@@ -39,6 +39,8 @@ import SemesterManagement from "../pages/SemesterManagment";
 import BatchCourses from "../pages/SemesterManagment/BatchCourses";
 import AttendanceManagement from "../pages/AttendanceManagement";
 import StudentGradeReport from "../pages/StudentGradeReport";
+import DepartmentGradeApproval from "../pages/DepartmentGradeApproval";
+import DeanGradeApproval from "../pages/DeanGradeApproval";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -109,6 +111,9 @@ const AllRoutes = () => {
                       path="/department"
                       element={<DepartmentManagement />}
                     />
+
+                    <Route path="/depGrade" element={<DepartmentGradeApproval />} />
+                    <Route path="/deanGrade" element={<DeanGradeApproval />} />
                     <Route path="/department/add" element={<AddDepartment />} />
                     <Route
                       path="/department/edit"

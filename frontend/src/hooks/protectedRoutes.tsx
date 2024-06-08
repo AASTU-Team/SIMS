@@ -37,7 +37,7 @@ export default function ProtectedRoutes({ children }: { children: React.ReactNod
   if(query.isSuccess){
 
   const user = query.data?.data
-  console.log(user)
+  // console.log("User Data",user)
  
   const state:UserState ={
     name:user?.user?.name,
