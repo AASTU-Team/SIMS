@@ -220,3 +220,14 @@ export const acceptAddDropDep = async (
     assignSec,
   });
 };
+
+export const acceptAddDropReg = async (
+  addDrop_id: string,
+) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post("student/stausUpdateRegistrar", {
+    addDrop_id,
+    status: "accept",
+  });
+};

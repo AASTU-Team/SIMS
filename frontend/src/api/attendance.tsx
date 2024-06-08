@@ -1,11 +1,10 @@
 import type { AxiosResponse } from "axios";
 import axios from "axios";
 import getCookie from "../hooks/getCookie";
-import { DepartmentFields } from "../type/department";
 import setCookie from "../hooks/setCookie";
 
 const client = axios.create({
-  baseURL: "http://localhost:3000/department",
+  baseURL: "http://localhost:3000/",
 });
 
 const authClient = axios.create({
@@ -72,35 +71,15 @@ client.interceptors.response.use(
   }
 );
 
-export const getDepartment = async () => {
+
+export const getCoursesInstructor = async (id:string) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.get("/");
-}
+  return await client.get(`/assignment/instructor/${id}`);
+};
 
-export const getDepartmentById = async (id: string) => {
+export const getSectionStudent = async (id: string,course_id:string) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.get(`/${id}`);
-}
-
-export const createDepartment = async (data: DepartmentFields) => {
-  const access_token = getCookie("access_token") || "";
-  setHeaderToken(access_token);
-  return await client.post("/create", data);
-}
-
-export const updateDepartment = async (id: string, data: DepartmentFields) => {
-  const access_token = getCookie("access_token") || "";
-  setHeaderToken(access_token);
-  return await client.patch(`/${id}`, data);
-}
-
-export const deleteDepartment = async (id: string) => {
-  const access_token = getCookie("access_token") || "";
-  setHeaderToken(access_token);
-  return await client.delete(`/${id}`);
-}
-
-
-
+  return await client.post(`/assignment/teacher/`,{id,course_id});
+};

@@ -301,10 +301,20 @@ export const getCourseSections = async (id: string,year:number,semester:number) 
   return await client.get(`/assignment/course?id=${id}&year=${year}&semester=${semester}`);
 };
 
-export const getAddDropRequest = async (type:string) => {
+export const getAddDropRequest = async (type:string,department:string) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.get(`user/student/addDrop?skip=0&limit=10&status=${type}`);
+  return await client.get(
+    `user/student/addDrop?skip=0&limit=10&status=${type}&department=${department}`
+  );
+};
+
+export const getAddDropRequestReg = async (type: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(
+    `user/student/addDrop?skip=0&limit=10&registrarStatus=${type}`
+  );
 };
 
 export const assignInstructor = async (assignment_id:string,instructor_id:string) => {
