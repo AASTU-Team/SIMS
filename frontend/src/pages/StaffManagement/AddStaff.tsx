@@ -333,6 +333,14 @@ export default function AddStaff() {
                           label: "Student Grade Management",
                         },
                         {
+                          value: "depGradeManagement",
+                          label: "Department Grade Management",
+                        },
+                        {
+                          value: "deanGradeManagement",
+                          label: "Dean Grade Management",
+                        },
+                        {
                           value: "semesterMan",
                           label: "Semester Management",
                         },
