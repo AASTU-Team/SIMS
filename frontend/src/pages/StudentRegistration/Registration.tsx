@@ -29,6 +29,7 @@ export default function Registration() {
     },
     onSuccess: () => {
       notification.success({ message: "Registration Successfully" });
+      query.refetch()
     },
   });
 
@@ -41,6 +42,7 @@ export default function Registration() {
       onOk() {
         registerCourseMutation.mutate();
         queryClient.invalidateQueries({ queryKey: ["regCourses"]});
+        query.refetch()
       },
       okText: "Confirm",
       onCancel() {
@@ -52,19 +54,23 @@ export default function Registration() {
   return (
     <div className="pt-1 flex flex-col gap-5">
       {query.isPending ? (
-        <div className="">
+        <div className="my-auto">
           <Loader />
         </div>
       ) : query.isError ? (
         <>{`${query.error}`}</>
       ) : query?.data?.data?.message === "Inactive" ? (
-        <div>Registration is Closed.</div>
+        <div className="font-medium">Registration is Closed.</div>
       ) : query?.data?.data?.status === "Student" ? (
-        <div className="font-medium">Your registration is being processed by your department.</div>
+        <div className="font-medium">
+          Your registration is being processed by your department.
+        </div>
       ) : query?.data?.data?.status === "Department" ? (
-        <div>Your registration is being processed by the registrar.</div>
+        <div className="font-medium">
+          Your registration is being processed by the registrar.
+        </div>
       ) : query?.data?.data?.status === "Registrar" ? (
-        <div>Your registration has been approved.</div>
+        <div className="font-medium">Your registration has been approved.</div>
       ) : (
         <div>
           <RegistrationSlip data={query?.data?.data?.message || []} />
