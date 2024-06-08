@@ -61,6 +61,8 @@ export default function Registration() {
         <>{`${query.error}`}</>
       ) : query?.data?.data?.message === "Inactive" ? (
         <div className="font-medium">Registration is Closed.</div>
+      ) : query?.data?.data?.message === "Student is not Active" ? (
+        <div className="font-medium">Student is not Active.</div>
       ) : query?.data?.data?.status === "Student" ? (
         <div className="font-medium">
           Your registration is being processed by your department.
@@ -72,17 +74,19 @@ export default function Registration() {
       ) : query?.data?.data?.status === "Registrar" ? (
         <div className="font-medium">Your registration has been approved.</div>
       ) : (
-        <div>
-          <RegistrationSlip data={query?.data?.data?.message || []} />
-          <div className="flex justify-end mr-5">
-            <button
-              className="flex justify-center w-30 items-center mt-2 gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray  hover:bg-opacity-90"
-              onClick={showConfirm}
-            >
-              Register
-            </button>
+        query?.data?.data?.message && (
+          <div>
+            <RegistrationSlip data={query?.data?.data?.message || []} />
+            <div className="flex justify-end mr-5">
+              <button
+                className="flex justify-center w-30 items-center mt-2 gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray  hover:bg-opacity-90"
+                onClick={showConfirm}
+              >
+                Register
+              </button>
+            </div>
           </div>
-        </div>
+        )
       )}
     </div>
   );

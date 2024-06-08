@@ -23,6 +23,7 @@ export default function AddDrop() {
     queryKey: ["myEnrolledCourse"],
     queryFn: () => getEnrolledCourse(user._id),
   });
+  // console.log(query)
   const [form] = Form.useForm();
   const [enrolledCourses, setEnrolledCourses] = useState<CourseFields[]>([]);
   const [addDropCourses, setAddDropCourses] = useState<CourseFields[]>([]);
