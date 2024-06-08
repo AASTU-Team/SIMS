@@ -102,8 +102,9 @@ const CurriculumTable: React.FC = () => {
         <Table
           columns={columns}
           dataSource={query?.data?.data?.data || []}
+          rowKey={(record) => record._id || ""}
           expandable={{
-            expandedRowRender: (record:{courses:CourseFields[],description:string}) => {return (
+            expandedRowRender: (record:{_id:string,courses:CourseFields[],description:string}) => {return (
               <div className="p-2 bg-white flex gap-20 overflow-y-scroll">
                 <div>
                   <h3 className="font-semibold">Courses</h3>
