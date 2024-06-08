@@ -15,12 +15,17 @@ import Loader from "../../components/Loader";
 import { RegistrationFields } from "../../type/registration";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
-import { acceptWithdrawalRequestsDep, getDepartmentWithdrawal, rejectWithdrawalRequestsDep } from "../../api/registration";
+import {
+  acceptWithdrawalRequestsDep,
+  getDepartmentWithdrawal,
+  rejectWithdrawalRequestsDep,
+} from "../../api/registration";
+import { DownloadOutlined } from "@ant-design/icons";
 
 export default function Withdrawal() {
   const user = useSelector((state: RootState) => state.user);
   const [form] = useForm();
-  const [rejectId,setRejectId] = useState<string>("")
+  const [rejectId, setRejectId] = useState<string>("");
 
   const query = useQuery({
     queryKey: ["studentWithDepartment"],
@@ -56,7 +61,10 @@ export default function Withdrawal() {
   const onFinish: FormProps["onFinish"] = (values) => {
     // console.log(values,rejectId);
 
-    RejectRequestMutation.mutate({id:rejectId,reason:values.rejection_reason})
+    RejectRequestMutation.mutate({
+      id: rejectId,
+      reason: values.rejection_reason,
+    });
     form.resetFields();
     setOpen(false);
   };
@@ -93,7 +101,7 @@ export default function Withdrawal() {
       key: "operation",
       fixed: "right",
       width: 200,
-      render: (text, record:RegistrationFields) => (
+      render: (text, record: RegistrationFields) => (
         <div className="font-semibold flex gap-3">
           <Popconfirm
             title="Approve Request"
@@ -125,10 +133,7 @@ export default function Withdrawal() {
 
   const data: RegistrationFields[] = [];
   const [open, setOpen] = useState(false);
-  if (
-    query.isSuccess &&
-    query.data?.data?.requests
-  ) {
+  if (query.isSuccess && query.data?.data?.requests) {
     for (let i = 0; i < (query.data?.data?.requests?.length || 0); i++) {
       data.push({
         key: i,
@@ -157,9 +162,15 @@ export default function Withdrawal() {
           scroll={{ x: 1300 }}
           expandable={{
             expandedRowRender: (record) => (
-              <div>
-                <h3 className="font-semibold">Reason of Withdrawal</h3>
-                <p>{record.reason}</p>
+              <div className="flex justify-between">
+                <div>
+                  <h3 className="font-semibold">Reason of Withdrawal</h3>
+                  <p>{record.reason}</p>
+                </div>
+                <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
+                  <DownloadOutlined />
+                  Download Attached Document
+                </button>
               </div>
             ),
           }}
