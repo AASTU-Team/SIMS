@@ -26,10 +26,10 @@ export default function SectionDetails({
   const user = useSelector((state: RootState) => state.user);
 
   const query = useQuery({
-    queryKey: ["batchCoursesSection"],
+    queryKey: ["batchCoursesSection",course._id],
     queryFn: () =>getCourseSections(course._id || "",parseInt(semester.batch),parseInt(semester.semester)),
   });
-  console.log(query);
+  // console.log(query);
   const staffQuery = useQuery({
     queryKey: ["staffDepartment"],
     queryFn: ()=>getStaffDep(user.department),
