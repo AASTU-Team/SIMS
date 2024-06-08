@@ -50,3 +50,9 @@ export const addCourse = async (data: CourseFields) => {
   setHeaderToken(access_token);
   return await client.post("/create", data);
 }
+
+export const editCourse = async (data: CourseFields) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch(`/${data._id}`, data);
+};
