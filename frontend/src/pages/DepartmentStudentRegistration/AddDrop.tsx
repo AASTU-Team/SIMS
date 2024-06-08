@@ -5,9 +5,12 @@ import { useNavigate } from "react-router-dom";
 import { getAddDropRequest } from "../../api/registration";
 import Loader from "../../components/Loader";
 import { CourseFields } from "../../type/course";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
 
 export default function AddDrop() {
   const navigate = useNavigate();
+  const user = useSelector((state: RootState) => state.user);
   
   const columns: TableColumnsType = [
     {
@@ -85,9 +88,9 @@ export default function AddDrop() {
   ];
    const query = useQuery({
      queryKey: ["getDepartmentAddDropRequest"],
-     queryFn: ()=>getAddDropRequest("pending"),
+     queryFn: ()=>getAddDropRequest("pending",user.department),
    });
-   console.log(query)
+  //  console.log("ADD Drop",query)
   
   return (
     <div className="pt-2">
@@ -105,13 +108,15 @@ export default function AddDrop() {
               stud_id,
               createdAt,
               courseToAdd,
-              courseToDrop
+              courseToDrop,
+              _id
             }: {
               stud_id: CourseFields;
               createdAt: string;
               courseToAdd: CourseFields[];
               courseToDrop: CourseFields[];
-            }) => ({ ...stud_id, createdAt, courseToAdd, courseToDrop})
+              _id:string;
+            }) => ({ ...stud_id, createdAt, courseToAdd, courseToDrop, addDrop_id:_id})
           )}
           scroll={{ x: 450 }}
         />
