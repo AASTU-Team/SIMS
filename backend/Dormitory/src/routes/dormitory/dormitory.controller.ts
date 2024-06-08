@@ -8,8 +8,77 @@ const Dormroom = require("../../models/dormroom.model");
 const Dormassignment = require("../../models/dormassignment");
 const Student = require("../../models/student.model");
 
+export const assignRooms = async (req:Request, res:Response) => {
+  try {
+    // Fetch all active students grouped by year, department, and gender
+    const studentsGroups = await Student.aggregate([
+      {
+        $match: { status: 'Active' },
+      },
+      {
+        $group: {
+          _id: {
+            year: '$year',
+            department_id: '$department_id',
+            gender: '$gender',
+          },
+          students: {
+            $push: {
+              _id: '$_id',
+              name: '$name',
+            },
+          },
+        },
+      },
+    ]);
+    console.log('Students groups:', studentsGroups);
+
+    for (const group of studentsGroups) {
+      const { year, department_id, gender } = group._id;
+      const studentList = group.students;
+
+      // Fetch available dorm rooms
+      let availableDorms = await Dormroom.find({ capacity: { $gt: 0 } });
+
+      for (const student of studentList) {
+        if (availableDorms.length === 0) {
+          console.log('No available dorm rooms left');
+          break;
+        }
+
+        const dorm = availableDorms[0];
+
+        // Assign student to dorm room
+        const dormAssignment = new Dormassignment({
+          room_id: dorm._id,
+          student_id: student._id,
+          assignment_date: new Date(),
+        });
+
+        await dormAssignment.save();
+
+        // Decrement the room capacity
+        dorm.capacity -= 1;
+        await dorm.save();
+
+        // Remove dorm from the available list if it's full
+        if (dorm.capacity === 0) {
+          availableDorms.shift();
+        }
+
+        console.log(`Assigned student ${student.name} to dorm room ${dorm.room_number}`);
+      }
+    }
+  } catch (err) {
+    console.error('Error during assignment:', err);
+  }
+
+
+
+}
+
 export const createRooms = async (req:Request, res:Response) => {
-  const { block, rooms, start_with } = req.body;
+  const { block, rooms, start_with,capaciy } = req.body;
 
   const schema = Joi.object({
     rooms: Joi.number().required(),
@@ -29,6 +98,7 @@ export const createRooms = async (req:Request, res:Response) => {
       roomData.push({
         room_number: x,
         block: block,
+        capaciy:capaciy
       });
       x++;
     }

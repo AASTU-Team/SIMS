@@ -38,6 +38,8 @@ import { studentRegistration } from "./user.controller";
 import { ListAddCourses } from "./user.controller";
 import { Request, Response } from "express";
 import { getWithdrawalStatus } from "./user.controller";
+import { exportWithdrawalFile } from "./user.controller";
+import { exportEnrollmentFile } from "./user.controller";
 import { EnrollmentRequest } from "./user.controller";
 import { getDepartmentWithdrawalRequests } from "./user.controller";
 import { getDepartmentEnrollmentRequests } from "./user.controller";
@@ -70,14 +72,41 @@ const assignSection = require("../../helper/assignSection");
 
 const validateRegistration = require("../../middlware/validateRegistration");
 const validateSRegistration = require("../../middlware/validateSRegistration");
+const validateCsv = require("../../middlware/validateCsv")
 const checkRegistrationStatus = require("../../middlware/checkRegistrationStatus");
 const checkRegistrationStatus2 = require("../../middlware/checkRegistrationStatus2");
+
+const Student  = require("../../models/student.model")
 
 const multer = require("multer");
 const csv = require("csv-parser");
 const fs = require("fs");
 
+const storage = multer.diskStorage({
+  destination: (req:any, file:any, cb:any) => {
+    cb(null, 'exports/withdrawals');
+  },
+  filename: (req:any, file:any, cb:any) => {
+    const fileName = `${req.body.id}.pdf`;
+    cb(null, fileName);
+  }
+});
+const storage2 = multer.diskStorage({
+  destination: (req:any, file:any, cb:any) => {
+    cb(null, 'exports/enrollments');
+  },
+  filename: (req:any, file:any, cb:any) => {
+    const fileName = `${req.body.id}.pdf`;
+    cb(null, fileName);
+  }
+});
+
 const upload = multer({ dest: "uploads/" });
+const upload2 =  multer({ storage });
+const upload3 =  multer({ storage2 });
+
+const ValidatePdf = require("../../middlware/validatePdf")
+const ValidatePdf2 = require("../../middlware/validatePdf2")
 
 const Studentrouter = express.Router();
 
@@ -90,6 +119,7 @@ Studentrouter.post("/register/student", validateRegistration, registerStudent);
 Studentrouter.post(
   "/register/studentCsv",
   upload.single("file"),
+  validateCsv,
   registerStudentCsv
 );
 Studentrouter.post("/register/staff", validateSRegistration, registerStaff);
@@ -130,7 +160,10 @@ Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
 Studentrouter.get("/student/activeAddDrop/:stud_id", getActiveAddDrop);
 
-Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
+Studentrouter.post("/student/withdrawalRequest",  upload2.single("file"),ValidatePdf, WithdrawalRequest);
+Studentrouter.get("/student/withdrawalFile/:id", exportWithdrawalFile);
+Studentrouter.get("/student/enrollmentFile/:id", exportEnrollmentFile);
+Studentrouter.post("/student/enrollmentRequest",  upload3.single("file"),ValidatePdf2, EnrollmentRequest);
 Studentrouter.get("/student/withdrawalStatus/:id", getWithdrawalStatus);
 
 Studentrouter.get(

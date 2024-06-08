@@ -19,6 +19,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 
 const upload = multer({ dest: "uploads/" });
+const validateCsv = require("../../middlware/validateCsv")
 
 const Courserourer = express.Router();
 
@@ -27,7 +28,7 @@ Courserourer.get("/", getCourses);
 Courserourer.get("/export", exportCourses);
 Courserourer.get("/:id", getCourseById);
 Courserourer.post("/create", createCourse);
-Courserourer.post("/createCsv",upload.single("file"), createCourseCsv);
+Courserourer.post("/createCsv",upload.single("file"),validateCsv, createCourseCsv);
 Courserourer.patch("/:id", updateCourse);
 Courserourer.delete("/:id", deleteCourse);
 

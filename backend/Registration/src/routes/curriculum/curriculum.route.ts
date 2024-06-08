@@ -22,6 +22,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 
 const upload = multer({ dest: "uploads/" });
+const validateCsv = require("../../middlware/validateCsv")
 
 const curriculumRoute = express.Router();
 
@@ -31,7 +32,7 @@ curriculumRoute.get("/spec", getSpecCurriculum);
 curriculumRoute.get("/export", exportCurriculums);
 curriculumRoute.get("/:id", getCurriculumById);
 curriculumRoute.post("/create", createCurriculum);
-curriculumRoute.post("/createCsv", upload.single("file"), createCurriculumCsv);
+curriculumRoute.post("/createCsv", upload.single("file"),validateCsv, createCurriculumCsv);
 curriculumRoute.patch("/:id", updateCurriculum);
 curriculumRoute.patch("/addcourse/:id", updateCurriculumCourse);
 curriculumRoute.delete("/deleteCourses/:id", removeCurriculumCourse);
