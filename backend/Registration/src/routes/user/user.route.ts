@@ -12,6 +12,7 @@ import {
   getStaffByDepId,
   getNumberOfStudents,
   acceptRejectRegistrar,
+  getActiveAddDrop,
 } from "./user.controller";
 import { registerStaff } from "./user.controller";
 import { registerDependency } from "./user.controller";
@@ -127,6 +128,7 @@ Studentrouter.post("/student/addDrop/:student_id", addDropCourse);
 Studentrouter.post("/student/stausUpdate", acceptReject);
 Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
+Studentrouter.get("/student/activeAddDrop/:stud_id", getActiveAddDrop);
 
 Studentrouter.post("/student/withdrawalRequest", WithdrawalRequest);
 Studentrouter.get("/student/withdrawalStatus/:id", getWithdrawalStatus);
