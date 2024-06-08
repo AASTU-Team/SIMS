@@ -1908,13 +1908,36 @@ export const acceptRejectRegistrar = async (req: Request, res: Response) => {
   }
 };
 
+export const getActiveAddDrop = async (req: Request, res: Response) => {
+  const { stud_id } = req.params;
+  const addDrop = await AddDrop.findOne({
+    stud_id: stud_id,
+    status: "pending",
+  });
+  const addDropR = await AddDrop.findOne({
+    stud_id: stud_id,
+    registrarStatus: "pending",
+  });
+  if (!addDrop && !addDropR) {
+    return res.status(200).send({ message: "no active request" });
+  }
+  res.status(200).send({ message: "success", data: addDrop || addDropR });
+};
+
 export const getAddDrop = async (req: Request, res: Response) => {
-  const { skip, limit, status, registrarStatus } = req.query;
-  let st = {};
+  const { stud_id, department_id, skip, limit, status, registrarStatus } =
+    req.query;
+  let st: any = {};
   if (status) {
     st = { status: status };
   } else if (registrarStatus) {
     st = { registrarStatus: registrarStatus };
+  }
+  if (department_id) {
+    st["department_id"] = department_id;
+  }
+  if (stud_id) {
+    st["stud_id"] = stud_id;
   }
   console.log(skip, limit);
   const addDrop = await AddDrop.find(st)
