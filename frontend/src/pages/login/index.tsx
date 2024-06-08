@@ -39,7 +39,6 @@ const loginMutation = useMutation({
   };
   return (
     <div suppressHydrationWarning={true}>
-
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex flex-wrap items-center">
           <div className="hidden w-full xl:block xl:w-1/2">
@@ -67,77 +66,88 @@ const loginMutation = useMutation({
               <h2 className="mb-9 text-2xl font-bold text-black dark:text-white sm:text-title-xl2">
                 Sign In to SIMS
               </h2>
-{             (loginMutation.isPending)? <Loader/>:
-              <Form
-                name="login_form"
-                onFinish={OnFinish}
-                onFinishFailed={onFinishFailed}
-              >
-                <Form.Item<LoginForm>
-                  name="email"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your email",
-                    },
-                  ]}
+              {loginMutation.isPending ? (
+                <Loader />
+              ) : (
+                <Form
+                  name="login_form"
+                  onFinish={OnFinish}
+                  onFinishFailed={onFinishFailed}
                 >
-                  <div className="mb-4">
-                    <label className="mb-2.5 block font-medium text-black dark:text-white">
-                      Email
-                    </label>
-                    <div className="relative">
-                      <Input
-                        type="email"
-                        placeholder="Enter your email"
-                        className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
+                  <Form.Item<LoginForm>
+                    name="email"
+                    rules={[
+                
+                      {
+                        required: true,
+                        message: "Please input your email",
+                      },
+                      {
+                        type: "email",
+                        message: "Please enter a valid email",
+                      },
+                    ]}
+                  >
+                    <div className="mb-4">
+                      <label className="mb-2.5 block font-medium text-black dark:text-white">
+                        Email
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type="email"
+                          name="email"
+                          placeholder="Enter your email"
+                          className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
 
-                    <MailIcon/>
+                        <MailIcon />
+                      </div>
                     </div>
-                  </div>
-                </Form.Item>
-                <Form.Item<LoginForm>
-                  name="password"
-                  rules={[
-                    {
-                      required: true,
-                      message: "Please input your password",
-                    },
-                  ]}
-                >
-                  <div className="mb-6">
-                    <label className="mb-2.5 block font-medium text-black dark:text-white">
-                      Password
-                    </label>
-                    <div className="relative">
-                      <Input
-                        type="password"
-                        placeholder="Enter your password"
-                        className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
-                      />
-                      
-                    <LockIcon/>
+                  </Form.Item>
+                  <Form.Item<LoginForm>
+                    name="password"
+                    rules={[
+                      {
+                        required: true,
+                        message: "Please input your password",
+                      },
+                    ]}
+                  >
+                    <div className="mb-6">
+                      <label className="mb-2.5 block font-medium text-black dark:text-white">
+                        Password
+                      </label>
+                      <div className="relative">
+                        <Input
+                          type="password"
+                          name="password"
+                          placeholder="Enter your password"
+                          className="w-full rounded-lg border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                        />
+
+                        <LockIcon />
+                      </div>
                     </div>
+                  </Form.Item>
+
+                  <div className="mb-5">
+                    <input
+                      type="submit"
+                      name="submit"
+                      value="Sign In"
+                      className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
+                    />
                   </div>
-                </Form.Item>
 
-                <div className="mb-5">
-                  <input
-                    type="submit"
-                    value="Sign In"
-                    className="w-full cursor-pointer rounded-lg border border-primary bg-primary p-4 text-white transition hover:bg-opacity-90"
-                  />
-                </div>
-
-                <div className="mt-6 text-center">
-                  <p>
-                    <Link to="/forgot_pass" className="text-primary">
-                      Forgot Password?
-                    </Link>
-                  </p>
-                </div>
-              </Form>}
+                  <div className="mt-6 text-center">
+                    <p>
+                      <Link to="/forgot_pass" className="text-primary">
+                        Forgot Password?
+                      </Link>
+                    </p>
+                  </div>
+                </Form>
+              )}
             </div>
           </div>
         </div>
