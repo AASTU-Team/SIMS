@@ -2,10 +2,12 @@ import {  Table, Button } from "antd";
 import type { TableColumnsType } from "antd";
 import { SlipDetails } from "../../type/registration";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { getAddDropRequest } from "../../api/registration";
 
 export default function AddDrop() {
   const navigate = useNavigate();
-  const columns: TableColumnsType<SlipDetails> = [
+  const columns: TableColumnsType = [
     {
       title: "Full Name",
       width: 150,
@@ -88,6 +90,11 @@ export default function AddDrop() {
       ac_year: "2023/2024",
     },
   ];
+  const query = useQuery({
+    queryKey: ["getDepartmentAddDropRequest"],
+    queryFn: () => getAddDropRequest("Accepted"),
+  });
+  console.log(query);
   return (
     <div className="pt-2">
       
