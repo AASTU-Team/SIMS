@@ -1,40 +1,74 @@
 // import { useQuery } from "@tanstack/react-query";
-import { Table, Modal, Form, Select, Input } from "antd";
+import { Table, Modal, Form, Select, Input, notification } from "antd";
 import type { TableColumnsType } from "antd";
 import { CourseFields } from "../../type/course";
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getCourse } from "../../api/course";
 import { ExclamationCircleFilled } from "@ant-design/icons";
+import { useLocation } from "react-router-dom";
+import SectionDropDown from "./SectionDropDown";
+import { createSection } from "../../api/registration";
+import { acceptAddDropDep } from "../../api/student";
 
 const { confirm } = Modal;
 
-const showConfirm = () => {
-  confirm({
-    title: "Are you sure you want to register?",
-    icon: <ExclamationCircleFilled />,
-    content:
-      "Make sure all the details are correct. Any problems can be addressed at the registrar office.",
-    onOk() {
-      console.log("OK");
-    },
-    onCancel() {
-      console.log("Cancel");
-    },
-  });
-};
 
 export default function AddDropRequests() {
-  //   const query = useQuery({
-  //     queryKey: ["myCourse"],
-  //     queryFn: ?,
-  //   });
-  
+   const queryClient= useQueryClient();
+   const [form] = Form.useForm();
+   const { state }:{state:{courseToAdd:CourseFields[],courseToDrop:CourseFields[], year:number,semester:number,type:string,_id:string}} = useLocation();
+   console.log("State",state);
+  const [assignment,setAssignment] = useState<{section_id:string,course_id:string}[]>([]);
+  console.log(assignment)
   const [open,setOpen] = useState(false);
   const courseQuery = useQuery({
     queryKey: ["course"],
     queryFn: getCourse,
   });
+  // console.log("Course Query",courseQuery);
+  const CreateSection = useMutation({
+     mutationKey: ["createNewSection"],
+     mutationFn: ({ name,course_id }: { name: string; course_id: string }) =>
+       createSection(course_id,name, state.year, state.semester,state.type),
+     onError: () => {
+       notification.error({ message: "Section Not Created" });
+     },
+     onSuccess: () => {
+       notification.success({ message: "Section Creation Successfully" });
+       queryClient.refetchQueries({ queryKey: ["batchCoursesSection"] });
+       form.resetFields();
+       setOpen(false);
+     },
+   });
+     const ApproveRequestMuation = useMutation({
+       mutationKey: ["approveAddDropRequestDep"],
+       mutationFn: ()=>acceptAddDropDep(state._id,assignment),
+       onError: () => {
+         notification.error({ message: "Request Approval Failed" });
+       },
+       onSuccess: () => {
+         notification.success({
+           message: "Request Approval Successful",
+         });
+       },
+     });
+     const showConfirm = () => {
+       confirm({
+         title: "Are you sure you want to approve this request?",
+         icon: <ExclamationCircleFilled />,
+         content:
+           "Make sure all the details are correct.",
+         okText:"Confirm",
+         onOk() {
+           ApproveRequestMuation.mutate();
+         },
+         onCancel() {
+           console.log("Cancel");
+         },
+       });
+     };
+
   const filterOption = (
     input: string,
     option?: { label: string; value: string }
@@ -160,41 +194,39 @@ export default function AddDropRequests() {
       key: "operation",
       fixed: "right",
       width: 150,
-      render: () => (
-        <div className=" font-semibold w-auto">
-          <Select
-            showSearch
-            placeholder="Select section"
-            optionFilterProp="children"
-            className="w-50"
-            options={[
-              {
-                value: "a",
-                label: "Section A - 30 Students",
-              },
-              {
-                value: "b",
-                label: "Section B - 20 Students",
-              },
-            ]}
-          />
-        </div>
+      render: (record: CourseFields) => (
+        <SectionDropDown
+          course_id={record._id || ""}
+          batch={state.year}
+          semester={state.semester}
+          setAssignment={setAssignment}
+          assignment={assignment}
+        />
       ),
     },
   ];
-const data = [
-  {
-    name: "Internet Programming",
-    code: "CSE 101",
-    lec: "2",
-    lab: "1",
-    tut: "1",
-    hs: "1",
-    type: "Core",
-    option: "Elective",
-    credits: "3",
-  },
-];
+
+  const onFinish =(values: { section_name: string; courses: string }) => {
+    // console.log("Success:", values);
+    CreateSection.mutate({
+      name: values.section_name,
+      course_id: values.courses,
+    });
+  }
+
+
+//   {
+//     name: "Internet Programming",
+//     code: "CSE 101",
+//     lec: "2",
+//     lab: "1",
+//     tut: "1",
+//     hs: "1",
+//     type: "Core",
+//     option: "Elective",
+//     credits: "3",
+//   },
+// ];
   return (
     <div className="p-6 flex flex-col gap-5">
       <div className="flex flex-col gap-4">
@@ -203,7 +235,7 @@ const data = [
         </div>
         <Table
           columns={columns}
-          dataSource={[]}
+          dataSource={state.courseToDrop}
           scroll={{ x: 1300 }}
           pagination={false}
         />
@@ -223,10 +255,11 @@ const data = [
         <Table
           columns={addDrop}
           pagination={false}
-          dataSource={data}
+          dataSource={state.courseToAdd}
           scroll={{ x: 1300 }}
         />
         <div className="flex gap-2 justify-end">
+          
           <button
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
             onClick={showConfirm}
@@ -234,7 +267,7 @@ const data = [
             Approve Request
           </button>
           <button
-            className="flex justify-center items-center gap-2 rounded-lg border border-red px-4 py-2 text-red "
+            className="flex justify-center items-center gap-2 rounded-lg border border-red px-4 py-2 text-red hover:bg-red hover:bg-opacity-10"
             onClick={showConfirm}
           >
             Reject Request
@@ -249,15 +282,18 @@ const data = [
         title="Create New Section"
         footer={[
           <div className="flex gap-2 justify-end">
-            <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
-              Add Courses
-            </button>
             <button
               className="flex justify-center items-center gap-2 rounded-lg px-4 py-2 font-mediumhover:bg-opacity-90"
               key="back"
               onClick={() => setOpen(false)}
             >
               Cancel
+            </button>
+            <button
+              onClick={() => form.submit()}
+              className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+            >
+              Create Section
             </button>
           </div>,
           // <Button
@@ -271,7 +307,7 @@ const data = [
         ]}
       >
         {/* <div className="flex justify-center items-center rounded-sm b</Form.Item>order border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark"> */}
-        <Form name="add section">
+        <Form name="add section" form={form} onFinish={onFinish}>
           <Form.Item
             name="section_name"
             rules={[
@@ -320,7 +356,7 @@ const data = [
                   }
                   optionFilterProp="children"
                   filterOption={filterOption}
-                  onChange={(value) => console.log(value)}
+                  onChange={(value) => {form.setFieldValue("courses",value)}}
                   disabled={courseQuery.isLoading}
                   options={
                     courseQuery.isFetched

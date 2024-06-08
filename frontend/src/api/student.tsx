@@ -171,9 +171,10 @@ export const getAddableCourse = async (id: string) => {
 };
 
 export const sendAddDropRequest = async (id:string,addedCourses:string[],droppedCourses:string[]) => {
+  console.log(id,addedCourses,droppedCourses);
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.post(`student/addDrop/${id}`, { addedCourses,droppedCourses });
+  return await client.post(`student/addDrop/${id}`, { add:addedCourses,drop:droppedCourses });
 };
 
 export const sendWithdrawalRequest = async (id: string,reason:string) => {
@@ -192,4 +193,30 @@ export const sendReadmissionRequest = async (id: string) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
   return await client.post(`student/register/`, { student_id: id });
+};
+
+export const allocateSection = async (
+  department: string,
+  year: number,
+  semester: number,
+  max: number,
+  type: string
+) => {
+  // console.log("Max", max);
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/student/test`, { department, max, year, semester,type });
+};
+
+export const acceptAddDropDep = async (
+  addDrop_id: string,
+  assignSec: { section_id: string; course_id: string }[]
+) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post("/student/stausUpdate", {
+    addDrop_id,
+    "status": "Accept",
+    assignSec,
+  });
 };
