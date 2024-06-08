@@ -292,3 +292,46 @@ export const rejectReadmissionRequestsReg = async (id: string,reason:string) => 
     data: [{ id, reason }],
   });
 };
+
+
+
+export const getCourseSections = async (id: string,year:number,semester:number) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/assignment/course?id=${id}&year=${year}&semester=${semester}`);
+};
+
+export const getAddDropRequest = async (type:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`user/student/addDrop?skip=0&limit=10&status=${type}`);
+};
+
+export const assignInstructor = async (assignment_id:string,instructor_id:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch(`assignment/${assignment_id}`, {instructor_id:instructor_id});
+};
+
+export const createSection = async (
+  course_id: string,
+  name: string,
+  year: number,
+  semester: number,
+  type: string
+) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post("section/create", {
+    data: {
+      name,
+      year,
+      semester,
+      type
+    },
+    courseData:{
+      course_id
+    }
+  });
+};
+
