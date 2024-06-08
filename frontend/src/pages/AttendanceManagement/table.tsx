@@ -13,7 +13,7 @@ const AttendanceTable: React.FC<{ columns: TableColumnsType }> = ({ columns }) =
         queryKey: ["semester"],
         queryFn: getSemester,
       });
-    console.log(query?.data?.data)
+    // console.log(query?.data?.data)
   
     
     return (

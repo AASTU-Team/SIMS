@@ -1,17 +1,37 @@
 import AttendanceTable from "./table";
 import { useState } from "react";
-import {  FileAddOutlined } from "@ant-design/icons";
+import { FileAddOutlined } from "@ant-design/icons";
 import { Button, Modal, Form, DatePicker, Select } from "antd";
 import type { FormProps } from "antd";
 import type { TableColumnsType } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { useQuery } from "@tanstack/react-query";
+import { getCoursesInstructor, getSectionStudent } from "../../api/attendance";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import { CourseFields } from "../../type/course";
 
 export default function AttendanceManagement() {
   const [open, setOpen] = useState(false);
   const [form] = Form.useForm();
   const [records, setRecords] = useState<TableColumnsType>([]);
-  
-  const columns=[
+  const user = useSelector((state: RootState) => state.user);
+  const [selectedCourse, setSelectedCourse] = useState<string>(""); 
+
+  const query = useQuery({
+    queryKey: ["courseForInstructor"],
+    queryFn: () => getCoursesInstructor(user._id),
+  });
+  // console.log(query);
+
+  const studentQuery = useQuery({
+      queryKey: ["studentForInstructor"],
+      queryFn: () => getSectionStudent(user._id,selectedCourse),
+      enabled:false
+    });
+  console.log("Student Query",studentQuery);
+
+  const columns = [
     {
       title: "Student Name",
       width: 150,
@@ -21,17 +41,20 @@ export default function AttendanceManagement() {
       sorter: true,
     },
     {
-      title: "Student ID", 
+      title: "Student ID",
       width: 150,
       dataIndex: "id",
       key: "id",
       fixed: "left",
       sorter: true,
     },
-  ]
-  
+  ];
+
   const onFinish: FormProps["onFinish"] = (values) => {
-    const formattedDate = new Date(values.record_date).toISOString().split("T")[0];
+    const formattedDate = new Date(values.record_date)
+      .toISOString()
+      .split("T")[0];
+
     const col: TableColumnsType = [
       {
         title: (
@@ -46,16 +69,39 @@ export default function AttendanceManagement() {
         fixed: undefined, // Set fixed property to undefined
       },
     ];
-    setRecords([...records,...col])
-    form.resetFields()
+    setRecords([...records, ...col]);
+    form.resetFields();
     setOpen(false);
   };
 
-  const onFinishFailed: FormProps["onFinishFailed"] = (
-    errorInfo
-  ) => {
+  const onFinishFailed: FormProps["onFinishFailed"] = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
+
+  const data: CourseFields[] = [];
+  if (query.isSuccess && query.data?.data) {
+    const uniqueData: CourseFields[] = [];
+    const existingIds: string[] = [];
+
+    for (let i = 0; i < query.data.data.length; i++) {
+      const courseId = query.data?.data[i]?.course_id?._id;
+      if (courseId && !existingIds.includes(courseId)) {
+        existingIds.push(courseId);
+        uniqueData.push({
+          _id: courseId,
+          name: query.data?.data[i]?.course_id?.name,
+        });
+      }
+    }
+
+    data.push(...uniqueData);
+    const newSelectedCourse = data[0]?._id || "";
+      if (selectedCourse !== newSelectedCourse) {
+        setSelectedCourse(newSelectedCourse);
+        studentQuery.refetch()
+      }
+  }
 
   return (
     <div className="max-w-screen-3xl p-4 md:p-6 2xl:p-10">
@@ -64,23 +110,24 @@ export default function AttendanceManagement() {
         <div className="flex gap-4 items-start justify-start">
           <Select
             showSearch
-            placeholder="Select Course"
-            optionFilterProp="children"
             className=" h-10 w-80"
-            options={[
-              {
-                value: "Undergraduate",
-                label: "Bachelors Degree",
-              },
-              {
-                value: "Masters",
-                label: "Masters Degree",
-              },
-              {
-                value: "PhD",
-                label: "PhD",
-              },
-            ]}
+            placeholder={query.isLoading ? "Fetching Courses" : "Select Course"}
+            optionFilterProp="children"
+            onChange={(value) => {
+              setSelectedCourse( value);
+              studentQuery.refetch()
+            }}
+            value={selectedCourse}
+            options={
+              query.isFetched
+                ? data?.map((value: CourseFields) => {
+                    return {
+                      value: value._id,
+                      label: value.name,
+                    };
+                  })
+                : []
+            }
           />
           <Select
             showSearch
