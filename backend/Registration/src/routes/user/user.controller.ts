@@ -575,8 +575,10 @@ function validateStudent(student: any) {
 }; */
 export const getAllStudent = async (req: Request, res: Response) => {
   try {
-    const { year, semester, search } = req.query;
+    const { year, semester, search, department_id} = req.query;
     const filter: any = {};
+    const page:any = req.query.page;
+    const limit:any = req.query.limit;
 
     if (year) {
       filter.year = year;
@@ -594,10 +596,21 @@ export const getAllStudent = async (req: Request, res: Response) => {
       ];
     }
 
-    const students = await Student.find(filter).populate({
-      path: "department_id",
-      select: "name",
-    });
+    if (department_id) {
+      filter.department_id = department_id;
+    }
+
+    const totalItems = await Student.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / limit);
+    const skip = (Number(page) - 1) * limit;
+
+    const students = await Student.find(filter)
+      .skip(skip)
+      .limit(Number(limit))
+      .populate({
+        path: "department_id",
+        select: "name",
+      });
 
     const myStudents = students.map((student: any) => {
       return {
@@ -607,7 +620,12 @@ export const getAllStudent = async (req: Request, res: Response) => {
       };
     });
 
-    res.status(200).json({message:myStudents});
+    res.status(200).json({
+      message: myStudents,
+      currentPage: Number(page),
+      totalPages: totalPages,
+      totalItems: totalItems,
+    });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -736,6 +754,8 @@ export const exportLogFile = async (req: Request, res: Response) => {
 export const getAllStaff = async (req: Request, res: Response) => {
   try {
     const { year, department_id, search } = req.query;
+   const page:any = req.query.page
+   const limit:any = req.query.limit
     const filter: any = {};
 
     if (year) {
@@ -754,10 +774,17 @@ export const getAllStaff = async (req: Request, res: Response) => {
       ];
     }
 
-    const staff = await Staff.find(filter).populate({
-      path: "department_id",
-      select: "name",
-    });
+    const totalItems = await Staff.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / limit);
+    const skip = (Number(page) - 1) * limit;
+
+    const staff = await Staff.find(filter)
+      .skip(skip)
+      .limit(Number(limit))
+      .populate({
+        path: "department_id",
+        select: "name",
+      });
 
     const myStaff = staff.map((person: any) => {
       return {
@@ -767,7 +794,12 @@ export const getAllStaff = async (req: Request, res: Response) => {
       };
     });
 
-    res.status(200).json({ message: myStaff });
+    res.status(200).json({
+      message: myStaff,
+      currentPage: Number(page),
+      totalPages: totalPages,
+      totalItems: totalItems,
+    });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
