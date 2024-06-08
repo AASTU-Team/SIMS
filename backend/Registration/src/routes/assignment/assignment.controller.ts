@@ -116,7 +116,10 @@ export const getTeachersAssignment = async (req: Request, res: Response) => {
         const secstudent = await NumberOfStudent.find({
           section_id: assign.section_id.toString(),
           course_id,
-        }).populate("numberOfStudent", "name email");
+        })
+          .populate("numberOfStudent", "id name email")
+          .populate("section_id");
+        console.log(secstudent);
         return secstudent;
       })
     );
