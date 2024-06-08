@@ -99,17 +99,29 @@ const CourseTable: React.FC = () => {
             expandedRowRender: (record: CourseFields) => {
               return (
                 <div className="p-2 bg-white flex gap-20 overflow-y-scroll">
-                  <div>
-                    <h3 className="font-semibold">Prerequisites</h3>
-                    <ul>
-                      {record?.prerequisites?.map((course) => (
-                        <li key={course._id} className="flex gap-1">
-                          <span key={course._id}>&#8226;</span>
-                          {course.name}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {record?.prerequisites?.length ? (
+                    <div>
+                      <h3 className="font-semibold">Prerequisites</h3>
+                      <ul>
+                        {record?.prerequisites?.map((course) => (
+                          <li key={course._id} className="flex gap-1">
+                            <span key={course._id}>&#8226;</span>
+                            {course.name}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <div>
+                      <h3 className="font-semibold">Prerequisites</h3>
+                      <ul>
+                          <li key="no_preq" className="flex gap-1">
+                            <span key="no_preq">&#8226;</span>
+                            No Prerequisites
+                          </li>
+                      </ul>
+                    </div>
+                  )}
                   <div>
                     <h3 className="font-semibold">Description</h3>
                     <p>{record.description}</p>
