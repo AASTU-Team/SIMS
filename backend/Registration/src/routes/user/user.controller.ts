@@ -2303,7 +2303,7 @@ export const dropCourse = async ({
     course_id: course,
   });
   if (number) {
-    const index = number.numberOfStudent.find((item: any) => {
+    const index = number.numberOfStudent.findIndex((item: any) => {
       return item.student.toString() == id;
     });
     if (index) {
