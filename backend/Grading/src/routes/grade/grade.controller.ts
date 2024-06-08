@@ -56,7 +56,6 @@ class GradeController {
             if (!grade) {
                 return res.status(404).json({ error: 'Grade not found' });
             }
-
             // Find the assessment within the assessments array
             const assessment = grade.assessments.find(assess => assess.assessment_id === assessmentId);
             if (!assessment) {
@@ -202,9 +201,9 @@ class GradeController {
 
     static async calculateGPAs(req: Request, res: Response) {
         const studentsData = req.body.students;
+        console.log("studentsData",req.body);
         try {
             const results: any[] = [];
-
             for (const studentData of studentsData) {
                 const { studentId, courses } = studentData;
                 const student = await Student.findById(studentId);

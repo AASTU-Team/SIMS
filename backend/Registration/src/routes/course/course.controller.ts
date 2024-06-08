@@ -369,13 +369,24 @@ export const deleteCourse = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
-    const deletedCourse = await Course.findByIdAndDelete(id);
-    if (!deletedCourse) {
-      return res.status(404).json({ message: "Not found" });
+    // Find the course to ensure it exists
+    const course = await Course.findById(id);
+    if (!course) {
+      return res.status(404).json({ message: "Course not found" });
     }
-    return res.status(200).json({ message: "success" });
+
+    // Update other courses to remove this course from their prerequisites
+    await Course.updateMany(
+      { prerequisites: id },
+      { $pull: { prerequisites: id } }
+    );
+
+    // Delete the course
+    await Course.findByIdAndDelete(id);
+
+    return res.status(200).json({ message: "Course and its prerequisite references removed successfully." });
   } catch (error: any) {
-    console.log(error.message);
+    console.error(error.message);
     return res.status(500).json({ message: error.message });
   }
 };
