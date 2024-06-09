@@ -250,9 +250,7 @@ export const registerStudent = async (req: Request, res: Response) => {
         const r = await response.json();
 
         console.log(r.message);
-        return res
-          .status(400)
-          .json({ message: r.message });
+        return res.status(400).json({ message: r.message });
       }
     } catch (error: any) {
       console.log(error.message);
@@ -301,7 +299,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
- /*  if (path.extname(req.file.filename).toLowerCase() !== ".csv") {
+  /*  if (path.extname(req.file.filename).toLowerCase() !== ".csv") {
     await deleteCsv(req.file.path);
     return res
       .status(400)
@@ -430,7 +428,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
             //             }
             // =======
 
-           /*  insertedStudents.push({
+            /*  insertedStudents.push({
               id: newstudent._id,
               department: student.department,
               type: student.type,
@@ -441,7 +439,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
               errors.push("Registration failed for student " + newstudent.name);
             }
             */
-            console.log("Ok"); 
+            console.log("Ok");
 
             // >>>>>>> main
           } else {
@@ -577,10 +575,10 @@ function validateStudent(student: any) {
 }; */
 export const getAllStudent = async (req: Request, res: Response) => {
   try {
-    const { year, semester, search, department_id} = req.query;
+    const { year, semester, search, department_id } = req.query;
     const filter: any = {};
-    const page:any = req.query.page;
-    const limit:any = req.query.limit;
+    const page: any = req.query.page;
+    const limit: any = req.query.limit;
 
     if (year) {
       filter.year = year;
@@ -592,9 +590,9 @@ export const getAllStudent = async (req: Request, res: Response) => {
 
     if (search) {
       filter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { id: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
+        { name: { $regex: search, $options: "i" } },
+        { id: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -697,10 +695,7 @@ export const exportLogFile = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
-    
     const filePath = path.join("./exports", "app.log");
-
-  
 
     // Read the CSV file contents
     fs.readFile(filePath, (err: any, data: any) => {
@@ -711,7 +706,6 @@ export const exportLogFile = async (req: Request, res: Response) => {
       }
 
       // Create a Blob object from the CSV data
-  
 
       // Set the necessary headers to trigger a download
       res.setHeader("Content-Disposition", "attachment; filename=app.log");
@@ -756,12 +750,15 @@ export const exportLogFile = async (req: Request, res: Response) => {
 export const getAllStaff = async (req: Request, res: Response) => {
   try {
     const { year, department_id, search } = req.query;
-   const page:any = req.query.page
-   const limit:any = req.query.limit
+    const page: any = req.query.page;
+    const limit: any = req.query.limit;
     const filter: any = {};
 
     if (year) {
-      filter.birthday = { $gte: new Date(Number(year) - 1, 0, 1), $lte: new Date(Number(year), 11, 31) };
+      filter.birthday = {
+        $gte: new Date(Number(year) - 1, 0, 1),
+        $lte: new Date(Number(year), 11, 31),
+      };
     }
 
     if (department_id) {
@@ -770,9 +767,9 @@ export const getAllStaff = async (req: Request, res: Response) => {
 
     if (search) {
       filter.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } },
-        { phone: { $regex: search, $options: 'i' } },
+        { name: { $regex: search, $options: "i" } },
+        { email: { $regex: search, $options: "i" } },
+        { phone: { $regex: search, $options: "i" } },
       ];
     }
 
@@ -1213,7 +1210,7 @@ export const getStudentCourses = async (req: Request, res: Response) => {
   });
 
   if (!registration.length) {
-    return res.status(404).json({ message: "Courses Not found" });
+    return res.status(200).json({ message: "Courses Not found" });
   }
   console.log(registration);
   const registrationData: any[] = registration;
@@ -1336,11 +1333,9 @@ export const getstudentRegistrationCourses = async (
   if (!student) {
     return res.status(404).json({ message: "student not found" });
   }
-  if(student.status !== "Active")
-    {
-      return res.status(200).json({ message:"Student is not Active" });
-
-    }
+  if (student.status !== "Active") {
+    return res.status(200).json({ message: "Student is not Active" });
+  }
   department_id = student.department_id;
   type = student.type;
 
@@ -2516,14 +2511,9 @@ export const WithdrawalRequest = async (req: Request, res: Response) => {
   const id = req.body.id;
   const reason = req.body.reason;
   const data = req.body;
-  const file = req.file
+  const file = req.file;
 
-  
-
-  
-  
-
-  console.log(req.body)
+  console.log(req.body);
 
   const student = await Student.findById(id);
 
@@ -2541,31 +2531,25 @@ export const WithdrawalRequest = async (req: Request, res: Response) => {
   });
 
   await withdrawalRequest.save();
-  if(file)
-    {
-
-  
-      const fileName = `${id}_${Date.now()}.pdf`;
-      const filePath = path.join(__dirname, '../exports', 'withdrawals', fileName);
-      
-    
-      
-
-    }
-
+  if (file) {
+    const fileName = `${id}_${Date.now()}.pdf`;
+    const filePath = path.join(
+      __dirname,
+      "../exports",
+      "withdrawals",
+      fileName
+    );
+  }
 
   return res.status(200).json({ message: "successfully submitted request" });
 };
 export const exportWithdrawalFile = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
-  const id = req.params.id
+  const id = req.params.id;
 
   try {
-    
-    const filePath = path.join("./exports","withdrawals", `${id}.pdf`);
-
-  
+    const filePath = path.join("./exports", "withdrawals", `${id}.pdf`);
 
     // Read the CSV file contents
     fs.readFile(filePath, (err: any, data: any) => {
@@ -2576,7 +2560,6 @@ export const exportWithdrawalFile = async (req: Request, res: Response) => {
       }
 
       // Create a Blob object from the CSV data
-  
 
       // Set the necessary headers to trigger a download
       res.setHeader("Content-Disposition", `attachment; filename=${id}.pdf`);
@@ -2608,7 +2591,7 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
   const id = req.body.id;
   const reason = req.body.reason;
   const data = req.body;
-  const file = req.file
+  const file = req.file;
 
   const student = await Student.findById(id);
 
@@ -2626,30 +2609,25 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
   });
 
   await withdrawalRequest.save();
-  if(file)
-    {
-
-  
-      const fileName = `${id}_${Date.now()}.pdf`;
-      const filePath = path.join(__dirname, '../exports', 'withdrawals', fileName);
-      
-    
-      
-
-    }
+  if (file) {
+    const fileName = `${id}_${Date.now()}.pdf`;
+    const filePath = path.join(
+      __dirname,
+      "../exports",
+      "withdrawals",
+      fileName
+    );
+  }
 
   return res.status(200).json({ message: "successfully submitted request" });
 };
 export const exportEnrollmentFile = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
-  const id = req.params.id
+  const id = req.params.id;
 
   try {
-    
-    const filePath = path.join("./exports","enrollments", `${id}.pdf`);
-
-  
+    const filePath = path.join("./exports", "enrollments", `${id}.pdf`);
 
     // Read the CSV file contents
     fs.readFile(filePath, (err: any, data: any) => {
@@ -2660,7 +2638,6 @@ export const exportEnrollmentFile = async (req: Request, res: Response) => {
       }
 
       // Create a Blob object from the CSV data
-  
 
       // Set the necessary headers to trigger a download
       res.setHeader("Content-Disposition", `attachment; filename=${id}.pdf`);
@@ -2686,7 +2663,7 @@ export const exportEnrollmentFile = async (req: Request, res: Response) => {
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
-}
+};
 
 export const getWithdrawalStatus = async (req: Request, res: Response) => {
   const id = req.params.id;
