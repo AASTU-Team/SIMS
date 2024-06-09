@@ -1,0 +1,154 @@
+### Submit Grade for Approval
+POST http://localhost:3005/approval/submit
+Content-Type: application/json
+
+{
+  "gradeId": "<GRADE_ID>",
+  "requestedBy": "6627f3543267383b7d6046e6"
+}
+
+# Expected Response:
+# {
+#   "message": "Grade submitted for approval",
+#   "approvalId": "<NEW_APPROVAL_ID>"
+# }
+
+### Approve Grade (Department)
+PATCH http://localhost:3005/approval/department/<APPROVAL_ID>
+Content-Type: application/json
+
+{
+  "approvedBy": "6627f1cb16bcc35f5d498f30"
+}
+
+# Expected Response:
+# {
+#   "message": "Grade approved by department",
+#   "approvalId": "<APPROVAL_ID>",
+#   "status": "Pending Dean Approval"
+# }
+
+### Reject Grade (Department)
+PATCH http://localhost:3005/approval/department/<APPROVAL_ID>
+Content-Type: application/json
+
+{
+  "rejectedBy": "6627f1cb16bcc35f5d498f30",
+  "reason": "Incomplete grade details"
+}
+
+# Expected Response:
+# {
+#   "message": "Grade rejected by department",
+#   "approvalId": "<APPROVAL_ID>",
+#   "status": "Rejected",
+#   "reason": "Incomplete grade details"
+# }
+
+### Approve Grade (Dean)
+PATCH http://localhost:3005/approval/dean/<APPROVAL_ID>
+Content-Type: application/json
+
+{
+  "approvedBy": "6627f3543267383b7d6046e6"
+}
+
+# Expected Response:
+# {
+#   "message": "Grade approved by dean",
+#   "approvalId": "<APPROVAL_ID>",
+#   "status": "Approved"
+# }
+
+### Reject Grade (Dean)
+PATCH http://localhost:3005/approval/dean/<APPROVAL_ID>
+Content-Type: application/json
+
+{
+  "rejectedBy": "6627f3543267383b7d6046e6",
+  "reason": "Insufficient attendance"
+}
+
+# Expected Response:
+# {
+#   "message": "Grade rejected by dean",
+#   "approvalId": "<APPROVAL_ID>",
+#   "status": "Rejected",
+#   "reason": "Insufficient attendance"
+# }
+
+### Bulk Approve Grades (Department)
+POST http://localhost:3005/approval/department/bulk
+Content-Type: application/json
+
+{
+  "approvalIds": ["<APPROVAL_ID1>", "<APPROVAL_ID2>"],
+  "approvedBy": "6627f1cb16bcc35f5d498f30"
+}
+
+# Expected Response:
+# {
+#   "message": "Grades approved by department",
+#   "approvedIds": ["<APPROVAL_ID1>", "<APPROVAL_ID2>"],
+#   "status": "Pending Dean Approval"
+# }
+
+### Bulk Approve Grades (Dean)
+POST http://localhost:3005/approval/dean/bulk
+Content-Type: application/json
+
+{
+  "approvalIds": ["<APPROVAL_ID1>", "<APPROVAL_ID2>"],
+  "approvedBy": "6627f3543267383b7d6046e6"
+}
+
+# Expected Response:
+# {
+#   "message": "Grades approved by dean",
+#   "approvedIds": ["<APPROVAL_ID1>", "<APPROVAL_ID2>"],
+#   "status": "Approved"
+# }
+
+### Get Approval Status by Approval ID
+GET http://localhost:3005/approval/status/<APPROVAL_ID>
+Content-Type: application/json
+
+# Expected Response:
+# {
+#   "_id": "<APPROVAL_ID>",
+#   "grade_id": "<GRADE_ID>",
+#   "status": "Pending Dean Approval",
+#   "requestedBy": "6627f3543267383b7d6046e6",
+#   "departmentApproval": {
+#     "approved": true,
+#     "approvedBy": "6627f1cb16bcc35f5d498f30",
+#     "date": "2024-09-10T00:00:00Z"
+#   },
+#   "deanApproval": {
+#     "approved": false,
+#     "approvedBy": null,
+#     "date": null
+#   }
+# }
+
+### Get Approval Status by Grade ID
+GET http://localhost:3005/approval/status/grade/<GRADE_ID>
+Content-Type: application/json
+
+# Expected Response:
+# {
+#   "_id": "<APPROVAL_ID>",
+#   "grade_id": "<GRADE_ID>",
+#   "status": "Pending Dean Approval",
+#   "requestedBy": "6627f3543267383b7d6046e6",
+#   "departmentApproval": {
+#     "approved": true,
+#     "approvedBy": "6627f1cb16bcc35f5d498f30",
+#     "date": "2024-09-10T00:00:00Z"
+#   },
+#   "deanApproval": {
+#     "approved": false,
+#     "approvedBy": null,
+#     "date": null
+#   }
+# }

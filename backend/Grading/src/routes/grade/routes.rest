@@ -1,0 +1,191 @@
+### Create a Grade Document for a Student in a Course
+POST http://localhost:3005/grades
+Content-Type: application/json
+
+{
+  "courseId": "<COURSE_ID>",
+  "studentId": "<STUDENT_ID>",
+  "instructorId": "<INSTRUCTOR_ID>"
+}
+
+# Expected Response:
+# {
+#   "message": "Grade document created successfully"
+# }
+
+### Update an Assessment within a Grade Document
+PUT http://localhost:3005/grades/<GRADE_ID>/assessments/<ASSESSMENT_ID>
+Content-Type: application/json
+
+{
+  "marks_obtained": 85,
+  "feedback": "Good performance"
+}
+
+# Expected Response:
+# {
+#   "message": "Assessment updated successfully",
+#   "grade": {
+#     "_id": "<GRADE_ID>",
+#     "student_id": "<STUDENT_ID>",
+#     "course_id": "<COURSE_ID>",
+#     "assessments": [
+#       {
+#         "assessment_id": "<ASSESSMENT_ID>",
+#         "name": "Midterm Exam",
+#         "value": 100,
+#         "completed": true,
+#         "marks_obtained": 85,
+#         "feedback": "Good performance"
+#       },
+#       ...
+#     ],
+#     "total_score": 85,
+#     "grade": "B"
+#   }
+# }
+
+### Get All Grades for a Specific Student
+GET http://localhost:3005/grades/<STUDENT_ID>
+Content-Type: application/json
+
+# Expected Response:
+# [
+#   {
+#     "_id": "<GRADE_ID>",
+#     "student_id": "<STUDENT_ID>",
+#     "course_id": "<COURSE_ID>",
+#     "assessments": [
+#       {
+#         "assessment_id": "<ASSESSMENT_ID>",
+#         "name": "Midterm Exam",
+#         "value": 100,
+#         "completed": true,
+#         "marks_obtained": 85,
+#         "feedback": "Good performance"
+#       },
+#       ...
+#     ],
+#     "total_score": 85,
+#     "grade": "B"
+#   },
+#   ...
+# ]
+
+### Get a Specific Grade for a Student in a Course
+GET http://localhost:3005/grades/<STUDENT_ID>/<COURSE_ID>
+Content-Type: application/json
+
+# Expected Response:
+# {
+#   "_id": "<GRADE_ID>",
+#   "student_id": "<STUDENT_ID>",
+#   "course_id": "<COURSE_ID>",
+#   "assessments": [
+#     {
+#       "assessment_id": "<ASSESSMENT_ID>",
+#       "name": "Midterm Exam",
+#       "value": 100,
+#       "completed": true,
+#       "marks_obtained": 85,
+#       "feedback": "Good performance"
+#     },
+#     ...
+#   ],
+#   "total_score": 85,
+#   "grade": "B"
+# }
+
+### List All Students with Their Assessments and Grades for a Given Course and Optional Filters
+GET http://localhost:3005/instructor/<INSTRUCTOR_ID>/courses?courseId=<COURSE_ID>&sectionId=<SECTION_ID>&semester=<SEMESTER>&year=<YEAR>
+Content-Type: application/json
+
+# Expected Response:
+# [
+#   {
+#     "studentId": "<STUDENT_ID>",
+#     "studentName": "John Doe",
+#     "year": 1,
+#     "semester": "Fall 2024",
+#     "section": "A",
+#     "courses": [
+#       {
+#         "courseId": "<COURSE_ID>",
+#         "courseName": "Mathematics",
+#         "sectionId": "A",
+#         "grade": "B",
+#         "status": "Completed"
+#       },
+#       ...
+#     ]
+#   },
+#   ...
+# ]
+
+### Calculate GPAs for a List of Students and Their Courses
+POST http://localhost:3005/calculateGPAs
+Content-Type: application/json
+
+{
+  "students": [
+    {
+      "studentId": "<STUDENT_ID>",
+      "courses": [
+        {
+          "courseId": "<COURSE_ID>"
+        },
+        ...
+      ]
+    },
+    ...
+  ]
+}
+
+# Expected Response:
+# [
+#   {
+#     "studentId": "<STUDENT_ID>",
+#     "studentName": "John Doe",
+#     "totalCredits": 15,
+#     "semesterGPA": 3.5,
+#     "courseGrades": [
+#       {
+#         "courseId": "<COURSE_ID>",
+#         "courseName": "Mathematics",
+#         "grade": "B"
+#       },
+#       ...
+#     ]
+#   },
+#   ...
+# ]
+
+### List All Students with Their Assessments and Grades for a Given Course
+GET http://localhost:3005/courses/<COURSE_ID>/students
+Content-Type: application/json
+
+# Expected Response:
+# {
+#   "courseId": "<COURSE_ID>",
+#   "courseName": "Mathematics",
+#   "students": [
+#     {
+#       "studentId": "<STUDENT_ID>",
+#       "studentName": "John Doe",
+#       "assessments": [
+#         {
+#           "assessment_id": "<ASSESSMENT_ID>",
+#           "name": "Midterm Exam",
+#           "value": 100,
+#           "completed": true,
+#           "marks_obtained": 85,
+#           "feedback": "Good performance"
+#         },
+#         ...
+#       ],
+#       "totalScore": 85,
+#       "grade": "B"
+#     },
+#     ...
+#   ]
+# }

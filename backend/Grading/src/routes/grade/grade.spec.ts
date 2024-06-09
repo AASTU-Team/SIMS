@@ -1,12 +1,7 @@
-import request from 'supertest';
+import supertest from 'supertest';
 import app from '../../app';  // Import your Express app
-import mongoose from 'mongoose';
-import Grade from '../../models/grade.model';
-import Course from '../../models/course.model';
-import Student from '../../models/student.model';
-import Registration from '../../models/registration.model';
 
-const baseUrl = "http://localhost:4000";
+const request = supertest(app);
 
 describe("Grade Management", () => {
   let courseId: string;
@@ -16,44 +11,49 @@ describe("Grade Management", () => {
   let assessmentId: string;
 
   beforeAll(async () => {
-    // Connect to MongoDB
-    await mongoose.connect(process.env.MONGO_URI || '', {
-      // Use the default options without specifying useNewUrlParser and useUnifiedTopology
-    });
-    
-    // Create sample data
-    const course = await Course.create({ name: 'Sample Course', instructors: [], assessments: [] });
-    courseId = course._id.toString();
+    // Create sample data using endpoints
+    const courseResponse = await request
+      .post("/courses")
+      .set("Content-Type", "application/json")
+      .send({ name: 'Sample Course', instructors: [], assessments: [] });
+    courseId = courseResponse.body.course._id;
 
-    const student = await Student.create({ name: 'John Doe' });
-    studentId = student._id.toString();
+    const studentResponse = await request
+      .post("/students")
+      .set("Content-Type", "application/json")
+      .send({ name: 'John Doe' });
+    studentId = studentResponse.body.student._id;
 
-    const instructor = await Student.create({ name: 'Jane Smith' });  // Assuming instructors are stored in the same collection
-    instructorId = instructor._id.toString();
+    const instructorResponse = await request
+      .post("/instructors")
+      .set("Content-Type", "application/json")
+      .send({ name: 'Jane Smith' });
+    instructorId = instructorResponse.body.instructor._id;
 
-    const grade = await Grade.create({ student_id: student._id, course_id: course._id, assessments: [], total_score: 0, grade: 'NG' });
-    gradeId = grade._id.toString();
+    const gradeResponse = await request
+      .post("/grades")
+      .set("Content-Type", "application/json")
+      .send({ courseId, studentId, instructorId });
+    gradeId = gradeResponse.body.grade._id;
 
-    const assessment = { assessment_id: 'sampleAssessment', name: 'Midterm', value: 50, completed: false, marks_obtained: 0 };
-    grade.assessments.push(assessment);
-    await grade.save();
-    assessmentId = assessment.assessment_id;
+    const assessmentResponse = await request
+      .post(`/grades/${gradeId}/assessments`)
+      .set("Content-Type", "application/json")
+      .send({ assessment_id: 'sampleAssessment', name: 'Midterm', value: 50 });
+    assessmentId = assessmentResponse.body.assessment._id;
   });
 
   afterAll(async () => {
-    // Cleanup sample data
-    await Course.deleteMany({});
-    await Student.deleteMany({});
-    await Grade.deleteMany({});
-    await Registration.deleteMany({});
-    
-    // Disconnect from MongoDB
-    await mongoose.disconnect();
+    // Cleanup sample data using endpoints
+    await request.delete(`/courses/${courseId}`);
+    await request.delete(`/students/${studentId}`);
+    await request.delete(`/instructors/${instructorId}`);
+    await request.delete(`/grades/${gradeId}`);
   });
 
   describe("Create Grade", () => {
     it("should create a grade document successfully", async () => {
-      const response = await request(baseUrl)
+      const response = await request
         .post("/grades")
         .set("Content-Type", "application/json")
         .send({ courseId, studentId, instructorId });
@@ -67,7 +67,7 @@ describe("Grade Management", () => {
     it("should update an assessment successfully", async () => {
       const updateData = { marks_obtained: 45 };
 
-      const response = await request(baseUrl)
+      const response = await request
         .put(`/grades/${gradeId}/assessments/${assessmentId}`)
         .set("Content-Type", "application/json")
         .send(updateData);
@@ -79,7 +79,7 @@ describe("Grade Management", () => {
     it("should return a 400 error for marks_obtained greater than assessment value", async () => {
       const updateData = { marks_obtained: 55 };
 
-      const response = await request(baseUrl)
+      const response = await request
         .put(`/grades/${gradeId}/assessments/${assessmentId}`)
         .set("Content-Type", "application/json")
         .send(updateData);
@@ -91,14 +91,14 @@ describe("Grade Management", () => {
 
   describe("Get Grades", () => {
     it("should retrieve all grades for a specific student", async () => {
-      const response = await request(baseUrl).get(`/grades/${studentId}`);
+      const response = await request.get(`/grades/${studentId}`);
 
       expect(response.statusCode).toBe(200);
       expect(response.body).toBeInstanceOf(Array);
     });
 
     it("should retrieve a specific grade for a student in a course", async () => {
-      const response = await request(baseUrl).get(`/grades/${studentId}/${courseId}`);
+      const response = await request.get(`/grades/${studentId}/${courseId}`);
 
       expect(response.statusCode).toBe(200);
       expect(response.body).toHaveProperty("course_id");
@@ -108,7 +108,7 @@ describe("Grade Management", () => {
 
   describe("Get Filtered Courses", () => {
     it("should retrieve all students with their assessments and grades for a given course and optional filters", async () => {
-      const response = await request(baseUrl).get(`/instructor/${instructorId}/courses`);
+      const response = await request.get(`/instructor/${instructorId}/courses`);
 
       expect(response.statusCode).toBe(200);
       expect(response.body).toBeInstanceOf(Array);
@@ -124,7 +124,7 @@ describe("Grade Management", () => {
         }
       ];
 
-      const response = await request(baseUrl)
+      const response = await request
         .post("/calculateGPAs")
         .set("Content-Type", "application/json")
         .send({ students: studentsData });
@@ -136,7 +136,7 @@ describe("Grade Management", () => {
 
   describe("Get Students by Course and Instructor", () => {
     it("should retrieve all students with their assessments and grades for a given course and instructor", async () => {
-      const response = await request(baseUrl).get(`/courses/${courseId}/students`);
+      const response = await request.get(`/courses/${courseId}/students`);
 
       expect(response.statusCode).toBe(200);
       expect(response.body).toHaveProperty("courseId");
