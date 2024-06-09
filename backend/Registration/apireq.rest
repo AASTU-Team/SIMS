@@ -66,7 +66,7 @@ GET  http://localhost:3000/assignment/course?id=662802ac728d90164b677588&year=1&
 Content-Type:  application/json
 
 ### 
-GET  http://localhost:3000/assignment/course?id=662802ac728d90164b677588&&year=1&semester=1&sections=true
+GET  http://localhost:5000/assignment/course?id=662802ac728d90164b677588&&year=1&semester=1&sections=true
 Content-Type:  application/json
 
  
@@ -106,7 +106,7 @@ Content-Type:  application/json
   }
 
 ### get students list wiht seciton id is inst id
-POST http://localhost:3000/assignment/teacher
+POST http://localhost:5000/assignment/teacher
 Content-Type:  application/json
 
 {
