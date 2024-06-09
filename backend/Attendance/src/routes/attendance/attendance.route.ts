@@ -10,6 +10,12 @@ import { getInstructorAttendance } from "./attendance.controller";
 
 const Attendancerouter = express.Router();
 
+Attendancerouter.get("/hi", (req, res) => {
+  console.log("hi");
+  res.send("hi");
+});
+
+9;
 Attendancerouter.post("/new", registerAttendance);
 
 Attendancerouter.post("/instructor", getInstructorAttendance);
