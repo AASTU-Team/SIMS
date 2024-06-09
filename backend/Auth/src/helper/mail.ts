@@ -5,20 +5,21 @@ const transporter = nodemailer.createTransport({
   host: "smtp.ethereal.email",
   port: 587,
   auth: {
-    user: 'zachary.goldner@ethereal.email',
-    pass: '7hgsvTvpMPsZHUEQq5'
+    user: "zachary.goldner@ethereal.email",
+    pass: "7hgsvTvpMPsZHUEQq5",
   },
 });
 
 const sendEmail = (data) => {
-  console.log(data)
+  console.log(data);
   return new Promise((resolve, reject) => {
     const message = {
       from: "haileyabsera3@gmail.com",
       to: data.email,
       subject: "Registration Confirmation",
       text: ``,
-      html: `<!DOCTYPE html>
+      html: !data.forgot
+        ? `<!DOCTYPE html>
       <html>
       <head>
         <title>Registration Confirmation</title>
@@ -75,7 +76,69 @@ const sendEmail = (data) => {
           <a href="http://localhost:5173/setpass/${data.invitations}" class="button">Activate Your Account</a>
         </div>
       </body>
-      </html>`,
+      </html>`
+        : `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Password Reset Request</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: #333333;
+    }
+
+    p {
+      color: #555555;
+      line-height: 1.5;
+    }
+
+    .button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 12px 24px;
+      background-color: #4CAF50;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+
+    .button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Password Reset Request</h1>
+    <p>Hello User,</p>
+    <p>We have received a request to reset the password for this email address. If this was you, please click the button below to reset your password:</p>
+    <a href="http://localhost:5173/setpass/${data.invitations}" class="button">Reset Password</a>
+    <p>If you did not request a password reset, please disregard this email. Someone may have accidentally or maliciously entered your email address.</p>
+    <p>For security reasons, we do not provide specific information about registered accounts. If you have any other questions or concerns, please contact our support team at <a href="mailto:support@example.com">support@example.com</a>.</p>
+    <p>Thank you for your understanding.</p>
+    <p>Best regards,<br>
+    The AASTU SIMS Team</p>
+  </div>
+</body>
+</html>`,
     };
 
     transporter.sendMail(message, (error, info) => {
@@ -91,5 +154,3 @@ const sendEmail = (data) => {
 };
 
 export { sendEmail };
-
-

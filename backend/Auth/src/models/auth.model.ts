@@ -16,10 +16,10 @@ interface IAuth {
   tokens: string[];
   salt: string;
   invitations: string;
-  role:string[],
-  status:string
+  role: string[];
+  status: string;
 }
-const bcrypt = require ('bcrypt');
+const bcrypt = require("bcrypt");
 
 // interface FindByCredentials extends Model<IAuth> {
 //   findByCredentials(email: string, password: string): Promise<IAuth | null>;
@@ -47,10 +47,10 @@ const AuthSchema: Schema = new Schema<IAuth, AuthModel, IAuthMethods>({
   role: { type: [String], default: [] },
   status: {
     type: String,
-    enum: ['Active', 'Inactive', 'Pending'],
+    enum: ["Active", "Inactive", "Pending"],
     required: true,
-   // default: 'active'
-  }
+    // default: 'active'
+  },
 });
 function validateUser(user: Document) {
   const schema = Joi.object({
@@ -78,9 +78,7 @@ function validateAuth(user: Document) {
 AuthSchema.method("generateAuthTokens", async function generateAuthTokens() {
   const id: Types.ObjectId = this._id as Types.ObjectId;
   const accessTokenPromise = jwt.sign(
-    { _id: id.toString(),
-      role: this.role,
-     },
+    { _id: id.toString(), role: this.role },
     process.env.JWT_AT_SECRET as string,
     { expiresIn: "1h" }
   );
@@ -127,7 +125,7 @@ AuthSchema.statics.findByCredentials = async (
   if (!user) {
     throw new Error("invalid email or password");
   }
-   const isMatch = await bcrypt.compare(password , user.password)
+  const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     throw new Error(" invalid email or password");
   }
@@ -163,5 +161,24 @@ async function createUser(user: IAuth): Promise<any> {
     return (error as Error).message;
   }
 }
+async function setInvite(user: IAuth): Promise<any> {
+  const userResult = await Auth.findOne({ email: user.email });
+  const invitations = jwt.sign(
+    { _id: userResult._id, email: userResult.email },
+    process.env.JWT_IT_SECRET as string,
+    { expiresIn: "7d" }
+  );
+  userResult.invitations = invitations;
+  try {
+    await userResult.save();
+    return {
+      email: userResult.email,
+      invitations,
+      username: userResult.username,
+    };
+  } catch (error: unknown) {
+    return (error as Error).message;
+  }
+}
 
-export { validateUser, createUser, validateAuth };
+export { validateUser, createUser, validateAuth, setInvite };

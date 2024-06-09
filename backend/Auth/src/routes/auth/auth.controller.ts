@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {
   createUser,
+  setInvite,
   validateAuth,
   validateUser,
 } from "../../models/auth.model";
@@ -222,6 +223,27 @@ async function findByCredentials(
   }
   return user;
 }
+async function forgotPassword(req: Request, res: Response): Promise<any> {
+  const existing = await Auth.findOne({ email: req.body.email });
+  if (!existing) return res.status(200).json({ message: "success" });
+
+  const user = await setInvite({
+    ...req.body,
+  });
+  //send email with link
+  try {
+    const info = await sendEmail({ ...user, forgot: true });
+    console.log("Email sent successfully!", info);
+    // Handle success case
+  } catch (error) {
+    console.error("Error sending email:", error);
+    // Handle error case
+  }
+
+  console.log(user);
+  if (!user) return res.status(200).json({ message: "success" });
+  return res.status(201).send({ message: "success message" });
+}
 
 export {
   register,
@@ -234,4 +256,5 @@ export {
   deleteUser,
   deactivateUser,
   activateUser,
+  forgotPassword,
 };

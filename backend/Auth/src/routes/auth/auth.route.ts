@@ -8,6 +8,7 @@ import {
   logout,
   logoutAll,
   deleteUser,
+  forgotPassword,
 } from "./auth.controller";
 
 import { accessAuth } from "../../middleware/auth";
@@ -33,6 +34,6 @@ auth.post("/logoutAll", accessAuth, logoutAll);
 auth.patch("/password", accessAuth, changePassword);
 auth.patch("/invitePass", inviteAuth, changePassword);
 
-// auth.patch("/forgotpassword ", forgotPassword);
+auth.patch("/forgotpassword ", forgotPassword);
 
 export default auth;
