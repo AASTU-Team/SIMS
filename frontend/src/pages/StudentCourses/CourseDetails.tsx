@@ -15,7 +15,7 @@ export default function CourseDetails({records}:{records:CourseFields}) {
       {
         key: "2",
         label: "Attendance",
-        children: <Attendance />,
+        children: <Attendance course={records._id || ""} />,
       }
     ];
     console.log(records)

@@ -1,5 +1,9 @@
+import { useQuery } from "@tanstack/react-query";
 import { Table } from "antd";
 import type { TableColumnsType } from "antd";
+import { getStudentAttendance } from "../../api/attendance";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
 
 const data = [
   {
@@ -7,7 +11,9 @@ const data = [
     attendance: "Present" 
   },
 ];
-export default function Attendance() {
+export default function Attendance({course}:{course:string}) {
+  const user = useSelector((state: RootState) => state.user);
+  // console.log(course)
   const columns: TableColumnsType = [
     {
       title: "Date",
@@ -24,6 +30,11 @@ export default function Attendance() {
       width: 70,
     },
   ];
+   const query = useQuery({
+     queryKey: ["myAttendance", course],
+     queryFn: () => getStudentAttendance(user._id, course),
+   });
+   console.log(query)
   return (
     <div className="flex flex-col gap-5">
       <Table columns={columns} dataSource={data} pagination={false} bordered/>
