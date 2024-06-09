@@ -1619,7 +1619,7 @@ export const studentRegistration = async (req: Request, res: Response) => {
 
 
     
-        const response = await axios.post('http://localhost:9000/grades/multiple', {
+        const response = await axios.post('http://localhost:3005/grades/multiple', {
         students: [
           {
             studentId: savedRegistration.stud_id,

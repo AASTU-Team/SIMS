@@ -61,12 +61,12 @@ Content-Type:  application/json
 	]
 }
 ### Get stud Attendance
-POST http://localhost:6000/attendance/student
+POST http://localhost:2000/attendance/student
 Content-Type:  application/json
 
 {
-   	"course_id":"662802ac728d90164b677588",
-	"student_id":"66279e2fda5951ab06556ed8"
+   	"course_id":"6646ed90eff03b65bce49e96",
+	"student_id":"66604b63da877f8869719ae7"
 }
 
 ### delete attendance

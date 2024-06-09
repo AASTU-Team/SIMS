@@ -46,7 +46,7 @@ Content-Type: application/json
 # }
 
 ### Get All Grades for a Specific Student
-GET http://localhost:3005/grades/<STUDENT_ID>
+GET http://localhost:3005/grades/6665f273c9e64fead1243b42
 Content-Type: application/json
 
 # Expected Response:
@@ -73,7 +73,7 @@ Content-Type: application/json
 # ]
 
 ### Get a Specific Grade for a Student in a Course
-GET http://localhost:3005/grades/<STUDENT_ID>/<COURSE_ID>
+GET http://localhost:3005/grades/6665f273c9e64fead1243b42/6665daa4bfc61fcd8ae966f9
 Content-Type: application/json
 
 # Expected Response:
@@ -97,7 +97,7 @@ Content-Type: application/json
 # }
 
 ### List All Students with Their Assessments and Grades for a Given Course and Optional Filters
-GET http://localhost:3005/instructor/<INSTRUCTOR_ID>/courses?courseId=<COURSE_ID>&sectionId=<SECTION_ID>&semester=<SEMESTER>&year=<YEAR>
+GET http://localhost:3005/instructor/664718164bdb605b328f311d/courses?courseId=6665daa4bfc61fcd8ae966f9
 Content-Type: application/json
 
 # Expected Response:
