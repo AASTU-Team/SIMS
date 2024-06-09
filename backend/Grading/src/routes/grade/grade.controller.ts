@@ -4,7 +4,8 @@ import Grade from '../../models/grade.model';
 import Course from '../../models/course.model';
 import Student from '../../models/student.model';
 import Registration from '../../models/registration.model';
-
+import assignInstructor from '../../helper/assignInstructor';
+ 
 
 
 class GradeController {
@@ -55,7 +56,7 @@ class GradeController {
                 const { studentId, courses } = studentData;
 
                 for (const courseData of courses) {
-                    const { course_id, instructor_id } = courseData;
+                    const { course_id } = courseData;
 
                     const course = await Course.findById(course_id).populate('assessments');
                     if (!course) {
@@ -73,8 +74,6 @@ class GradeController {
                     const newGrade = new Grade({
                         student_id: new mongoose.Types.ObjectId(studentId),
                         course_id: new mongoose.Types.ObjectId(course_id),
-                       // instructor_id: new mongoose.Types.ObjectId(instructor_id),
-                        //instructor_id: "",
                         assessments,
                         total_score: 0,
                         grade: 'NG'  
@@ -202,8 +201,9 @@ class GradeController {
         }
     }
 
+    // Get students by course and instructor, and assign instructors if missing
     static async getStudentsByCourseAndInstructor(req: Request, res: Response) {
-        const { courseId } = req.params;
+        const { courseId, instructorId } = req.params;
 
         try {
             // Find the course
@@ -213,21 +213,35 @@ class GradeController {
             }
 
             // Find all grades for the given course
-            const grades = await Grade.find({ course_id: courseId }).populate('student_id');
+            const grades = await Grade.find({ course_id: courseId });
 
             if (!grades || grades.length === 0) {
                 return res.status(404).json({ error: 'No grades found for this course' });
             }
 
+            // Collect student IDs and assign instructors if missing
+            const studentIds = grades.map(grade => grade.student_id.toString());
+            for (const studentId of studentIds) {
+                await assignInstructor(studentId, [courseId]);
+            }
+
+            // Find grades with the specified courseId and instructorId
+            const filteredGrades = await Grade.find({ course_id: courseId, instructor_id: instructorId });
+
+            if (!filteredGrades || filteredGrades.length === 0) {
+                return res.status(404).json({ error: 'No grades found for this course and instructor' });
+            }
+
             // Prepare the response data
-            const studentGrades = grades.map(grade => {
+            const studentGrades = filteredGrades.map(grade => {
                 const student = grade.student_id as any;  // Assuming student_id is populated
                 return {
                     studentId: student._id,
                     studentName: student.name,
                     assessments: grade.assessments,
                     totalScore: grade.total_score,
-                    grade: grade.grade
+                    grade: grade.grade,
+                    instructorId: grade.instructor_id
                 };
             });
 
@@ -237,7 +251,7 @@ class GradeController {
                 students: studentGrades
             });
         } catch (error) {
-            console.error('Error fetching students by course:', error);
+            console.error('Error fetching students by course and instructor:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
     }

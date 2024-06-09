@@ -1,8 +1,8 @@
-POST http://localhost:4000/notification 
+POST http://localhost:5000/notification 
 Content-Type:  application/json
 
 {"data" : {
- "srecipient": ["663a8a581f5ac9b89475633a"],
+ "srecipient": ["sodrinarte@gufum.com" , "bajakes638@jadsys.com"],
  "message" : "this is the  new m",
  "type" : "blaaa"
 } , "name" : "student" , 
@@ -17,7 +17,7 @@ Content-Type:  application/json
  "type" : "blaaa"
 } , "stud_id" : "663a8a581f5ac9b89475633c"}
 ### get notification 
-GET http://localhost:4000/notification/663a8a581f5ac9b89475633a
+GET http://localhost:5000/notification/sodrinarte@gufum.com
 Content-Type:  application/json
  
 ### delete notification
@@ -25,7 +25,7 @@ DELETE  http://localhost:4000/notification/6661a8987a9682152c3c0e12
 Content-Type:  application/json
  
 ### get notification 
-GET http://localhost:4000/notification/notify?id=663a8a581f5ac9b89475633a&isRead=true
+GET http://localhost:5000/notification/notify?id=sodrinarte@gufum.com&isRead=false
 Content-Type:  application/json
 
 ### get check 
@@ -33,13 +33,12 @@ GET http://localhost:4000/notification/hi
 Content-Type:  application/json
 
 ### get check 
-POST http://localhost:4000/notification/true
+POST http://localhost:5000/notification/true
 Content-Type:  application/json
 
-{
+{     "email" : "sodrinarte@gufum.com",
      "data" : [
-          "6661b3eb680c374863eb9ac0" ,
-          "6661dff6ef29f639925dc5a8"
+          "66661227a9d9eb6212f8fc4e"
      ]
 }
 

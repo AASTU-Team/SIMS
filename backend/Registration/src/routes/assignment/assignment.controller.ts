@@ -118,7 +118,9 @@ export const getTeachersAssignment = async (req: Request, res: Response) => {
           course_id,
         })
           .populate("numberOfStudent.student", "id name email")
-          .populate("section_id");
+          .populate("section_id")
+          .populate("course_id");
+
         console.log(secstudent);
         return secstudent;
       })

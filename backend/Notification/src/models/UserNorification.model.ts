@@ -1,9 +1,10 @@
 import mongoose from "mongoose";
 
 let userNotificationSchema = new mongoose.Schema({
-  user_id: {
-    type: mongoose.Schema.Types.ObjectId,
+  user_email: {
+    type: String,
     required: true,
+    unique: true,
   },
   notifications: [
     {
