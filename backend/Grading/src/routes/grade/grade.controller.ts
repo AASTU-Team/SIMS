@@ -44,43 +44,44 @@ class GradeController {
         }
     }
 
-    // Create grade documents for a student in multiple courses
-    static async createGradesForCourses(req: Request, res: Response) {
-        const { studentId, courses } = req.body;
+    // Create grade documents for multiple students and their courses
+    static async createGradesForStudents(req: Request, res: Response) {
+        const studentsData = req.body;
 
         try {
-            const createdGrades = [];
+            for (const studentData of studentsData) {
+                const { studentId, courses } = studentData;
 
-            for (const courseData of courses) {
-                const { course_id, instructor_id } = courseData;
+                for (const courseData of courses) {
+                    const { course_id, instructor_id } = courseData;
 
-                const course = await Course.findById(course_id).populate('assessments');
-                if (!course) {
-                    return res.status(404).json({ error: `Course not found: ${course_id}` });
+                    const course = await Course.findById(course_id).populate('assessments');
+                    if (!course) {
+                        return res.status(404).json({ error: `Course not found: ${course_id}` });
+                    }
+
+                    const assessments = course.assessments.map((assessment: any) => ({
+                        assessment_id: assessment._id,
+                        name: assessment.name,
+                        value: assessment.value,
+                        completed: false,
+                        marks_obtained: 0
+                    }));
+
+                    const newGrade = new Grade({
+                        student_id: new mongoose.Types.ObjectId(studentId),
+                        course_id: new mongoose.Types.ObjectId(course_id),
+                        instructor_id: new mongoose.Types.ObjectId(instructor_id),
+                        assessments,
+                        total_score: 0,
+                        grade: 'NG'  
+                    });
+
+                    await newGrade.save();
                 }
-
-                const assessments = course.assessments.map((assessment: any) => ({
-                    assessment_id: assessment._id,
-                    name: assessment.name,
-                    value: assessment.value,
-                    completed: false,
-                    marks_obtained: 0
-                }));
-
-                const newGrade = new Grade({
-                    student_id: new mongoose.Types.ObjectId(studentId),
-                    course_id: new mongoose.Types.ObjectId(course_id),
-                    instructor_id: new mongoose.Types.ObjectId(instructor_id),
-                    assessments,
-                    total_score: 0,
-                    grade: 'NG'  
-                });
-
-                await newGrade.save();
-                createdGrades.push(newGrade);
             }
 
-            return res.status(201).json({ createdGrades, message: 'Grade documents created successfully' });
+            return res.status(201).json({ message: 'Grade documents created successfully' });
         } catch (error) {
             console.error('Error creating grade documents:', error);
             return res.status(500).json({ error: 'Internal server error' });
