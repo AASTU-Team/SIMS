@@ -1,7 +1,6 @@
-const Student = require('../models/student.model')
-const Registration = require('../models/registration.model')
-const Assignment = require('../models/Assignment.model')
-const Grade = require('../models/grade.model')
+import Grade from '../models/grade.model';
+import Student from '../models/student.model';
+import Registration from '../models/registration.model';
 
 async function assignInstructor(Stud_id: any, courses: any[]): Promise<any> {
 

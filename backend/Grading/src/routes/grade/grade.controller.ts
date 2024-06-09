@@ -213,14 +213,14 @@ class GradeController {
             }
 
             // Find all grades for the given course
-            const grades = await Grade.find({ course_id: courseId }).populate('student_id');
+            const grades = await Grade.find({ course_id: courseId });
 
             if (!grades || grades.length === 0) {
                 return res.status(404).json({ error: 'No grades found for this course' });
             }
 
             // Collect student IDs and assign instructors if missing
-            const studentIds = grades.map(grade => grade.student_id._id);
+            const studentIds = grades.map(grade => grade.student_id.toString());
             for (const studentId of studentIds) {
                 await assignInstructor(studentId, [courseId]);
             }
