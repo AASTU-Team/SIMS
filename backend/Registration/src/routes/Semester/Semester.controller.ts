@@ -14,6 +14,7 @@ const AddStatus = require("../../models/AddStatus.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
 const Student = require("../../models/student.model");
 const Registration = require("../../models/registration.model");
+const reAssignSemester = require("../../helper/reAssignSemester"); 
 
 
 
@@ -174,135 +175,10 @@ export const deleteStatus = async (req: Request, res: Response) => {
   const { id } = req.params;
 
 
-  const semester:any = await Semester.findById(id)
-  
+  await reAssignSemester(id)
 
 
 
-  if(!semester)
-    {
-      return res.status(400).json({ message: "unable to find semester" });
-    }
-    const batchesAsStrings:string[] = semester.batches;
-    const batchesAsIntegers:number[] = batchesAsStrings.map(batch => parseInt(batch));
-    const semestersAsIneger = parseInt(semester.semester)
-
-    const students = await Student.find({
-      semester: semestersAsIneger,
-      year: { $in: batchesAsIntegers }
-    });
-    if(students.length > 0)
-      {
-        for(const student of students){
-          let isPass = "PASS"
-
-          const regData = await Registration.findOne({stud_id:student._id,year: student.year,semester:student.semester});
-          if(regData)
-            {
-              console.log(regData.status)
-              if(regData.status !="Registrar")
-                {
-                  continue
-                }
-                if(student.CGPA)
-                  {
-                    if(student.CGPA < 1.75)
-                      {
-                        continue
-                      }
-
-                  }
-              
-                console.log("here")
-                        const courses = regData.courses;
-        const modifiedCourses = courses.map(( course:any) => ({
-          courseId: course.courseID
-          
-        }));
-        console.log(modifiedCourses)
-              
-                try {
-                  const response = await axios.post('http://localhost:9000/calculateGPAs', {
-                  students: [
-                    {
-                      studentId: regData.stud_id,
-                      courses: modifiedCourses,
-                    }
-                  ]
-                });
-
-                // Handle the response
-                console.log(response.data);
-                const data = response.data;
-
-                console.log("insidle loop",data[0].courseGrades)
-
-                const getCourses= data[0].courseGrades
-             
-
-                const newArray = getCourses.map((obj:any) => {
-                  let status = "Active";
-                  if (obj.grade == "NG") {
-                    status = "Incomplete";
-                    isPass = "Fail";
-                  } else if (!obj.grade) {
-                    status = "Incomplete";
-                    isPass = "Fail";
-                  }
-                  else{
-                    status = "Complete";
-
-                  }
-                
-                  return {
-                    courseID: obj.courseId,
-                    grade: obj.grade || "",
-                    status: status,
-                    isRetake: regData.isRetake,
-                    section: regData.section || null,
-                  };
-                });
-
-                const newReg = await Registration.findByIdAndUpdate(regData._id,{GPA:data[0].semesterGPA,courses:newArray})
-                if(newReg) {
-                  console.log("success")
-                }
-                else{
-                  console.log("error")
-                }
-            
-  
-                } catch (error) {
-                  console.error("An error occurred:", error);
-                }
-            
-              
-            }
-            if(isPass == "Fail"){
-
-              continue
-
-            }
-          let year = 0
-          let semester = 0
-          if(student.semester == 1)
-            {
-              semester = parseInt(student.semester)+1
-              year = parseInt(student.year)
-            }
-            else if(student.semester == 2){
-              semester = 1
-              year = parseInt(student.year)+1
-            }
-
-            student.year = year
-            student.semester = semester
-            student.save()
-
-          
-        }
-
-      }
   
 
   
