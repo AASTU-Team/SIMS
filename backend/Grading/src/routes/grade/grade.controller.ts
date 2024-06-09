@@ -226,7 +226,7 @@ class GradeController {
             }
 
             // Find grades with the specified courseId and instructorId
-            const filteredGrades = await Grade.find({ course_id: courseId, instructor_id: instructorId }).populate('student_id');
+            const filteredGrades = await Grade.find({ course_id: courseId, instructor_id: instructorId });
 
             if (!filteredGrades || filteredGrades.length === 0) {
                 return res.status(404).json({ error: 'No grades found for this course and instructor' });
