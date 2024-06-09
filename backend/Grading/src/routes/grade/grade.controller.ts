@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import Grade from '../../models/grade.model';
 import Course from '../../models/course.model';
 import Student from '../../models/student.model';
@@ -11,35 +12,32 @@ class GradeController {
 
         try {
             // Find the course and populate the assessments
-            const course = await Course.findById(courseId).populate('assessments');
+            const course = await Course.findById(courseId);
             if (!course) {
                 return res.status(404).json({ error: 'Course not found' });
             }
-            console.log(course);
 
-            //   // Initialize assessments from the populated course assessments
-            //   const assessments = course.assessments.map((assessment: any) => ({
-            //     assessment_id: assessment._id,
-            //     name: assessment.name,
-            //     value: assessment.value,
-            //     completed: false,
-            //     marks_obtained: 0
-            //   }));
+            // Initialize assessments from the course assessments
+            const assessments = course.assessments.map((assessment: any) => ({
+                assessment_id: assessment._id,
+                name: assessment.name,
+                value: assessment.value,
+                completed: false,
+                marks_obtained: 0
+            }));
 
-            //   // Create the grade document
-            //   const newGrade = new Grade({
-            //     student_id: new mongoose.Types.ObjectId(studentId),
-            //     course_id: new mongoose.Types.ObjectId(courseId),
-            //     assessments,
-            //     total_score: 0,
-            //     grade: 'NG'  // Not Graded initially
-            //   });
+            // Create the grade document
+            const newGrade = new Grade({
+                student_id: new mongoose.Types.ObjectId(studentId),
+                course_id: new mongoose.Types.ObjectId(courseId),
+                instructor_id: new mongoose.Types.ObjectId(instructorId),
+                assessments,
+                total_score: 0,
+                grade: 'NG'  // Not Graded initially
+            });
 
-            //   await newGrade.save();
-            //   return res.status(201).json({ message: 'Grade document created successfully', gassessments });
+            await newGrade.save();
             return res.status(201).json({ message: 'Grade document created successfully' });
-
-
         } catch (error) {
             console.error('Error creating grade document:', error);
             return res.status(500).json({ error: 'Internal server error' });
@@ -56,6 +54,7 @@ class GradeController {
             if (!grade) {
                 return res.status(404).json({ error: 'Grade not found' });
             }
+            console.log(updateData)
             // Find the assessment within the assessments array
             const assessment = grade.assessments.find(assess => assess.assessment_id === assessmentId);
             if (!assessment) {
@@ -80,7 +79,6 @@ class GradeController {
             await grade.save();
 
             return res.status(200).json({ message: 'Assessment updated successfully', grade });
-
         } catch (error) {
             console.error('Error updating assessment:', error);
             return res.status(500).json({ error: 'Internal server error' });
@@ -146,12 +144,12 @@ class GradeController {
                     studentName: student.name,
                     year: registration.year,
                     semester: registration.semester,
+                    section: registration.section_id,
                     courses: studentCourses,
                 };
             });
 
             return res.status(200).json(results);
-
         } catch (error) {
             console.error('Error fetching filtered courses:', error);
             return res.status(500).json({ error: 'Internal server error' });
@@ -192,7 +190,6 @@ class GradeController {
                 courseName: course.name,
                 students: studentGrades
             });
-
         } catch (error) {
             console.error('Error fetching students by course:', error);
             return res.status(500).json({ error: 'Internal server error' });
@@ -201,9 +198,9 @@ class GradeController {
 
     static async calculateGPAs(req: Request, res: Response) {
         const studentsData = req.body.students;
-        console.log("studentsData",req.body);
         try {
             const results: any[] = [];
+
             for (const studentData of studentsData) {
                 const { studentId, courses } = studentData;
                 const student = await Student.findById(studentId);
@@ -274,7 +271,6 @@ class GradeController {
             }
 
             return res.status(200).json(results);
-
         } catch (error) {
             console.error('Error calculating GPAs:', error);
             return res.status(500).json({ error: 'Internal server error' });
@@ -288,7 +284,6 @@ class GradeController {
         try {
             const grades = await Grade.find({ student_id: studentId }).populate('course_id');
             return res.status(200).json(grades);
-
         } catch (error) {
             console.error('Error getting grades:', error);
             return res.status(500).json({ error: 'Internal server error' });
@@ -305,7 +300,6 @@ class GradeController {
                 return res.status(404).json({ error: 'Grade not found' });
             }
             return res.status(200).json(grade);
-
         } catch (error) {
             console.error('Error getting grade:', error);
             return res.status(500).json({ error: 'Internal server error' });
