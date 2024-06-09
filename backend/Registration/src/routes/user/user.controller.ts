@@ -1229,6 +1229,88 @@ export const getStudentCourses = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: courseids });
 };
+
+export const getStudentCourseStatus = async (req: Request, res: Response) => {
+  const { student_id } = req.params;
+  const completed: any[] = [];
+  const enrolled: any[] = [];
+  const left: any[] = [];
+  const incomplete: any[] = [];
+  const fail: any[] = [];
+
+  const registration = await Registration.find({
+    stud_id: student_id,
+  }).populate({
+    path: "courses.courseID",
+    select: "code name credits lec lab description ",
+  });
+
+  if (!registration.length) {
+    return res.status(404).json({ message: "Courses Not found" });
+  }
+  console.log(registration);
+  const registrationData: any[] = registration;
+
+  registrationData.map((registration) => {
+    registration.courses.map((course: any) => {
+      // console.log(course)
+      if (course.status === "Active") {
+        enrolled.push(course.courseID);
+      }
+      else if(course.status === "Completed")
+        {
+          completed.push(course.courseID);
+
+        }
+        else if(course.status === "Incomplete" || course.grade == "NG")
+          {
+            incomplete.push(course.courseID);
+  
+          }
+          else if(course.grade === "F")
+            {
+              fail.push(course.courseID);
+    
+            }
+    });
+  });
+ /*  const student = await Student.findById(student_id)
+  if(!student) return
+  const departmentId - student
+  const highestCombination = await Registration.findOne({ stud_id: student_id })
+  .sort({ year: -1, semester: -1 })
+  .select("year semester")
+  .limit(1); 
+
+ if (highestCombination) {
+ const highestYear = highestCombination.year;
+const highestSemester = highestCombination.semester;
+try {
+  const curricula = await Curriculum.find({
+    year: { $gte: highestYear },
+    semester: { $gte: highestSemester },
+    department_id: departmentId,
+    type: type,
+  })
+  .sort({ year: 1, semester: 1 })
+  .populate('courses');
+
+  const courses = curricula.reduce((allCourses, curriculum) => {
+    return [...allCourses, ...curriculum.courses];
+  }, []);
+
+  return courses;
+} catch (error) {
+  console.error('Error getting curriculum courses:', error);
+  throw error;
+} */
+
+ //}
+
+
+
+  return res.status(200).json({ enrolled: enrolled });
+};
 export const getstudentRegistrationCourses = async (
   req: Request,
   res: Response

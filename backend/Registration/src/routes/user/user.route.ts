@@ -34,6 +34,7 @@ import { getStudentByDepartment } from "./user.controller";
 import { deleteStudent } from "./user.controller";
 import { updateStudent } from "./user.controller";
 import { getStudentCourses } from "./user.controller";
+import { getStudentCourseStatus } from "./user.controller";
 import { studentRegistration } from "./user.controller";
 import { ListAddCourses } from "./user.controller";
 import { Request, Response } from "express";
@@ -144,6 +145,7 @@ Studentrouter.patch("/student/update", updateStudent);
 Studentrouter.patch("/staff/update", updateStaff);
 
 Studentrouter.get("/student/courses/:student_id", getStudentCourses);
+Studentrouter.get("/student/coursesStatus/:student_id", getStudentCourseStatus);
 Studentrouter.post("/student/register", studentRegistration);
 Studentrouter.get(
   "/student/registrationCourses/:student_id",
