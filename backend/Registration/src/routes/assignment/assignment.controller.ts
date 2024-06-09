@@ -113,7 +113,7 @@ export const getTeachersAssignment = async (req: Request, res: Response) => {
     const data = await Promise.all(
       assignment.map(async (assign: any) => {
         // fetch student data using course from num using course and section
-        const secstudent = await NumberOfStudent.find({
+        const secstudent = await NumberOfStudent.findOne({
           section_id: assign.section_id.toString(),
           course_id,
         })
