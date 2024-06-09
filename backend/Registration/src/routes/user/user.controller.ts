@@ -251,7 +251,7 @@ export const registerStudent = async (req: Request, res: Response) => {
         console.log(r.message);
         return res
           .status(400)
-          .json({ message: "An error happend please try again" });
+          .json({ message: r.message });
       }
     } catch (error: any) {
       console.log(error.message);
@@ -300,7 +300,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
     return res.status(400).json({ error: "No file uploaded" });
   }
 
-  if (path.extname(req.file.filename).toLowerCase() !== ".csv") {
+ /*  if (path.extname(req.file.filename).toLowerCase() !== ".csv") {
     await deleteCsv(req.file.path);
     return res
       .status(400)
@@ -315,7 +315,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
         MAX_FILE_SIZE / (1024 * 1024)
       } MB`,
     });
-  }
+  } */
 
   const currentYear = new Date().getFullYear();
   const subtractedYear = currentYear - 8;
@@ -429,7 +429,7 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
             //             }
             // =======
 
-            insertedStudents.push({
+           /*  insertedStudents.push({
               id: newstudent._id,
               department: student.department,
               type: student.type,
@@ -439,7 +439,8 @@ export const registerStudentCsv = async (req: Request, res: Response) => {
             if (!registration || registration.length === 0) {
               errors.push("Registration failed for student " + newstudent.name);
             }
-            console.log("registration", registration);
+            */
+            console.log("Ok"); 
 
             // >>>>>>> main
           } else {
@@ -536,25 +537,25 @@ function validateStudent(student: any) {
     status: Joi.string().optional(),
     year: Joi.number().integer(),
     semester: Joi.number(),
-    CGPA: Joi.number(),
+    CGPA: Joi.number().optional(),
     //admission_date: Joi.date().format('YYYY-MM-DD').withMessage('Admission date must be in the format YYYY-MM-DD'),
     //grad_date: Joi.date().format('YYYY-MM-DD').withMessage('Graduation date must be in the format YYYY-MM-DD'),
     contact: Joi.string(),
     address: Joi.string(),
     emergencycontact_name: Joi.string().regex(/^[A-Za-z\s]+$/),
     emergencycontact_relation: Joi.string(),
-    phone: Joi.string().regex(/^(\+\d{12}|\d{10})$/),
+    phone: Joi.string().regex(/^(\+\d{12}|\d{10}|\d{9})$/),
     birthday: Joi.date(),
     admission_date: Joi.date(),
     grad_date: Joi.date(),
     //emergencycontact_phone: Joi.string().regex(/^\+\d{12}$/).withMessage('Emergency contact phone number must start with "+" and be followed by 12 digits'),
-    emergencycontact_phone: Joi.string().regex(/^(\+\d{12}|\d{10})$/),
+    emergencycontact_phone: Joi.string().regex(/^(\+\d{12}|\d{10}|\d{9})$/),
   });
 
   return schema.validate(student);
 }
 
-export const getAllStudent = async (req: Request, res: Response) => {
+/* export const getAllStudent = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
@@ -569,6 +570,63 @@ export const getAllStudent = async (req: Request, res: Response) => {
     // console.log(myStudents);
 
     res.status(200).json({ message: myStudents });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+}; */
+export const getAllStudent = async (req: Request, res: Response) => {
+  try {
+    const { year, semester, search, department_id} = req.query;
+    const filter: any = {};
+    const page:any = req.query.page;
+    const limit:any = req.query.limit;
+
+    if (year) {
+      filter.year = year;
+    }
+
+    if (semester) {
+      filter.semester = semester;
+    }
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { id: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    if (department_id) {
+      filter.department_id = department_id;
+    }
+
+    const totalItems = await Student.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / limit);
+    const skip = (Number(page) - 1) * limit;
+
+    const students = await Student.find(filter)
+      .skip(skip)
+      .limit(Number(limit))
+      .populate({
+        path: "department_id",
+        select: "name",
+      });
+
+    const myStudents = students.map((student: any) => {
+      return {
+        ...student.toObject(),
+        department_name: student.department_id?.name,
+        department_id: student.department_id?._id,
+      };
+    });
+
+    res.status(200).json({
+      message: myStudents,
+      currentPage: Number(page),
+      totalPages: totalPages,
+      totalItems: totalItems,
+    });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -633,7 +691,52 @@ export const exportAllStudent = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
-export const getAllStaff = async (req: Request, res: Response) => {
+
+export const exportLogFile = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  try {
+    
+    const filePath = path.join("./exports", "app.log");
+
+  
+
+    // Read the CSV file contents
+    fs.readFile(filePath, (err: any, data: any) => {
+      if (err) {
+        console.error("Error reading Log file:", err);
+        res.status(500).json({ error: "Error exporting data" });
+        return;
+      }
+
+      // Create a Blob object from the CSV data
+  
+
+      // Set the necessary headers to trigger a download
+      res.setHeader("Content-Disposition", "attachment; filename=app.log");
+      res.setHeader("Content-Type", "text/csv");
+      const file = path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+
+        "exports",
+        "app.log"
+      );
+      console.log(__dirname);
+      res.download(file);
+
+      // Send the Blob in the response
+      // res.status(200).send({data:blob});
+    });
+
+    // console.log(myStudents);
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+/* export const getAllStaff = async (req: Request, res: Response) => {
   // Handle student registration logic here
 
   try {
@@ -645,6 +748,59 @@ export const getAllStaff = async (req: Request, res: Response) => {
       };
     });
     res.status(200).json({ message: myStaff });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+}; */
+export const getAllStaff = async (req: Request, res: Response) => {
+  try {
+    const { year, department_id, search } = req.query;
+   const page:any = req.query.page
+   const limit:any = req.query.limit
+    const filter: any = {};
+
+    if (year) {
+      filter.birthday = { $gte: new Date(Number(year) - 1, 0, 1), $lte: new Date(Number(year), 11, 31) };
+    }
+
+    if (department_id) {
+      filter.department_id = department_id;
+    }
+
+    if (search) {
+      filter.$or = [
+        { name: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } },
+        { phone: { $regex: search, $options: 'i' } },
+      ];
+    }
+
+    const totalItems = await Staff.countDocuments(filter);
+    const totalPages = Math.ceil(totalItems / limit);
+    const skip = (Number(page) - 1) * limit;
+
+    const staff = await Staff.find(filter)
+      .skip(skip)
+      .limit(Number(limit))
+      .populate({
+        path: "department_id",
+        select: "name",
+      });
+
+    const myStaff = staff.map((person: any) => {
+      return {
+        ...person.toObject(),
+        department_name: person.department_id?.name,
+        department_id: person.department_id?._id,
+      };
+    });
+
+    res.status(200).json({
+      message: myStaff,
+      currentPage: Number(page),
+      totalPages: totalPages,
+      totalItems: totalItems,
+    });
   } catch (error: any) {
     return res.status(500).json({ message: error.message });
   }
@@ -1097,6 +1253,11 @@ export const getstudentRegistrationCourses = async (
   if (!student) {
     return res.status(404).json({ message: "student not found" });
   }
+  if(student.status !== "Active")
+    {
+      return res.status(200).json({ message:"Student is not Active" });
+
+    }
   department_id = student.department_id;
   type = student.type;
 
@@ -2236,6 +2397,14 @@ export const WithdrawalRequest = async (req: Request, res: Response) => {
   const id = req.body.id;
   const reason = req.body.reason;
   const data = req.body;
+  const file = req.file
+
+  
+
+  
+  
+
+  console.log(req.body)
 
   const student = await Student.findById(id);
 
@@ -2253,14 +2422,74 @@ export const WithdrawalRequest = async (req: Request, res: Response) => {
   });
 
   await withdrawalRequest.save();
+  if(file)
+    {
+
+  
+      const fileName = `${id}_${Date.now()}.pdf`;
+      const filePath = path.join(__dirname, '../exports', 'withdrawals', fileName);
+      
+    
+      
+
+    }
+
 
   return res.status(200).json({ message: "successfully submitted request" });
+};
+export const exportWithdrawalFile = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  const id = req.params.id
+
+  try {
+    
+    const filePath = path.join("./exports","withdrawals", `${id}.pdf`);
+
+  
+
+    // Read the CSV file contents
+    fs.readFile(filePath, (err: any, data: any) => {
+      if (err) {
+        console.error("Error reading Log file:", err);
+        res.status(500).json({ error: "Error exporting data" });
+        return;
+      }
+
+      // Create a Blob object from the CSV data
+  
+
+      // Set the necessary headers to trigger a download
+      res.setHeader("Content-Disposition", `attachment; filename=${id}.pdf`);
+      res.setHeader("Content-Type", "text/pdf");
+      const file = path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+
+        "exports",
+        "withdrawals",
+        `${id}.pdf`
+      );
+      console.log(__dirname);
+      res.download(file);
+
+      // Send the Blob in the response
+      // res.status(200).send({data:blob});
+    });
+
+    // console.log(myStudents);
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 export const EnrollmentRequest = async (req: Request, res: Response) => {
   const id = req.body.id;
   const reason = req.body.reason;
   const data = req.body;
+  const file = req.file
 
   const student = await Student.findById(id);
 
@@ -2278,9 +2507,67 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
   });
 
   await withdrawalRequest.save();
+  if(file)
+    {
+
+  
+      const fileName = `${id}_${Date.now()}.pdf`;
+      const filePath = path.join(__dirname, '../exports', 'withdrawals', fileName);
+      
+    
+      
+
+    }
 
   return res.status(200).json({ message: "successfully submitted request" });
 };
+export const exportEnrollmentFile = async (req: Request, res: Response) => {
+  // Handle student registration logic here
+
+  const id = req.params.id
+
+  try {
+    
+    const filePath = path.join("./exports","enrollments", `${id}.pdf`);
+
+  
+
+    // Read the CSV file contents
+    fs.readFile(filePath, (err: any, data: any) => {
+      if (err) {
+        console.error("Error reading Log file:", err);
+        res.status(500).json({ error: "Error exporting data" });
+        return;
+      }
+
+      // Create a Blob object from the CSV data
+  
+
+      // Set the necessary headers to trigger a download
+      res.setHeader("Content-Disposition", `attachment; filename=${id}.pdf`);
+      res.setHeader("Content-Type", "text/pdf");
+      const file = path.join(
+        __dirname,
+        "..",
+        "..",
+        "..",
+
+        "exports",
+        "enrollments",
+        `${id}.pdf`
+      );
+      console.log(__dirname);
+      res.download(file);
+
+      // Send the Blob in the response
+      // res.status(200).send({data:blob});
+    });
+
+    // console.log(myStudents);
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+}
 
 export const getWithdrawalStatus = async (req: Request, res: Response) => {
   const id = req.params.id;

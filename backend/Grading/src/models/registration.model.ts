@@ -55,7 +55,7 @@ let registrationSchema = new mongoose.Schema({
       },
       status: {
         type: String,
-        enum: ["Active", "Completed", "Dropped","Incomplete"],
+        enum: ["Active", "Completed", "Dropped"],
         required: true,
       },
       isRetake: {
@@ -76,11 +76,9 @@ let registrationSchema = new mongoose.Schema({
   GPA:{
     type: Number,
     required: false,
-    default:0
    
   }
 });
 
-module.exports =
-  mongoose.models.Registration ||
-  mongoose.model("Registration", registrationSchema);
+const Registration = mongoose.models.Registration || mongoose.model("Registration", registrationSchema);
+export default Registration

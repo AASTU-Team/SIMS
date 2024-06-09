@@ -27,6 +27,9 @@ async function register(req: Request, res: Response): Promise<any> {
   //   "password",
   //   "salt",
   // ]);
+
+  const existing = await Auth.findOne({ email: req.body.email });
+  if (existing) return res.status(409).json({ message: "Conflicting email" });
   const salt = await bcrypt.genSalt(10);
   // const password = await bcrypt.hash(req.body.password, salt)
   const user = await createUser({

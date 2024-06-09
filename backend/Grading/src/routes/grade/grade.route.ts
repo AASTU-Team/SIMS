@@ -1,25 +1,25 @@
 import express from 'express';
-import { verifyToken } from '../../middlewares/auth.middleware';
-import gradeController from './grade.controller';
+import GradeController from './grade.controller';  // Adjust the path as necessary
 
 const router = express.Router();
 
-// List of students taught by the teacher
-router.get('/students', verifyToken, gradeController.listStudentsTaughtByTeacher);
+// Route to create a grade document for a student in a course
+router.post('/grades', GradeController.createGrade);
 
-// Retrieve grades for a specific student
-router.get('/student/:studentId', verifyToken, gradeController.getStudentGrades);
+// Route to update an assessment within a grade document
+router.put('/grades/:gradeId/assessments/:assessmentId', GradeController.updateAssessment);
 
-// Set or update a grade
-router.post('/grade', verifyToken, gradeController.setOrUpdateGrade);
+// Route to get all grades for a specific student
+router.get('/grades/:studentId', GradeController.getGrades);
 
-// Get grades for all students in a specific course
-router.get('/course/:courseId', verifyToken, gradeController.getCourseGrades);
+// Route to get a specific grade for a student in a course
+router.get('/grades/:studentId/:courseId', GradeController.getGrade);
 
-// Student view of grades for a specific course
-router.get('/mygrade/:courseId', verifyToken, gradeController.studentViewOfGrade);
+// Route to list all students with their assessments and grades for a given course and optional filters
+router.get('/instructor/:instructorId/courses', GradeController.getFilteredCourses);
 
-// Calculate and set the final grade for a student
-router.post('/calculate/:studentId', verifyToken, gradeController.calculateAndSetGrade);
+router.post('/calculateGPAs', GradeController.calculateGPAs);
+
+router.get('/courses/:courseId/students', GradeController.getStudentsByCourseAndInstructor);
 
 export default router;

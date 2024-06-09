@@ -359,13 +359,15 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
       if (theStudent && department) {
         department_id = department._id;
         theStudent.department_id = department_id;
+        theStudent.year = parseInt(data.year)
+        theStudent.semester = semester
         await theStudent.save();
         console.log(
           `Student with id ${data.id} assigned to department ${data.department}`
         );
       }
 
-      const curriculum = await Curriculum.findOne({
+   /*    const curriculum = await Curriculum.findOne({
         department_id: department_id,
         year: data.year,
         semester:semester,
@@ -423,7 +425,7 @@ export const assignDepartmentCsv = async (req: Request, res: Response) => {
       } catch (error) {
         console.error("Error saving registration:", error);
         errors.push(`Unable to save registration of student ${data.id}`);
-      }
+      } */
     })
     .on("end", () => {
       // Send the response after the parsing and processing is complete
