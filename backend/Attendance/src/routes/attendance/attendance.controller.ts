@@ -224,7 +224,7 @@ export const getAttendance = async (req: Request, res: Response) => {
     course_id: course_id,
     student_id: student_id,
   });
-
+  
   if (!attendance) {
     return res.status(400).json({ message: "Attendance not found" });
   }
