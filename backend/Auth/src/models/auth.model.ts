@@ -162,7 +162,7 @@ async function createUser(user: IAuth): Promise<any> {
   }
 }
 async function setInvite(user: IAuth): Promise<any> {
-  const userResult = await Auth.findOne({ email: user.email });
+  const userResult:any = await Auth.findOne({ email: user.email });
   const invitations = jwt.sign(
     { _id: userResult._id, email: userResult.email },
     process.env.JWT_IT_SECRET as string,
