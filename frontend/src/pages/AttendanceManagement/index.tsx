@@ -1,35 +1,185 @@
 import AttendanceTable from "./table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FileAddOutlined } from "@ant-design/icons";
-import { Button, Modal, Form, DatePicker, Select } from "antd";
+import {
+  Button,
+  Modal,
+  Form,
+  DatePicker,
+  Select,
+  Popconfirm,
+  notification,
+} from "antd";
 import type { FormProps } from "antd";
 import type { TableColumnsType } from "antd";
-import { DeleteOutlined } from "@ant-design/icons";
-import { useQuery } from "@tanstack/react-query";
-import { getCoursesInstructor, getSectionStudent } from "../../api/attendance";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import {
+  getCoursesInstructor,
+  getSectionStudent,
+} from "../../api/registration";
 import { useSelector } from "react-redux";
 import { RootState } from "../../state/store";
 import { CourseFields } from "../../type/course";
+import { StudentFields } from "../../type/student";
+import {
+  createAttendanceRecord,
+  getAttendance,
+  updateAttendance,
+} from "../../api/attendance";
+
+interface SectionData {
+  name: string;
+  id: string;
+  students: {
+    studentId: string;
+    name: string;
+    _id: string;
+    isOutofBatch: boolean;
+  }[];
+}
 
 export default function AttendanceManagement() {
   const [open, setOpen] = useState(false);
+  const [activeRecord, setActiveRecord] = useState(false);
   const [form] = Form.useForm();
   const [records, setRecords] = useState<TableColumnsType>([]);
   const user = useSelector((state: RootState) => state.user);
-  const [selectedCourse, setSelectedCourse] = useState<string>(""); 
-
+  const [selectedCourse, setSelectedCourse] = useState<string>("");
+  const [selectedSection, setSelectedSection] = useState<string>("");
+  const [selectedType, setSelectedType] = useState<string[]>(["regular"]);
+  const [attendance, setAttendance] = useState<
+    { student_id: string; status: string }[]
+  >([]);
   const query = useQuery({
     queryKey: ["courseForInstructor"],
     queryFn: () => getCoursesInstructor(user._id),
   });
   // console.log(query);
 
-  const studentQuery = useQuery({
-      queryKey: ["studentForInstructor"],
-      queryFn: () => getSectionStudent(user._id,selectedCourse),
-      enabled:false
-    });
-  console.log("Student Query",studentQuery);
+  const studentQuery = useMutation({
+    mutationKey: ["studentForInstructor"],
+    mutationFn: (value: string) => getSectionStudent(user._id, value),
+  });
+
+  const attendanceQuery = useMutation({
+    mutationKey: ["getAttendanceQuery"],
+    mutationFn: (value: string) => getAttendance(value, user._id),
+  });
+  useEffect(() => {
+    if (attendanceQuery.isSuccess && attendanceQuery.data?.data) {
+      const uniqueDates: { label: string; value: string }[] = [];
+
+      for (let i = 0; i < attendanceQuery.data.data.length; i++) {
+        for (
+          let j = 0;
+          j < attendanceQuery.data.data[i].attendances.length;
+          j++
+        ) {
+          const date = new Date(
+            attendanceQuery.data.data[i].attendances[j].date
+          );
+          const formattedDate = `${date.getFullYear()}-${String(
+            date.getMonth() + 1
+          ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+          const bareDate = attendanceQuery.data.data[i].attendances[j].date;
+
+          if (!uniqueDates.some((d) => d.value === formattedDate)) {
+            uniqueDates.push({ label: formattedDate, value: bareDate });
+          }
+        }
+      }
+
+      // console.log("Unique Dates",uniqueDates);
+      const col: TableColumnsType = uniqueDates.map(({ label, value }) => {
+        return {
+          title: label,
+          width: 150,
+          dataIndex: label,
+          key: label,
+          fixed: false,
+          render(text, record: { _id: string; name: string }) {
+            return (
+              <Select
+                placeholder="Select Attendance"
+                defaultValue={
+                  attendanceQuery.data.data
+                    .find(
+                      (student: { student_id: string }) =>
+                        student.student_id === record._id
+                    )
+                    ?.attendances.find(
+                      (attend: { date: string }) => attend.date === value
+                    )?.status
+                }
+                onChange={(status: string) => {
+                  const attendance_id = attendanceQuery.data.data
+                    .find((student: { student_id: string }) => student.student_id === record._id)?._id
+                  const _id = attendanceQuery.data.data
+                  .find((student: { student_id: string }) => student.student_id === record._id)
+                  ?.attendances.find(
+                    (attend: { date: string }) => attend.date === value
+                  )?._id;
+
+                  editAttendanceMutation.mutate({ attendance_id , status, date:label, _id });
+                }}
+                options={[
+                  {
+                    value: "Present",
+                    label: "Present",
+                  },
+                  {
+                    value: "Absent",
+                    label: "Absent",
+                  },
+                ]}
+              />
+            );
+          },
+        };
+      });
+
+      setRecords(col);
+    }
+  }, [attendanceQuery.isSuccess]);
+
+  console.log("Student Query", studentQuery);
+
+  const createAttendanceMutation = useMutation({
+    mutationKey: ["createAttendanceRecord"],
+    mutationFn: (date: string) =>
+      createAttendanceRecord(selectedCourse, user._id, date, attendance),
+    onError: () => {
+      notification.error({ message: "Record not saved" });
+    },
+    onSuccess: () => {
+      notification.success({ message: "Record Saved Successfully" });
+      setAttendance([]);
+      query.refetch();
+    },
+  });
+
+  const editAttendanceMutation = useMutation({
+    mutationKey: ["editAttendanceRecord"],
+    mutationFn: ({
+      attendance_id,
+      status,
+      date,
+      _id,
+    }: {
+      attendance_id: string;
+      status: string;
+      date: string;
+      _id: string;
+    }) => updateAttendance(attendance_id, status, date, _id),
+    onError: () => {
+      notification.error({ message: "Record not updated" });
+    },
+    onSuccess: () => {
+      notification.success({ message: "Record Updated Successfully" });
+      query.refetch();
+    },
+  });
 
   const columns = [
     {
@@ -43,12 +193,18 @@ export default function AttendanceManagement() {
     {
       title: "Student ID",
       width: 150,
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "studentId",
+      key: "studentId",
       fixed: "left",
       sorter: true,
     },
   ];
+
+  const onDelete = (date: string) => {
+    const updatedRecords = records.filter((record) => record.key !== date);
+    setRecords(updatedRecords);
+    setActiveRecord(false);
+  };
 
   const onFinish: FormProps["onFinish"] = (values) => {
     const formattedDate = new Date(values.record_date)
@@ -58,26 +214,82 @@ export default function AttendanceManagement() {
     const col: TableColumnsType = [
       {
         title: (
-          <div>
+          <div className="flex gap-2 items-center">
             {formattedDate}
-            <DeleteOutlined style={{ marginLeft: "10px" }} />
+            <Popconfirm
+              title="Delete this record"
+              description="Are you sure to delete this record?"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => onDelete(formattedDate)}
+            >
+              <Button danger>Delete</Button>
+            </Popconfirm>
+            <Popconfirm
+              title="Submit this record"
+              description="Are you sure to submit this record?"
+              okText="Yes"
+              cancelText="No"
+              onConfirm={() => createAttendanceMutation.mutate(formattedDate)}
+            >
+              <Button>Submit</Button>
+            </Popconfirm>
           </div>
         ),
         width: 150,
         dataIndex: formattedDate,
         key: formattedDate,
-        fixed: undefined, // Set fixed property to undefined
+        fixed: false,
+        render(text, record) {
+          return (
+            <Select
+              placeholder="Select Attendance"
+              onChange={(value: string) => {
+                setAttendance((prevAttendance) => {
+                  const updatedAttendance = [...prevAttendance];
+                  const existingIndex = updatedAttendance.findIndex(
+                    (item) => item.student_id === record._id
+                  );
+                  if (existingIndex !== -1) {
+                    updatedAttendance[existingIndex] = {
+                      student_id: record._id,
+                      status: value,
+                    };
+                  } else {
+                    updatedAttendance.push({
+                      student_id: record._id,
+                      status: value,
+                    });
+                  }
+                  // console.log("Update Att",updatedAttendance)
+                  return updatedAttendance;
+                });
+                // console.log("Attendance",attendance);
+              }}
+              options={[
+                {
+                  value: "Present",
+                  label: "Present",
+                },
+                {
+                  value: "Absent",
+                  label: "Absent",
+                },
+              ]}
+            />
+          );
+        },
       },
     ];
     setRecords([...records, ...col]);
     form.resetFields();
+    setActiveRecord(true);
     setOpen(false);
   };
 
   const onFinishFailed: FormProps["onFinishFailed"] = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
-
 
   const data: CourseFields[] = [];
   if (query.isSuccess && query.data?.data) {
@@ -96,11 +308,76 @@ export default function AttendanceManagement() {
     }
 
     data.push(...uniqueData);
-    const newSelectedCourse = data[0]?._id || "";
-      if (selectedCourse !== newSelectedCourse) {
-        setSelectedCourse(newSelectedCourse);
-        studentQuery.refetch()
+    if (!selectedCourse && data.length > 0) {
+      setSelectedCourse(data[0]?._id || "");
+      studentQuery.mutate(data[0]?._id || "");
+      attendanceQuery.mutate(data[0]?._id || "");
+    }
+    // const newSelectedCourse = data[0]?._id || "";
+    // setSelectedCourse(newSelectedCourse);
+  }
+  console.log("Attendance Query", attendanceQuery.data);
+
+  const studentData: SectionData[] = [];
+  const sections: { id: string; name: string }[] = [];
+  if (studentQuery.isSuccess && query.data?.data) {
+    const uniqueData: SectionData[] = [];
+    const existingIds: string[] = [];
+    // console.log("Student Query Data",studentQuery.data.data);
+    for (let i = 0; i < studentQuery.data.data.length; i++) {
+      const sectionId = studentQuery.data?.data[i]?.section_id?._id;
+      // console.log(sectionId)
+      if (sectionId && !existingIds.includes(sectionId)) {
+        sections.push({
+          id: sectionId,
+          name: studentQuery.data?.data[i]?.section_id?.name,
+        });
+        existingIds.push(sectionId);
+        uniqueData.push({
+          id: sectionId,
+          name: studentQuery.data?.data[i]?.section_id?.name,
+          students:
+            studentQuery.data?.data[i]?.numberOfStudent?.map(
+              (value: { isOutOfBatch: boolean; student: StudentFields }) => {
+                return {
+                  studentId: value?.student?.id,
+                  name: value?.student?.name,
+                  _id: value?.student?._id,
+                  isOutofBatch: value?.isOutOfBatch,
+                };
+              }
+            ) || [],
+        });
       }
+    }
+    // console.log("Unique Data",uniqueData);
+    studentData.push(...uniqueData);
+    // console.log("Student Data",studentData);
+
+    if (!selectedSection && sections.length > 0) {
+      setSelectedSection(sections[0]?.id || "");
+    }
+
+    // console.log("Student Data",studentData);
+    // console.log("Sections",sections);
+    // console.log(selectedSection)
+    // console.log("Students Data",
+    //   studentData
+    //     .filter((value) => value.id === selectedSection)
+    //     .map((value) => value.students)
+    //     .flat()
+    //     .filter((student) => {
+    //       if (selectedType.includes("regular") && selectedType.includes("add")) {
+    //         return true;
+    //       } else if (selectedType.includes("regular")) {
+    //         return student.isOutofBatch === false;
+    //       } else if (selectedType.includes("add")) {
+    //         return student.isOutofBatch === true;
+    //       } else {
+    //         return false;
+    //       }
+    //     })
+    // );
   }
 
   return (
@@ -113,11 +390,18 @@ export default function AttendanceManagement() {
             className=" h-10 w-80"
             placeholder={query.isLoading ? "Fetching Courses" : "Select Course"}
             optionFilterProp="children"
-            onChange={(value) => {
-              setSelectedCourse( value);
-              studentQuery.refetch()
+            onChange={(value: string) => {
+              // console.log(value);
+              setSelectedCourse(value);
+              studentQuery.mutate(value);
             }}
-            value={selectedCourse}
+            value={
+              selectedCourse
+                ? selectedCourse
+                : query.isFetched && data.length > 0
+                ? data[0]?._id
+                : undefined
+            }
             options={
               query.isFetched
                 ? data?.map((value: CourseFields) => {
@@ -134,20 +418,27 @@ export default function AttendanceManagement() {
             placeholder="Select Section"
             optionFilterProp="children"
             className=" h-10 w-50"
-            options={[
-              {
-                value: "Undergraduate",
-                label: "Bachelors Degree",
-              },
-              {
-                value: "Masters",
-                label: "Masters Degree",
-              },
-              {
-                value: "PhD",
-                label: "PhD",
-              },
-            ]}
+            onChange={(value: string) => {
+              // console.log(value);
+              setSelectedSection(value);
+            }}
+            value={
+              selectedSection
+                ? selectedSection
+                : studentQuery.isSuccess && sections.length > 0
+                ? sections[0]?.id
+                : undefined
+            }
+            options={
+              studentQuery.isSuccess
+                ? sections?.map((value: { id: string; name: string }) => {
+                    return {
+                      value: value.id,
+                      label: value.name,
+                    };
+                  })
+                : []
+            }
           />
           <Select
             showSearch
@@ -155,20 +446,33 @@ export default function AttendanceManagement() {
             optionFilterProp="children"
             mode="multiple"
             className=" h-10 w-50"
+            value={selectedType}
+            onChange={(value: string[]) => {
+              // console.log(value);
+              setSelectedType(value);
+            }}
             options={[
               {
-                value: "Regular",
+                value: "regular",
                 label: "Regular",
               },
               {
-                value: "Add",
+                value: "add",
                 label: "Add",
               },
             ]}
           />
 
           <button
-            onClick={() => setOpen(true)}
+            onClick={() => {
+              if (activeRecord === true) {
+                notification.error({
+                  message: "Please submit the open record first",
+                });
+              } else {
+                setOpen(true);
+              }
+            }}
             className="flex justify-center items-center h-fit gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
           >
             <FileAddOutlined />
@@ -177,6 +481,26 @@ export default function AttendanceManagement() {
         </div>
       </div>
       <AttendanceTable
+        data={
+          studentData
+            .filter((value) => value.id === selectedSection)
+            .map((value) => value.students)
+            .flat()
+            .filter((student) => {
+              if (
+                selectedType.includes("regular") &&
+                selectedType.includes("add")
+              ) {
+                return true;
+              } else if (selectedType.includes("regular")) {
+                return student.isOutofBatch === false;
+              } else if (selectedType.includes("add")) {
+                return student.isOutofBatch === true;
+              } else {
+                return false;
+              }
+            }) || []
+        }
         columns={[
           ...columns.map((column) => ({ ...column, fixed: undefined })),
           ...records,
@@ -185,7 +509,9 @@ export default function AttendanceManagement() {
       <Modal
         centered
         open={open}
-        onOk={() => setOpen(false)}
+        onOk={() => {
+          setOpen(false);
+        }}
         onCancel={() => setOpen(false)}
         title="Add Record"
         footer={[
