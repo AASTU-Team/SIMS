@@ -27,23 +27,25 @@ async function register(req: Request, res: Response): Promise<any> {
   //   "password",
   //   "salt",
   // ]);
-  const salt =await  bcrypt.genSalt(10)
- // const password = await bcrypt.hash(req.body.password, salt)
-  const user = await createUser({ ...req.body, salt: salt,role:req.body.role,status:"Pending" });
+  const salt = await bcrypt.genSalt(10);
+  // const password = await bcrypt.hash(req.body.password, salt)
+  const user = await createUser({
+    ...req.body,
+    salt: salt,
+    role: req.body.role,
+    status: "Pending",
+  });
   //send email with link
 
-    try {
-      const info = await sendEmail(user);
-      console.log("Email sent successfully!", info);
-      // Handle success case
-    } catch (error) {
-      console.error("Error sending email:", error);
-      // Handle error case
-    }
+  try {
+    const info = await sendEmail(user);
+    console.log("Email sent successfully!", info);
+    // Handle success case
+  } catch (error) {
+    console.error("Error sending email:", error);
+    // Handle error case
+  }
 
-
-    
-  
   console.log(user);
   if (!user) return res.status(409).json({ message: "Conflict" });
   return res.status(201).send({ message: "success message" });
@@ -54,25 +56,15 @@ async function deleteUser(req: Request, res: Response): Promise<any> {
   if (error) return res.status(400).send(error.details[0].message);
 
   try {
-    const deleteduser = await Auth.deleteOne({email: req.body.email})
-    if(!deleteduser)
-      {
-        return res.status(404).json({message:"Not found"})
-      }
+    const deleteduser = await Auth.deleteOne({ email: req.body.email });
+    if (!deleteduser) {
+      return res.status(404).json({ message: "Not found" });
+    }
 
-
-      return res.status(200).json({message:"success"})
-  
-    
-  } catch (error:any) {
-
+    return res.status(200).json({ message: "success" });
+  } catch (error: any) {
     return res.status(400).send(error.message);
-
-    
   }
- 
-  
-  
 }
 
 async function deactivateUser(req: Request, res: Response): Promise<any> {
@@ -81,25 +73,18 @@ async function deactivateUser(req: Request, res: Response): Promise<any> {
   if (error) return res.status(400).send(error.details[0].message);
 
   try {
-    const updateduser = await Auth.findOneAndUpdate({email: req.body.email},{status: 'Inactive'})
-    if(!updateduser)
-      {
-        return res.status(404).json({message:"Not Updated"})
-      }
+    const updateduser = await Auth.findOneAndUpdate(
+      { email: req.body.email },
+      { status: "Inactive" }
+    );
+    if (!updateduser) {
+      return res.status(404).json({ message: "Not Updated" });
+    }
 
-
-      return res.status(200).json({message:"success"})
-  
-    
-  } catch (error:any) {
-
+    return res.status(200).json({ message: "success" });
+  } catch (error: any) {
     return res.status(400).send(error.message);
-
-    
   }
- 
-  
-  
 }
 
 async function activateUser(req: Request, res: Response): Promise<any> {
@@ -108,25 +93,18 @@ async function activateUser(req: Request, res: Response): Promise<any> {
   if (error) return res.status(400).send(error.details[0].message);
 
   try {
-    const updateduser = await Auth.findOneAndUpdate({email: req.body.email},{status: 'Active'})
-    if(!updateduser)
-      {
-        return res.status(404).json({message:"Not Updated"})
-      }
+    const updateduser = await Auth.findOneAndUpdate(
+      { email: req.body.email },
+      { status: "Active" }
+    );
+    if (!updateduser) {
+      return res.status(404).json({ message: "Not Updated" });
+    }
 
-
-      return res.status(200).json({message:"success"})
-  
-    
-  } catch (error:any) {
-
+    return res.status(200).json({ message: "success" });
+  } catch (error: any) {
     return res.status(400).send(error.message);
-
-    
   }
- 
-  
-  
 }
 
 async function login(req: Request, res: Response): Promise<any> {
@@ -162,7 +140,7 @@ async function getNewAccessToken(req: any, res: Response): Promise<void> {
 }
 async function changePassword(req: any, res: Response): Promise<void> {
   try {
-    const user = req.user;  //database user object
+    const user = req.user; //database user object
 
     //const isMatch = await bcrypt.compare(password , req.user.password)
 
@@ -226,17 +204,15 @@ async function findByCredentials(
   if (!user) {
     throw new Error("invalid email or password");
   }
-  if(user.status === "Inactive")
-    {
-      throw new Error("your account is inactive please contact the administrator");
+  if (user.status === "Inactive") {
+    throw new Error(
+      "your account is inactive please contact the administrator"
+    );
+  }
 
-    }
-
-    if(user.status === "Pending")
-      {
-        throw new Error("Please Verify your password");
-  
-      }
+  if (user.status === "Pending") {
+    throw new Error("Please Verify your password");
+  }
   const isMatch = await bcrypt.compare(password, user.password);
   if (!isMatch) {
     throw new Error(" invalid email or password");
@@ -254,5 +230,5 @@ export {
   logoutAll,
   deleteUser,
   deactivateUser,
-  activateUser
+  activateUser,
 };
