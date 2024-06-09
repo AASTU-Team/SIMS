@@ -56,8 +56,18 @@ let courseSchema = new mongoose.Schema({
     default: "",
   },
   assessments: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Assessment",
+    id: {
+      type: String,
+      required: true,
+    },
+    name: {
+      type: String,
+      required: false,
+    },
+    value: {
+      type: Number,
+      required: false,
+    },
   }],
 
 });
