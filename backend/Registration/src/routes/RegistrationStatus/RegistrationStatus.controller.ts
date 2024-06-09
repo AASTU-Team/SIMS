@@ -8,6 +8,9 @@ const Joi = require("joi");
 let results: any = [];
 
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
+const Notification = require("../../helper/Notification");
+const Student = require("../../models/student.model");
+const Semester = require("../../models/Semesters.model");
 
 
 
@@ -53,6 +56,7 @@ export const createRegistrationStatus = async (req: Request, res: Response) => {
 
 export const ActivateRegistrationStatus = async (req: Request, res: Response) => {
   const id = req.body.id;
+  const emails:any  = []
 
   try {
 
@@ -62,7 +66,42 @@ export const ActivateRegistrationStatus = async (req: Request, res: Response) =>
       {
         RegStatus.status = "Active"
         await RegStatus.save()
+
+        const Mysemester = await Semester.findById(id)
+        const batches = Mysemester.batches
+
+       
+
+        const students = await Student.find()
+        students.map((student:any) => {
+          const y  = student.year
+          const year = y.toString()
+          const s = student.semester
+          const semester = s.toString()
+
+          if (batches.includes(year) && semester == Mysemester.semester) {
+            emails.push(student.email)
+
+          }
+  
+
+        })
+        
+        const data = {
+          "data" : {
+      "srecipient":emails,
+      "message" : "Registration Status is active",
+      "type" : "RegistrationStatus"
+     },
+      "name" : "student" , 
+     "dept_id" : "6627f1cb16bcc35f5d498f30"
+          
+          }
+           await Notification(data)
+          
+
         return res.status(200).json({ message: "success", staus: RegStatus });
+
 
       }
 
