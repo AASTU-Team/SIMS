@@ -5,6 +5,8 @@ import Course from '../../models/course.model';
 import Student from '../../models/student.model';
 import Registration from '../../models/registration.model';
 
+
+
 class GradeController {
     // Create a grade document for a student in a course
     static async createGrade(req: Request, res: Response) {
