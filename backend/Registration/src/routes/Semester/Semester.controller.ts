@@ -2,6 +2,7 @@ import { patch } from "app";
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 import { registerStaff } from "routes/user/user.controller";
+import axios from "axios";
 const fs = require("fs");
 const csv = require("csv-parser");
 const Joi = require("joi");
@@ -193,29 +194,94 @@ export const deleteStatus = async (req: Request, res: Response) => {
     if(students.length > 0)
       {
         for(const student of students){
+          let isPass = "PASS"
 
           const regData = await Registration.findOne({stud_id:student._id,year: student.year,semester:student.semester});
           if(regData)
             {
-              const requestGrade = await fetch("http://localhost:3005/grade/grades-and-gpa",{
-                method:"Post",
-                body:JSON.stringify({
-                  stud_id:regData.stud_id,
-                  semester:regData.semester,
-                  year:regData.year,
-                  courses:regData.courses
-                 
-                })
-
-              })
-
-              const response = await requestGrade.json()
-              console.log(response)
-              if(regData.GPA < 1.75)
+              console.log(regData.status)
+              if(regData.status !="Registrar")
                 {
                   continue
                 }
+                if(student.CGPA)
+                  {
+                    if(student.CGPA < 1.75)
+                      {
+                        continue
+                      }
+
+                  }
               
+                console.log("here")
+                        const courses = regData.courses;
+        const modifiedCourses = courses.map(( course:any) => ({
+          courseId: course.courseID
+          
+        }));
+        console.log(modifiedCourses)
+              
+                try {
+                  const response = await axios.post('http://localhost:9000/calculateGPAs', {
+                  students: [
+                    {
+                      studentId: regData.stud_id,
+                      courses: modifiedCourses,
+                    }
+                  ]
+                });
+
+                // Handle the response
+                console.log(response.data);
+                const data = response.data;
+
+                console.log("insidle loop",data[0].courseGrades)
+
+                const getCourses= data[0].courseGrades
+             
+
+                const newArray = getCourses.map((obj:any) => {
+                  let status = "Active";
+                  if (obj.grade == "NG") {
+                    status = "Incomplete";
+                    isPass = "Fail";
+                  } else if (!obj.grade) {
+                    status = "Incomplete";
+                    isPass = "Fail";
+                  }
+                  else{
+                    status = "Complete";
+
+                  }
+                
+                  return {
+                    courseID: obj.courseId,
+                    grade: obj.grade || "",
+                    status: status,
+                    isRetake: regData.isRetake,
+                    section: regData.section || null,
+                  };
+                });
+
+                const newReg = await Registration.findByIdAndUpdate(regData._id,{GPA:data[0].semesterGPA,courses:newArray})
+                if(newReg) {
+                  console.log("success")
+                }
+                else{
+                  console.log("error")
+                }
+            
+  
+                } catch (error) {
+                  console.error("An error occurred:", error);
+                }
+            
+              
+            }
+            if(isPass == "Fail"){
+
+              continue
+
             }
           let year = 0
           let semester = 0
@@ -240,7 +306,7 @@ export const deleteStatus = async (req: Request, res: Response) => {
   
 
   
-  try {
+ /*  try {
      const deletedStatus = await Semester.findByIdAndDelete(id);
     if (!deletedStatus) {
       return res.status(404).json({ message: "Not found" });
@@ -249,5 +315,5 @@ export const deleteStatus = async (req: Request, res: Response) => {
   } catch (error: any) {
     console.log(error.message);
     return res.status(500).json({ message: error.message });
-  }
+  } */
 };

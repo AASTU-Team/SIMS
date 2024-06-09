@@ -55,7 +55,7 @@ let registrationSchema = new mongoose.Schema({
       },
       status: {
         type: String,
-        enum: ["Active", "Completed", "Dropped"],
+        enum: ["Active", "Completed", "Dropped","Incomplete"],
         required: true,
       },
       isRetake: {
@@ -76,6 +76,7 @@ let registrationSchema = new mongoose.Schema({
   GPA:{
     type: Number,
     required: false,
+    default:0
    
   }
 });
