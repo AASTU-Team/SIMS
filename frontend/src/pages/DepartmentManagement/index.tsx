@@ -4,6 +4,7 @@ import { UserAddOutlined, UploadOutlined, InboxOutlined, DownloadOutlined } from
 import { Button, Modal, Form, Upload } from "antd";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
+import { exportDepartment } from "../../api/departmentApi";
 
 
 export default function DepartmentManagement() {
@@ -37,7 +38,7 @@ export default function DepartmentManagement() {
             <UploadOutlined />
             Add Multiple Department
           </button>
-          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
+          <button onClick={()=>exportDepartment()} className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
             <DownloadOutlined />
             Export List
           </button>
