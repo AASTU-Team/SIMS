@@ -206,11 +206,29 @@ export const getInstructorAttendance = async (req: Request, res: Response) => {
     instructor_id: instructor_id,
   });
 
+  console.log(attendance);
+  const attendanceData: any = [];
+  for (let attend of attendance) {
+    let count = 0;
+    for (const att of attend.attendances) {
+      if (att.status == "Absent") {
+        count = count + 1;
+      }
+    }
+    const Present =
+      ((attend.attendances.length - count) / attend.attendances.length) * 100;
+    //send notification
+    attendanceData.push({
+      ...attend.toObject(),
+      Present,
+    });
+  }
+
   if (!attendance) {
     return res.status(400).json({ message: "Attendance not found" });
   }
 
-  res.status(200).json(attendance);
+  res.status(200).json(attendanceData);
 };
 
 export const getAttendance = async (req: Request, res: Response) => {

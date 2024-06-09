@@ -50,9 +50,9 @@ Content-Type:  application/json
 			"attendance_id":"66637547f851f1dad440e0e9",
 			"attendances":[
 				{
-					"status":"Present",
+					"status":"Absent",
 					"date" : "2024-09-09",
-					"_id" : "66637583f851f1dad440e0f5"
+					"_id" : "66659f7fce8463afa0df0ab8"
 				}
 			]
 			
