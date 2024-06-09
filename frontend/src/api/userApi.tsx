@@ -58,7 +58,7 @@ export const Logout = async () => {
 export const ChangePassword = async ({old_password, password}: ChangePasswordForm) => {
   const access_token = getCookie("access_token") || ""
   setHeaderToken(access_token)
-  return await client.patch('/password',{old_password,password})
+  return await client.patch('/password',{oldPassword:old_password,password})
 }
 
 export const setPassword = async ({invite_token,password}:ChangePasswordForm) => {
