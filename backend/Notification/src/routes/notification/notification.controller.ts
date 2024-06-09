@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const Notification = require("../../models/Notification.model");
 const UserNotification = require("../../models/UserNorification.model");
 import { io } from "../../server";
+import { sendEmail } from "../../helper/mail";
 const Joi = require("joi");
 
 export const hi = async (req: Request, res: Response) => {
@@ -14,7 +15,7 @@ export const sendNotification = async (req: Request, res: Response) => {
   const data = req.body.data;
   const { name, dept_id, stud_id } = req.body;
   //list of students from the data base using dept id
-
+  // const info = await sendEmail(user);
   try {
     const notification = await Notification.create(data);
     await notification.save();
@@ -27,7 +28,7 @@ export const sendNotification = async (req: Request, res: Response) => {
     const norify = await Promise.all(
       data.srecipient.map(async (data: String) => {
         console.log(data);
-        const user = await UserNotification.findOne({ user_id: data });
+        const user = await UserNotification.findOne({ user_email: data });
         console.log(user);
         if (user) {
           user.notifications.push({
@@ -37,7 +38,7 @@ export const sendNotification = async (req: Request, res: Response) => {
           await user.save();
         } else {
           const newUser = await UserNotification.create({
-            user_id: data,
+            user_email: data,
             notifications: [
               {
                 notification_id: notification._id,
@@ -49,7 +50,13 @@ export const sendNotification = async (req: Request, res: Response) => {
         }
       })
     );
-
+    console.log("data");
+    const emaildata = {
+      emails: data.srecipient,
+      message: data.message,
+    };
+    const info = await sendEmail(emaildata);
+    console.log(info);
     return res.send(notification);
   } catch (e) {
     return res.status(400).send({ message: "error" });
