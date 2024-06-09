@@ -2461,7 +2461,7 @@ export const exportWithdrawalFile = async (req: Request, res: Response) => {
 
       // Set the necessary headers to trigger a download
       res.setHeader("Content-Disposition", `attachment; filename=${id}.pdf`);
-      res.setHeader("Content-Type", "text/pdf");
+      res.setHeader("Content-Type", "application/pdf");
       const file = path.join(
         __dirname,
         "..",
@@ -2545,7 +2545,7 @@ export const exportEnrollmentFile = async (req: Request, res: Response) => {
 
       // Set the necessary headers to trigger a download
       res.setHeader("Content-Disposition", `attachment; filename=${id}.pdf`);
-      res.setHeader("Content-Type", "text/pdf");
+      res.setHeader("Content-Type", "application/pdf");
       const file = path.join(
         __dirname,
         "..",
