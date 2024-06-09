@@ -7,11 +7,7 @@ let notificationSchema = new mongoose.Schema({
     ref: "Event",
   },
   srecipient: {
-    type: Array<mongoose.Schema.Types.ObjectId>,
-    required: false,
-  },
-  urecipient: {
-    type: Array<mongoose.Schema.Types.ObjectId>,
+    type: Array<String>,
     required: false,
   },
   message: {
