@@ -41,6 +41,7 @@ import AttendanceManagement from "../pages/AttendanceManagement";
 import StudentGradeReport from "../pages/StudentGradeReport";
 import DepartmentGradeApproval from "../pages/DepartmentGradeApproval";
 import DeanGradeApproval from "../pages/DeanGradeApproval";
+import RoleRoutes from "../hooks/roleBasedRoutes";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -67,73 +68,218 @@ const AllRoutes = () => {
                   />
                   <Routes>
                     <Route index element={<Dashboard />} />
-                    <Route path="/students" element={<StudentManagement />} />
-                    <Route path="/students/add" element={<AddStudent />} />
-                    <Route path="/students/edit/" element={<EditStudent />} />
-                    <Route path="/studentGrades" element={<StudentGrades />} />
+
+                    {/* Student Management Routes */}
                     <Route
-                      path="/studentDepReg"
-                      element={<DepartmentStudentRegistration />}
-                    />
-                    <Route
-                      path="/studentDepReg/viewRequest"
-                      element={<AddDropRequests />}
-                    />
-                    <Route
-                      path="/studentReg"
-                      element={<RegistrarRegistration />}
-                    />
-                    <Route
-                      path="/studentReg/viewRequest"
-                      element={<RegistrarAddDropRequests />}
+                      path="/students/*"
+                      element={
+                        <RoleRoutes role="studentMan">
+                          <Routes>
+                            <Route index element={<StudentManagement />} />
+                            <Route path="/add" element={<AddStudent />} />
+                            <Route path="/edit/" element={<EditStudent />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
                     />
 
-                    <Route path="/staff" element={<StaffManagement />} />
-                    <Route path="/staff/add" element={<AddStaff />} />
-                    <Route path="/staff/edit" element={<EdditStaff />} />
-                    <Route path="/course" element={<CourseManagement />} />
-                    <Route path="/courses/add" element={<AddCourse />} />
-                    <Route path="/courses/edit" element={<EditCourse />} />
+                    {/* Staff Management Routes */}
                     <Route
-                      path="/attendance"
-                      element={<AttendanceManagement />}
-                    />
-                    <Route
-                      path="/curriculum"
-                      element={<CurriculumManagement />}
-                    />
-                    <Route path="/curriculum/add" element={<AddCurriculum />} />
-                    <Route
-                      path="/curriculum/edit"
-                      element={<EditCurriculum />}
-                    />
-                    <Route
-                      path="/department"
-                      element={<DepartmentManagement />}
+                      path="/staff/*"
+                      element={
+                        <RoleRoutes role="staffMan">
+                          <Routes>
+                            <Route index element={<StaffManagement />} />
+                            <Route path="/add" element={<AddStaff />} />
+                            <Route path="/edit" element={<EdditStaff />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
                     />
 
-                    <Route path="/depGrade" element={<DepartmentGradeApproval />} />
-                    <Route path="/deanGrade" element={<DeanGradeApproval />} />
-                    <Route path="/department/add" element={<AddDepartment />} />
+                    {/* Course Management Routes */}
                     <Route
-                      path="/department/edit"
-                      element={<EditDepartment />}
+                      path="/course/*"
+                      element={
+                        <RoleRoutes role="courseMan">
+                          <Routes>
+                            <Route index element={<CourseManagement />} />
+                            <Route path="/add" element={<AddCourse />} />
+                            <Route path="/edit" element={<EditCourse />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
                     />
-                    <Route path="/room" element={<RoomManagement />} />
-                    <Route path="/room/add" element={<AddRooms />} />
-                    <Route path="/rooms/edit" element={<EditRoom />} />
+
+                    {/* Curriculum Management Routes */}
+                    <Route
+                      path="/curriculum/*"
+                      element={
+                        <RoleRoutes role="curriculumMan">
+                          <Routes>
+                            <Route index element={<CurriculumManagement />} />
+                            <Route path="/add" element={<AddCurriculum />} />
+                            <Route path="/edit" element={<EditCurriculum />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Department Management Routes */}
+                    <Route
+                      path="/department/*"
+                      element={
+                        <RoleRoutes role="departmentMan">
+                          <Routes>
+                            <Route index element={<DepartmentManagement />} />
+                            <Route path="/add" element={<AddDepartment />} />
+                            <Route path="/edit" element={<EditDepartment />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Room Management Routes */}
+                    <Route
+                      path="/room/*"
+                      element={
+                        <RoleRoutes role="roomMan">
+                          <Routes>
+                            <Route index element={<RoomManagement />} />
+                            <Route path="/add" element={<AddRooms />} />
+                            <Route path="/edit" element={<EditRoom />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Semester Management Routes */}
+                    <Route
+                      path="/semester/*"
+                      element={
+                        <RoleRoutes role="semesterMan">
+                          <Routes>
+                            <Route index element={<SemesterManagement />} />
+                            <Route path="/batches" element={<BatchCourses />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Student Grading Management Routes */}
+                    <Route
+                      path="/studentGrades/*"
+                      element={
+                        <RoleRoutes role="studentGrade">
+                          <Routes>
+                            <Route index element={<StudentGrades />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Student Department Registration Management Routes */}
+                    <Route
+                      path="/studentDepReg/*"
+                      element={
+                        <RoleRoutes role="studentDepReg">
+                          <Routes>
+                            <Route
+                              index
+                              element={<DepartmentStudentRegistration />}
+                            />
+                            <Route
+                              path="/viewRequest"
+                              element={<AddDropRequests />}
+                            />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Registrar Registration Management Routes */}
+                    <Route
+                      path="/studentReg/*"
+                      element={
+                        <RoleRoutes role="studentReg">
+                          <Routes>
+                            <Route index element={<RegistrarRegistration />} />
+                            <Route
+                              path="/viewRequest"
+                              element={<RegistrarAddDropRequests />}
+                            />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Attendance Management Routes */}
+                    <Route
+                      path="/attendance/*"
+                      element={
+                        <RoleRoutes role="attendance">
+                          <Routes>
+                            <Route index element={<AttendanceManagement />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Department Grade Approval Routes */}
+
+                    <Route
+                      path="/depGrade/*"
+                      element={
+                        <RoleRoutes role="depGradeManagement">
+                          <Routes>
+                            <Route
+                              index
+                              element={<DepartmentGradeApproval />}
+                            />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Dean Grade Approval Routes */}
+                    <Route
+                      path="/deanGrade/*"
+                      element={
+                        <RoleRoutes role="deanGradeManagement">
+                          <Routes>
+                            <Route index element={<DeanGradeApproval />} />
+                          </Routes>
+                        </RoleRoutes>
+                      }
+                    />
+
+                    {/* Student Routes */}
+
                     <Route
                       path="/myRegistration"
-                      element={<StudentRegistration />}
+                      element={
+                        <RoleRoutes role="student">
+                          <StudentRegistration />
+                        </RoleRoutes>
+                      }
                     />
-                    <Route path="/myCourses" element={<StudentCourses />} />
-                    <Route path="/myGrades" element={<StudentGradeReport />} />
-
-                    <Route path="/semester" element={<SemesterManagement />} />
                     <Route
-                      path="/semester/batches"
-                      element={<BatchCourses />}
+                      path="/myCourses"
+                      element={
+                        <RoleRoutes role="student">
+                          <StudentCourses />
+                        </RoleRoutes>
+                      }
                     />
+                    <Route
+                      path="/myGrades"
+                      element={
+                        <RoleRoutes role="student">
+                          <StudentGradeReport />
+                        </RoleRoutes>
+                      }
+                    />
+
                     <Route path="/calendar" element={<Calendar />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="*" element={<NotFoundPage />} />
