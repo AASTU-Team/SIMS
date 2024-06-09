@@ -84,3 +84,24 @@ export const addCurriculum = async (data: CurriculumFields) => {
   setHeaderToken(access_token);
   return await client.post("/create", data);
 }
+
+export const exportCurriculum = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  const response = await client.get("/export", {
+    responseType: "blob",
+  });
+  console.log(response);
+  saveFile(response.data, "curriculum.csv");
+};
+
+const saveFile = (data: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};

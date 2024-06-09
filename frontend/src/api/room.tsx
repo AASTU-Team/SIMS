@@ -86,3 +86,24 @@ export const addRooms = async (data: RoomFields) => {
   setHeaderToken(access_token);
   return await client.post("/", data);
 }
+
+export const exportRoom = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  const response = await client.get("/staff/all/export", {
+    responseType: "blob",
+  });
+  console.log(response);
+  saveFile(response.data, "staff.csv");
+};
+
+const saveFile = (data: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};

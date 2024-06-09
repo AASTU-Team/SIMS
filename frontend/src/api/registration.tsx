@@ -345,3 +345,15 @@ export const createSection = async (
   });
 };
 
+
+export const getCoursesInstructor = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/assignment/instructor/${id}`);
+};
+
+export const getSectionStudent = async (id: string, course_id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/assignment/teacher/`, { id, course_id });
+};

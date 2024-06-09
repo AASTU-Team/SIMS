@@ -96,3 +96,24 @@ export const deleteCourse = async (id: string) => {
   setHeaderToken(access_token);
   return await client.delete(`/${id}`);
 };
+
+export const exportCourse = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  const response = await client.get("/export", {
+    responseType: "blob",
+  });
+  console.log(response);
+  saveFile(response.data, "course.csv");
+};
+
+const saveFile = (data: Blob, filename: string) => {
+  const url = window.URL.createObjectURL(new Blob([data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", filename);
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  window.URL.revokeObjectURL(url);
+};
