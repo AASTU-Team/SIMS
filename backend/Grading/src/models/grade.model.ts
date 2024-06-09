@@ -23,15 +23,15 @@ interface GradeDocument extends Document {
 const studentAssessmentSchema = new Schema<StudentAssessment>({
   assessment_id: {
     type: String,
-    required: true,
+    required: false,
   },
   name: {
     type: String,
-    required: true,
+    required: false,
   },
   value: {
     type: Number,
-    required: true,
+    required: false,
   },
   completed: {
     type: Boolean,
@@ -66,11 +66,11 @@ const gradeSchema = new Schema<GradeDocument>({
   instructor_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Staff",
-    required: true,
+    required: false,
   },
   assessments: {
     type: [studentAssessmentSchema],
-    required: true,
+    required: false,
   },
   total_score: {
     type: Number,

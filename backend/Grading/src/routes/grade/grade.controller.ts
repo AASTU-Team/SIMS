@@ -48,7 +48,7 @@ class GradeController {
 
     // Create grade documents for multiple students and their courses
     static async createGradesForStudents(req: Request, res: Response) {
-        const studentsData = req.body;
+        const studentsData = req.body.students;
 
         try {
             for (const studentData of studentsData) {
@@ -73,7 +73,8 @@ class GradeController {
                     const newGrade = new Grade({
                         student_id: new mongoose.Types.ObjectId(studentId),
                         course_id: new mongoose.Types.ObjectId(course_id),
-                        instructor_id: new mongoose.Types.ObjectId(instructor_id),
+                       // instructor_id: new mongoose.Types.ObjectId(instructor_id),
+                        //instructor_id: "",
                         assessments,
                         total_score: 0,
                         grade: 'NG'  

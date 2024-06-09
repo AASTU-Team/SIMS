@@ -2,6 +2,7 @@ import { response, search } from "app";
 import { Request, Response } from "express";
 import { any } from "joi";
 import mongoose, { Mongoose } from "mongoose";
+import axios from "axios";
 
 //const assignCourse = require("../../helper/assignFreshmanCourse");
 const assignCourse = require("../../helper/assignCourse");
@@ -1516,6 +1517,42 @@ export const studentRegistration = async (req: Request, res: Response) => {
     );
     if (savedRegistration) {
       console.log("Registration saved successfully:", savedRegistration);
+      ////////////////////////////////////////////////////////////////
+
+       const modifiedCourses:any = []
+      const courses:any = savedRegistration.courses
+
+      courses.map((course:any) => {
+
+        modifiedCourses.push(
+          {
+            course_id:course.courseID,
+            instructor_id:""
+          }
+        )
+        
+      
+    })
+
+
+
+    
+        const response = await axios.post('http://localhost:9000/grades/multiple', {
+        students: [
+          {
+            studentId: savedRegistration.stud_id,
+            courses: modifiedCourses,
+          }
+        ]
+      });
+
+      // Handle the response
+      console.log(response.data);
+      const data = response.data; 
+
+
+
+      ///////////////////////////////////////////////////////////////////////////
       return res.status(200).json({
         message: "Registered successfully! please wait for confirmation",
       });
