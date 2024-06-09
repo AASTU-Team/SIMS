@@ -44,6 +44,49 @@ class GradeController {
         }
     }
 
+    // Create grade documents for a student in multiple courses
+    static async createGradesForCourses(req: Request, res: Response) {
+        const { studentId, courses } = req.body;
+
+        try {
+            const createdGrades = [];
+
+            for (const courseData of courses) {
+                const { course_id, instructor_id } = courseData;
+
+                const course = await Course.findById(course_id).populate('assessments');
+                if (!course) {
+                    return res.status(404).json({ error: `Course not found: ${course_id}` });
+                }
+
+                const assessments = course.assessments.map((assessment: any) => ({
+                    assessment_id: assessment._id,
+                    name: assessment.name,
+                    value: assessment.value,
+                    completed: false,
+                    marks_obtained: 0
+                }));
+
+                const newGrade = new Grade({
+                    student_id: new mongoose.Types.ObjectId(studentId),
+                    course_id: new mongoose.Types.ObjectId(course_id),
+                    instructor_id: new mongoose.Types.ObjectId(instructor_id),
+                    assessments,
+                    total_score: 0,
+                    grade: 'NG'  
+                });
+
+                await newGrade.save();
+                createdGrades.push(newGrade);
+            }
+
+            return res.status(201).json({ createdGrades, message: 'Grade documents created successfully' });
+        } catch (error) {
+            console.error('Error creating grade documents:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
     static async updateAssessment(req: Request, res: Response) {
         const { gradeId, assessmentId } = req.params;
         const updateData = req.body;
