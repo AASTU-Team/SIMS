@@ -3,7 +3,7 @@
 GET  http://localhost:3000/user/student/courses/6646788517b2c61fd5e52d85
 Content-Type:  application/json
 ### 13 get list of courses we can add 
-GET  http://localhost:3000/user/student/addcourses/6646788517b2c61fd5e52d84
+GET  http://localhost:5000/user/student/addcourses/6646788517b2c61fd5e52d84
 Content-Type:  application/json
 
 ### 14 student send list of courses student id
