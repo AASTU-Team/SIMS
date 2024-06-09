@@ -6,6 +6,8 @@ import { useEffect, useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getDepartment } from "../../api/departmentApi";
 import { editCourse, getCourse } from "../../api/course";
+import { DepartmentFields } from "../../type/department";
+import {DeleteOutlined} from "@ant-design/icons";
 
 export default function EditCourse() {
   const [form] = Form.useForm();
@@ -104,7 +106,7 @@ export default function EditCourse() {
 
           <button
             onClick={() => form.submit()}
-            disabled={AddCourseMuations.isPending}
+            disabled={EditCourseMuations.isPending}
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
           >
             Add Course

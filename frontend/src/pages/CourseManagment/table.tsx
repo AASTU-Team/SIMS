@@ -70,7 +70,7 @@ const CourseTable: React.FC = () => {
         <Space size="middle" className="px-4 font-semibold">
           <a
             onClick={() => {
-              navigate(`/courses/edit/`, { state: record });
+              navigate(`/course/edit/`, { state: record });
             }}
           >
             Edit
