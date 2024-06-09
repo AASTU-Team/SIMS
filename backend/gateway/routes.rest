@@ -1,13 +1,8 @@
 
 
-
-### hi 
-GET http://localhost:4000/attendance/hi
-Content-Type:  application/json
-
 ### register
 
-POST http://localhost:4000/attendance
+POST http://localhost:6000/attendance/new
 Content-Type:  application/json
 
 {
