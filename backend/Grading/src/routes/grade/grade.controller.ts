@@ -12,11 +12,11 @@ class GradeController {
 
         try {
             // Find the course and populate the assessments
-            const course = await Course.findById(courseId);
+            const course = await Course.findById(courseId).populate('assessments');
             if (!course) {
                 return res.status(404).json({ error: 'Course not found' });
             }
-
+            console.log(course)
             // Initialize assessments from the course assessments
             const assessments = course.assessments.map((assessment: any) => ({
                 assessment_id: assessment._id,
@@ -37,7 +37,7 @@ class GradeController {
             });
 
             await newGrade.save();
-            return res.status(201).json({ message: 'Grade document created successfully' });
+            return res.status(201).json({ newGrade, message: 'Grade document created successfully' });
         } catch (error) {
             console.error('Error creating grade document:', error);
             return res.status(500).json({ error: 'Internal server error' });
@@ -54,7 +54,6 @@ class GradeController {
             if (!grade) {
                 return res.status(404).json({ error: 'Grade not found' });
             }
-            console.log(updateData)
             // Find the assessment within the assessments array
             const assessment = grade.assessments.find(assess => assess.assessment_id === assessmentId);
             if (!assessment) {
