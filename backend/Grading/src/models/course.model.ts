@@ -1,5 +1,18 @@
 import mongoose from "mongoose";
 
+const assessmentsSchema = new mongoose.Schema({
+  id: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String
+  },
+  value: {
+    type: Number
+  }
+});
+
 let courseSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -55,10 +68,9 @@ let courseSchema = new mongoose.Schema({
     required: false,
     default: "",
   },
-  assessments: [{
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Assessment",
-  }],
+  assessments: {
+    type: [assessmentsSchema]
+  }
 
 });
 
