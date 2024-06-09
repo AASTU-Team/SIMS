@@ -48,7 +48,7 @@ const RoomTable: React.FC = () => {
         <Space size="middle" className="px-4 font-semibold">
           <a
             onClick={() => {
-              navigate(`/rooms/edit/`, { state: record });
+              navigate(`/room/edit/`, { state: record });
             }}
           >
             Edit
