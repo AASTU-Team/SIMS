@@ -4,7 +4,7 @@ import getCookie from "../hooks/getCookie";
 import setCookie from "../hooks/setCookie";
 
 const client = axios.create({
-  baseURL: "http://localhost:3000/",
+  baseURL: "http://localhost:2000/attendance",
 });
 
 const authClient = axios.create({
@@ -71,15 +71,57 @@ client.interceptors.response.use(
   }
 );
 
-
-export const getCoursesInstructor = async (id:string) => {
+export const createAttendanceRecord = async (
+  course_id: string,
+  instructor_id: string,
+  date: string,
+  attendance: { student_id: string; status: string }[]
+) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.get(`/assignment/instructor/${id}`);
+  return await client.post(`/new`, {
+    course_id,
+    instructor_id,
+    date,
+    attendance,
+  });
 };
 
-export const getSectionStudent = async (id: string,course_id:string) => {
+export const getAttendance = async (
+  course_id: string,
+  instructor_id: string
+) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.post(`/assignment/teacher/`,{id,course_id});
+  return await client.post(`/instructor`, {
+    course_id,
+    instructor_id,
+  });
+};
+
+export const updateAttendance = async (
+  attendance_id: string,
+  status: string,
+  date: string,
+  _id: string
+) => {
+  console.log(attendance_id, status, date, _id);
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch(`/attendance`, {
+    attendance_id,
+    attendances: { status, date, _id },
+  });
+};
+
+export const getStudentAttendance = async (
+  course_id: string,
+  student_id: string
+) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/student`, {
+    course_id,
+    student_id,
+  });
 };
