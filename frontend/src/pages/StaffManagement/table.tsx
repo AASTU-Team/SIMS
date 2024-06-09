@@ -126,7 +126,7 @@ const StaffTable: React.FC = () =>
           <Table
             columns={columns}
             dataSource={query?.data?.data?.message || []} // Fix: Access the 'data' property of the resolved data
-            scroll={{ x: 1300 }}
+            scroll={{ x: 1000 }}
           />
         )}
       </div>

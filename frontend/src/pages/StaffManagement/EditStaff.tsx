@@ -216,26 +216,25 @@ export default function EdditStaff() {
                     filterOption={filterOption}
                     options={[
                       {
-                        value: "student",
+                        value: "studentMan",
                         label: "Student Management",
                       },
                       {
-                        value: "staff",
+                        value: "staffMan",
                         label: "Staff Management",
                       },
                       {
-                        value: "course",
+                        value: "courseMan",
                         label: "Course Management",
                       },
                       {
-                        value: "room",
+                        value: "roomMan",
                         label: "Room Management",
                       },
                       {
-                        value: "curriculum",
+                        value: "curriculumMan",
                         label: "Curriculum Management",
                       },
-
                       {
                         value: "attendance",
                         label: "Student Attendance",
@@ -247,6 +246,14 @@ export default function EdditStaff() {
                       {
                         value: "studentGrade",
                         label: "Student Grade Management",
+                      },
+                      {
+                        value: "depGradeManagement",
+                        label: "Department Grade Management",
+                      },
+                      {
+                        value: "deanGradeManagement",
+                        label: "Dean Grade Management",
                       },
                       {
                         value: "semesterMan",

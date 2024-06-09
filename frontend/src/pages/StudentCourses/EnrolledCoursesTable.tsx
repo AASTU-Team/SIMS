@@ -1,21 +1,21 @@
 import { Table } from "antd";
 import type { TableColumnsType } from "antd";
+import { RootState } from "../../state/store";
+import { useSelector } from "react-redux";
+import { useQuery } from "@tanstack/react-query";
+import { getEnrolledCourse } from "../../api/student";
+import Loader from "../../components/Loader";
 import { CourseFields } from "../../type/course";
 import CourseDetails from "./CourseDetails";
 
-const data = [{
-  name: "Internet Programming",
-  code: "CSE 101",
-  lec: "2",
-  lab: "1",
-  tut: "1",
-  hs: "1",
-  type: "Core",
-  option: "Elective",
-  credits: "3",
-}]
+
 export default function EnrolledCoursesTable() {
-    const columns: TableColumnsType<CourseFields> = [
+  const user = useSelector((state: RootState) => state.user);
+  const query = useQuery({
+    queryKey: ["myEnrolledCourse"],
+    queryFn: () => getEnrolledCourse(user._id),
+  });
+    const columns: TableColumnsType = [
       {
         title: "Course Name",
         width: 150,
@@ -75,18 +75,27 @@ export default function EnrolledCoursesTable() {
     ]; 
   return (
     <div className="pt-1 flex flex-col gap-5">
-      <Table
-        columns={columns}
-        dataSource={data}
-        scroll={{ x: 1300 }}
-        expandable={{
-          expandedRowRender: () => (
-            <div className="p-2 bg-white">
-              <CourseDetails />
-            </div>
-          ),
-        }}
-      />
+      {query.isPending ? (
+        <div className="h-auto">
+          <Loader />
+        </div>
+      ) : query.isError ? (
+        <>{`${query.error}`}</>
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={query.data?.data?.message || []}
+          scroll={{ x: 1300 }}
+          rowKey={(record) => record._id || ""}
+          expandable={{
+            expandedRowRender: (record:CourseFields) => (
+              <div className="p-2 bg-white">
+                <CourseDetails records={record}/>
+              </div>
+            ),
+          }}
+        />
+      )}
     </div>
   );
 }

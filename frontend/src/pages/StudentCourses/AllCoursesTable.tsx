@@ -1,23 +1,18 @@
 import { Table } from "antd";
 import type { TableColumnsType } from "antd";
+import { useQuery } from "@tanstack/react-query";
+import Loader from "../../components/Loader";
 import { CourseFields } from "../../type/course";
 import CourseDetails from "./CourseDetails";
+import { getCourse } from "../../api/course";
 
-const data = [
-  {
-    name: "Internet Programming",
-    code: "CSE 101",
-    lec: "2",
-    lab: "1",
-    tut: "1",
-    hs: "1",
-    type: "Core",
-    option: "Elective",
-    credits: "3",
-  },
-];
-export default function AllCoursesTable() {
-  const columns: TableColumnsType<CourseFields> = [
+export default function AllCourseTable() {
+  const query = useQuery({
+    queryKey: ["getCourse"],
+    queryFn: getCourse,
+  });
+  console.log(query);
+  const columns: TableColumnsType = [
     {
       title: "Course Name",
       width: 150,
@@ -77,18 +72,27 @@ export default function AllCoursesTable() {
   ];
   return (
     <div className="pt-1 flex flex-col gap-5">
-      <Table
-        columns={columns}
-        dataSource={data}
-        scroll={{ x: 1300 }}
-        expandable={{
-          expandedRowRender: () => (
-            <div className="p-2 bg-white">
-              <CourseDetails />
-            </div>
-          ),
-        }}
-      />
+      {query.isPending ? (
+        <div className="h-auto">
+          <Loader />
+        </div>
+      ) : query.isError ? (
+        <>{`${query.error}`}</>
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={query.data?.data?.data|| []}
+          scroll={{ x: 1300 }}
+          rowKey={(record) => record._id || ""}
+          expandable={{
+            expandedRowRender: (record: CourseFields) => (
+              <div className="p-2 bg-white">
+                <CourseDetails records={record} />
+              </div>
+            ),
+          }}
+        />
+      )}
     </div>
   );
 }

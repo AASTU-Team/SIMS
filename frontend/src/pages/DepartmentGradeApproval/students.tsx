@@ -5,70 +5,41 @@ import {
   Modal,
   Form,
   Input,
-  notification,
 } from "antd";
 import type { FormProps, TableColumnsType } from "antd";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useSelector } from "react-redux";
-import { RootState } from "../../state/store";
-import Loader from "../../components/Loader";
-import { RegistrationFields } from "../../type/registration";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
-import {
-  acceptWithdrawalRequestsDep,
-  getDepartmentWithdrawal,
-  rejectWithdrawalRequestsDep,
-} from "../../api/registration";
-import { DownloadOutlined } from "@ant-design/icons";
-import { getWithdrawalRequestFile } from "../../api/student";
 
-export default function Withdrawal() {
-  const user = useSelector((state: RootState) => state.user);
+export default function StudentsList() {
+  const [open,setOpen] = useState(false)
   const [form] = useForm();
-  const [rejectId, setRejectId] = useState<string>("");
+  const data = [
+    {
+      key: "1",
+      name: "John Brown",
+      id: "2019-01-01",
+      grade: "A",
+      attendance: "90%",
+    },
+  ];
+//   const query = useQuery({
+//     queryKey: ["studentRegisteredRegistrar"],
+//     queryFn: () => getRegistrationRegistrar(),
+//   });
 
-  const query = useQuery({
-    queryKey: ["studentWithDepartment"],
-    queryFn: () => getDepartmentWithdrawal(user.department),
-  });
-  console.log(query);
+//   const ApproveAllRequestMutation = useMutation({
+//     mutationKey: ["approveAllRequestRegistrar"],
+//     mutationFn: () => confirmAllRegistrationRegistrar(),
+//     onError: () => {
+//       notification.error({ message: "Registration Not Successful" });
+//     },
+//     onSuccess: () => {
+//       notification.success({ message: "Registration Successful" });
+//       query.refetch();
+//       form.resetFields();
+//     },
+//   });
 
-  const ApproveRequestMutation = useMutation({
-    mutationKey: ["approveWithDepartment"],
-    mutationFn: (id: string) => acceptWithdrawalRequestsDep(id),
-    onError: () => {
-      notification.error({ message: "Request Not Approved" });
-    },
-    onSuccess: () => {
-      notification.success({ message: "Request Approved" });
-      query.refetch();
-      form.resetFields();
-    },
-  });
-  const RejectRequestMutation = useMutation({
-    mutationKey: ["rejectWithDep"],
-    mutationFn: ({ id, reason }: { id: string; reason: string }) =>
-      rejectWithdrawalRequestsDep(id, reason),
-    onError: () => {
-      notification.error({ message: "Request Reject Unsuccessfully" });
-    },
-    onSuccess: () => {
-      notification.success({ message: "Request Rejected Successfully" });
-      query.refetch();
-      form.resetFields();
-    },
-  });
-  const onFinish: FormProps["onFinish"] = (values) => {
-    // console.log(values,rejectId);
-
-    RejectRequestMutation.mutate({
-      id: rejectId,
-      reason: values.rejection_reason,
-    });
-    form.resetFields();
-    setOpen(false);
-  };
   const columns: TableColumnsType = [
     {
       title: "Full Name",
@@ -80,34 +51,34 @@ export default function Withdrawal() {
     },
     {
       title: "ID",
-      width: 100,
+      width: 150,
       dataIndex: "id",
       key: "id",
       sorter: true,
     },
     {
-      title: "Email",
-      dataIndex: "email",
-      key: "email",
-      width: 150,
+      title: "Grade",
+      dataIndex: "grade",
+      key: "grade",
+      width: 100,
     },
     {
-      title: "Phone Number",
-      dataIndex: "phone",
-      key: "phone",
-      width: 150,
+      title: "Attendance",
+      dataIndex: "attendance",
+      key: "attendance",
+      width: 70,
     },
     {
       title: "Action",
       key: "operation",
       fixed: "right",
       width: 200,
-      render: (text, record: RegistrationFields) => (
+      render: () => (
         <div className="font-semibold flex gap-3">
           <Popconfirm
             title="Approve Request"
             description="Are you sure to approve this request?"
-            onConfirm={() => ApproveRequestMutation.mutate(record._id)}
+            onConfirm={() => console.log("approved")}
             okText="Yes"
             cancelText="No"
           >
@@ -117,7 +88,6 @@ export default function Withdrawal() {
           <Button
             danger
             onClick={() => {
-              setRejectId(record._id);
               setOpen(true);
             }}
           >
@@ -132,25 +102,26 @@ export default function Withdrawal() {
     console.log("Failed:", errorInfo);
   };
 
-  const data: RegistrationFields[] = [];
-  const [open, setOpen] = useState(false);
-  if (query.isSuccess && query.data?.data?.requests) {
-    for (let i = 0; i < (query.data?.data?.requests?.length || 0); i++) {
-      data.push({
-        key: i,
-        _id: query.data?.data?.requests[i]?.stud_id?._id,
-        name: query.data?.data?.requests[i]?.stud_id?.name,
-        id: query.data?.data?.requests[i]?.stud_id?.id,
-        email: query.data?.data?.requests[i]?.stud_id?.email,
-        phone: query.data?.data?.requests[i]?.stud_id?.phone,
-        reason: query.data?.data?.requests[i]?.reason,
-      });
-    }
-  }
+    const onFinish: FormProps["onFinish"] = (value) => {
+      console.log("Success:", value);
+    };
 
   return (
     <div className="pt-2">
-      {query.isPending ? (
+      <div className="flex justify-start">
+        <Popconfirm
+          title="Approve All Request"
+          description="Are you sure to approve all the request?"
+          onConfirm={() => console.log("approve all")}
+          okText="Confirm"
+          cancelText="No"
+        >
+          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray mb-2 hover:bg-opacity-90 ">
+            Approve All Requests
+          </button>
+        </Popconfirm>
+      </div>
+      {/* {query.isPending ? (
         <div className="">
           <Loader />
         </div>
@@ -162,23 +133,20 @@ export default function Withdrawal() {
           dataSource={data || []}
           scroll={{ x: 1300 }}
           expandable={{
-            expandedRowRender: (record) => (
-              <div className="flex justify-between">
-                <div>
-                  <h3 className="font-semibold">Reason of Withdrawal</h3>
-                  <p>{record.reason}</p>
-                </div>
-                <button onClick={
-                  () => getWithdrawalRequestFile(record._id)
-                } className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90" >
-                  <DownloadOutlined />
-                  Download Attached Document
-                </button>
+            expandedRowRender: (record: RegistrationFields) => (
+              <div className="p-1 bg-white">
+                <RegistrationSlip details={record.courses} />
               </div>
             ),
           }}
         />
-      )}
+      )} */}
+      <Table
+        columns={columns}
+        dataSource={ data}
+        scroll={{ x: 1300 }}
+        
+      />
       <Modal
         centered
         open={open}

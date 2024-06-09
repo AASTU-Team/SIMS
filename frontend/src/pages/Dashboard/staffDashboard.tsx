@@ -4,8 +4,8 @@ import {
   FileSyncOutlined,
   FileExcelOutlined,
 } from "@ant-design/icons";
-import ChartOne from "../../components/LineChart";
 import ChartTwo from "../../components/BarChart";
+import ChartStaff from "../../components/LineChart/indexStaff";
 
 export default function StaffDashboard() {
 
@@ -36,7 +36,7 @@ export default function StaffDashboard() {
         ))}
       </div>
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <ChartOne />
+        <ChartStaff />
         <ChartTwo/>
       </div>
     </div>

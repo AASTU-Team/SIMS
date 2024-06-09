@@ -1,12 +1,10 @@
 import type { AxiosResponse } from "axios";
 import axios from "axios";
 import getCookie from "../hooks/getCookie";
-import { StaffFields } from "../type/staff";
 import setCookie from "../hooks/setCookie";
 
-
 const client = axios.create({
-  baseURL: "http://localhost:3000/user",
+  baseURL: "http://localhost:2000/attendance",
 });
 
 const authClient = axios.create({
@@ -72,49 +70,58 @@ client.interceptors.response.use(
     }
   }
 );
-export const getStaff = async () => {
+
+export const createAttendanceRecord = async (
+  course_id: string,
+  instructor_id: string,
+  date: string,
+  attendance: { student_id: string; status: string }[]
+) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.get("/staff/all");
-};
-
-export const registerStaff = async (data: StaffFields) => {
-  const access_token = getCookie("access_token") || "";
-  setHeaderToken(access_token);
-  return await client.post("/register/staff", data);
-};
-
-export const deleteStaff = async (id: string, email: string) => {
-  const access_token = getCookie("access_token") || "";
-  setHeaderToken(access_token);
-  return await client.delete(`/staff/delete/?staff_id=${id}&email=${email}`);
-};
-
-
-export const getStaffDep = async (id:string) => {
-  const access_token = getCookie("access_token") || "";
-  setHeaderToken(access_token);
-  return await client.get(`/staff/dept/${id}?inst=true`);
-};
-
-export const exportStaff = async () => {
-  const access_token = getCookie("access_token") || "";
-  setHeaderToken(access_token);
-  const response = await client.get("/staff/all/export", {
-    responseType: "blob",
+  return await client.post(`/new`, {
+    course_id,
+    instructor_id,
+    date,
+    attendance,
   });
-  console.log(response);
-  saveFile(response.data, "staff.csv");
 };
 
+export const getAttendance = async (
+  course_id: string,
+  instructor_id: string
+) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/instructor`, {
+    course_id,
+    instructor_id,
+  });
+};
 
-const saveFile = (data: Blob, filename: string) => {
-  const url = window.URL.createObjectURL(new Blob([data]));
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", filename);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  window.URL.revokeObjectURL(url);
+export const updateAttendance = async (
+  attendance_id: string,
+  status: string,
+  date: string,
+  _id: string
+) => {
+  console.log(attendance_id, status, date, _id);
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch(`/attendance`, {
+    attendance_id,
+    attendances: { status, date, _id },
+  });
+};
+
+export const getStudentAttendance = async (
+  course_id: string,
+  student_id: string
+) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.post(`/student`, {
+    course_id,
+    student_id,
+  });
 };

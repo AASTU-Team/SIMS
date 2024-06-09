@@ -13,6 +13,7 @@ export default function Profile() {
   const [form] = Form.useForm();
   const [changePass, setChangePass] = useState(false);
   const user = useSelector((state: RootState) => state.user);
+  // console.log(user)
 
   const passwordMutation = useMutation({
     mutationKey: ["password"],
@@ -193,6 +194,7 @@ export default function Profile() {
                     id="ID"
                     placeholder="Your ID"
                     defaultValue={user?.id}
+                    disabled
                   />
                 </div>
 

@@ -235,7 +235,7 @@ export default function SemesterOption({
                 onClick={() => {
                   navigate(`/semester/batches/`, {
                     state: {
-                      semesterId: semester?.id,
+                      semesterId: semester?._id,
                       batch: batch,
                       semester: semester?.semester,
                       type: semester?.program,

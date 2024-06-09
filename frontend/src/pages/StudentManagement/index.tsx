@@ -79,9 +79,9 @@ export default function StudentManagement() {
 
   return (
     <div className="max-w-screen-3xl p-4 md:p-6 2xl:p-10">
-      <div className="flex justify-between">
+      <div className="flex flex-col justify-between sm:flex-row sm:gap-2">
         <div className="text-title-md">Student Management</div>
-        <div className="flex gap-2">
+        <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
           <button
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
             onClick={() => router("/students/add")}

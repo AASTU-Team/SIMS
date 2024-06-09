@@ -14,6 +14,7 @@ import { RegistrationFields } from "../../type/registration";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { acceptReadmissionRequestsReg, getRegistrarWithdrawal, rejectWithdrawalRequestsReg } from "../../api/registration";
+import { DownloadOutlined } from "@ant-design/icons";
 
 export default function Withdrawal() {
   const [form] = useForm();
@@ -26,17 +27,17 @@ export default function Withdrawal() {
   console.log(query);
 
   const ApproveRequestMutation = useMutation({
-    mutationKey: ["approveWithRegistrar"],
-    mutationFn: (id: string) => acceptReadmissionRequestsReg(id),
-    onError: () => {
-      notification.error({ message: "Request Not Approved" });
-    },
-    onSuccess: () => {
-      notification.success({ message: "Request Approved" });
-      query.refetch();
-      form.resetFields();
-    },
-  });
+      mutationKey: ["approveWithRegistrar"],
+      mutationFn: (id: string) => acceptReadmissionRequestsReg(id),
+      onError: () => {
+        notification.error({ message: "Request Not Approved" });
+      },
+      onSuccess: () => {
+        notification.success({ message: "Request Approved" });
+        query.refetch();
+        form.resetFields();
+      },
+    });
   const RejectRequestMutation = useMutation({
     mutationKey: ["rejectWithRegistrar"],
     mutationFn: ({ id, reason }: { id: string; reason: string }) =>
@@ -154,9 +155,18 @@ export default function Withdrawal() {
           scroll={{ x: 1300 }}
           expandable={{
             expandedRowRender: (record) => (
-              <div>
-                <h3 className="font-semibold">Reason of Withdrawal</h3>
-                <p>{record.reason}</p>
+              <div className="flex justify-between">
+                <div>
+                  <h3 className="font-semibold">Reason of Withdrawal</h3>
+                  <p>{record.reason}</p>
+                </div>
+                <button
+                  onClick={() => getWithdrawalRequestFile(record._id)}
+                  className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+                >
+                  <DownloadOutlined />
+                  Download Attached Document
+                </button>
               </div>
             ),
           }}

@@ -4,6 +4,7 @@ import { UserAddOutlined, UploadOutlined, InboxOutlined,DownloadOutlined } from 
 import { Button, Modal, Form, Upload } from "antd";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
+import { exportStaff } from "../../api/staff";
 
 
 export default function StaffManagement() {
@@ -38,6 +39,7 @@ export default function StaffManagement() {
             Register Multiple Staff Members
           </button>
           <button
+            onClick={()=>exportStaff()}
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
           >
             <DownloadOutlined />

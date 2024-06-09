@@ -28,10 +28,14 @@ export interface SemesterDetails {
 }
 
 export interface SectionFields {
-  key: string;
-  name: string;
-  enrolled: string;
+  _id: string;
+  key?: string;
+  name?: string;
+  enrolled?: string;
+  section_id?: string;
+  type?:string;
   staff?:string;
+  instructor?:string;
 }
 
 export interface RegistrationFields {

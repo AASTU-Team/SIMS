@@ -4,6 +4,7 @@ import { UserAddOutlined, UploadOutlined, InboxOutlined,DownloadOutlined } from 
 import { Button, Modal, Form, Upload } from "antd";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
+import { exportCurriculum } from "../../api/curriculum";
 
 
 export default function CurriculumManagement() {
@@ -19,7 +20,7 @@ export default function CurriculumManagement() {
     console.log("Failed:", errorInfo);
   };
   return (
-    <div className="max-w-screen-2xl p-4 md:p-6 2xl:p-10">
+    <div className="max-w-screen-3xl p-4 md:p-6 2xl:p-10">
       <div className="flex justify-between">
         <div className="text-title-md">Curriculum Management</div>
         <div className="flex gap-2">
@@ -37,7 +38,7 @@ export default function CurriculumManagement() {
             <UploadOutlined />
             Register Multiple Curriculums
           </button>
-          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
+          <button onClick={()=>exportCurriculum()} className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
             <DownloadOutlined />
             Export List
           </button>

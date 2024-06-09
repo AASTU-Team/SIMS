@@ -4,6 +4,7 @@ import { UserAddOutlined, UploadOutlined, InboxOutlined, DownloadOutlined } from
 import { Button, Modal, Form, Upload } from "antd";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
+import { exportCourse } from "../../api/course";
 
 
 export default function CourseManagement() {
@@ -25,7 +26,7 @@ export default function CourseManagement() {
         <div className="flex gap-2">
           <button
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
-            onClick={() => router("/courses/add")}
+            onClick={() => router("/course/add")}
           >
             <UserAddOutlined />
             Add Course
@@ -37,7 +38,7 @@ export default function CourseManagement() {
             <UploadOutlined />
             Add Multiple Courses
           </button>
-          <button className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
+          <button onClick={()=>exportCourse()} className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
             <DownloadOutlined />
             Export List
           </button>
