@@ -288,6 +288,10 @@ export const editAttendance = async (req: Request, res: Response) => {
     });
   } catch (error: any) {
     console.error(error.message);
+    return res.status(500).send({
+      message: "Error",
+      error: error.message,
+    });
   }
 };
 
