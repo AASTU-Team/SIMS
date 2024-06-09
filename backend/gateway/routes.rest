@@ -1,13 +1,8 @@
 
 
-
-### hi 
-GET http://localhost:4000/attendance/hi
-Content-Type:  application/json
-
 ### register
 
-POST http://localhost:4000/attendance
+POST http://localhost:6000/attendance/new
 Content-Type:  application/json
 
 {
@@ -50,9 +45,9 @@ Content-Type:  application/json
 			"attendance_id":"66637547f851f1dad440e0e9",
 			"attendances":[
 				{
-					"status":"Absent",
+					"status":"Present",
 					"date" : "2024-09-09",
-					"_id" : "66659f7fce8463afa0df0ab8"
+					"_id" : "66637583f851f1dad440e0f5"
 				}
 			]
 			

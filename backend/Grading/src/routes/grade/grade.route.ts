@@ -6,6 +6,8 @@ const router = express.Router();
 // Route to create a grade document for a student in a course
 router.post('/grades', GradeController.createGrade);
 
+router.post('/grades/multiple', GradeController.createGradesForStudents);
+
 // Route to update an assessment within a grade document
 router.put('/grades/:gradeId/assessments/:assessmentId', GradeController.updateAssessment);
 

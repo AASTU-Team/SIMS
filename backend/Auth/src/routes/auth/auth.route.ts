@@ -7,8 +7,8 @@ import {
   changePassword,
   logout,
   logoutAll,
-  deleteUser
-  
+  deleteUser,
+  forgotPassword,
 } from "./auth.controller";
 
 import { accessAuth } from "../../middleware/auth";
@@ -22,8 +22,8 @@ const auth = Router();
 
 auth.post("/register", register);
 auth.delete("/delete", deleteUser);
-auth.patch("/deactivate", deactivateUser)
-auth.patch("/activate", activateUser)
+auth.patch("/deactivate", deactivateUser);
+auth.patch("/activate", activateUser);
 auth.post("/login", login);
 // auth.get("/me", [accessAuth, role], getUserProfile);
 auth.get("/me", [accessAuth], getUserProfile);
@@ -33,5 +33,7 @@ auth.post("/logoutAll", accessAuth, logoutAll);
 // auth.post("/refresh", [refAuth], getNewAccessToken);
 auth.patch("/password", accessAuth, changePassword);
 auth.patch("/invitePass", inviteAuth, changePassword);
+
+auth.patch("/forgotpassword", forgotPassword);
 
 export default auth;
