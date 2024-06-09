@@ -38,7 +38,10 @@ async function getCourseToAdd(StudentID: String): Promise<any> {
       coursesData.push(...course.courses);
     });
     coursesData.forEach((course: any) => {
-      takencourses.push(course?.courseID.toString());
+      console.log("str", course.grade, "end");
+      if (!(course.grade == "NG") || !(course.grade == "F")) {
+        takencourses.push(course?.courseID.toString());
+      }
     });
 
     const curriculum = await Curriculum.find({

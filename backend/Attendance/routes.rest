@@ -7,7 +7,7 @@ Content-Type:  application/json
 
 ### register
 
-POST http://localhost:4000/attendance
+POST http://localhost:4000/attendance/new
 Content-Type:  application/json
 
 {
@@ -47,7 +47,7 @@ Content-Type:  application/json
 {
 	"attendance":[
 		{
-			"attendance_id":"66637547f851f1dad440e0e9",
+			"attendance_id":"66637547f851f1dad440e0e1",
 			"attendances":[
 				{
 					"status":"Absent",
