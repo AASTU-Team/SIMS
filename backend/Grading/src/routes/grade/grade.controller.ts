@@ -117,7 +117,6 @@ class GradeController {
                 }
             }
             else {
-                console.log('here')
                 assessment.marks_obtained = 0;
                 assessment.completed = false;
             }
