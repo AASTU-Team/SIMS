@@ -7,11 +7,13 @@ import {
   getAssignmentBycourse,
   updateAssignment,
   getTeachersAssignment,
+  getAssignmentHistory,
 } from "./assignment.controller";
 
 const Assignmentrouter = express.Router();
 
 Assignmentrouter.post("/register", createSchedule);
+Assignmentrouter.get("/history", getAssignmentHistory);
 
 Assignmentrouter.get("/course", getAssignmentBycourse);
 Assignmentrouter.post("/teacher", getTeachersAssignment);
