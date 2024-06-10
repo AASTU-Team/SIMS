@@ -10,6 +10,7 @@ const deleteCsv = require("../../helper/deleteCsv");
 const checkPrerequisite = require("../../helper/checkPrerequisite");
 const isCourseTaken = require("../../helper/isCourseTaken");
 const getCourseToAdd = require("../../helper/getCoursetoAdd");
+const Notification = require("../../helper/Notification");
 async function getCredit(Id: String): Promise<any> {
   const course = await Course.findById(Id);
   if (!course) {
@@ -2611,7 +2612,7 @@ export const exportWithdrawalFile = async (req: Request, res: Response) => {
 
         "exports",
         "withdrawals",
-        `${id}.pdf`
+        `${id}-withdrawal.pdf`
       );
       console.log(__dirname);
       res.download(file);
@@ -2633,6 +2634,10 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
   const file = req.file;
 
   const student = await Student.findById(id);
+  const withdrawal = await Withdrawal.findOne({ stud_id:id,status:"Registrar-withdrawal"})
+  if (!withdrawal) {
+    return res.status(200).json({ message: "Can't Ask for Enrollment" });
+  }
 
   if (!student) {
     return res.status(404).json({ message: "Student not found" });
@@ -2689,7 +2694,7 @@ export const exportEnrollmentFile = async (req: Request, res: Response) => {
 
         "exports",
         "enrollments",
-        `${id}.pdf`
+        `${id}-enroll.pdf`
       );
       console.log(__dirname);
       res.download(file);
@@ -2891,6 +2896,7 @@ export const AcceptRegistrarWithdrawalRequest = async (
   const ids: any = req.body.data;
   const errors: any = [];
   const success: any = [];
+  const emails:any = []
 
   for (const id of ids) {
     const student = await Student.findById(id);
@@ -2898,6 +2904,7 @@ export const AcceptRegistrarWithdrawalRequest = async (
     if (!student) {
       errors.push(`Could not find student with id ${id}`);
     }
+    emails.push(student.email)
     const highestCombination = await Registration.findOne({ stud_id: id })
       .sort({ year: -1, semester: -1 })
       .select("year semester")
@@ -2937,6 +2944,17 @@ export const AcceptRegistrarWithdrawalRequest = async (
       errors.push(`Could not update student with name ${student.name}`);
     } else {
       success.push(` updated student with name ${student.name}`);
+      const data = {
+        "data" : {
+    "srecipient":emails,
+    "message" : "Registration period is Inactive",
+    "type" : "RegistrationStatus"
+   },
+    "name" : "student" , 
+   "dept_id" : "6627f1cb16bcc35f5d498f30"
+        
+        }
+         //await Notification(data)
     }
   }
 

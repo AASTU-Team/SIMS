@@ -177,10 +177,11 @@ Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
 Studentrouter.get("/student/activeAddDrop/:stud_id", getActiveAddDrop);
 
-Studentrouter.post("/student/withdrawalRequest",  upload2.single("file"),ValidatePdf, WithdrawalRequest);
+
 Studentrouter.get("/student/withdrawalFile/:id", exportWithdrawalFile);
 Studentrouter.get("/student/enrollmentFile/:id", exportEnrollmentFile);
-Studentrouter.post("/student/enrollmentRequest",  upload3.single("file"),ValidatePdf2, EnrollmentRequest);
+Studentrouter.post("/student/withdrawalRequest",  upload2.single("file"),ValidatePdf, WithdrawalRequest);
+Studentrouter.post("/student/enrollmentRequest",  upload2.single("file"),ValidatePdf2, EnrollmentRequest);
 Studentrouter.post("/student/uploadImage",  upload4.single("file"), UploadStudentImage);
 Studentrouter.get("/student/withdrawalStatus/:id", getWithdrawalStatus);
 

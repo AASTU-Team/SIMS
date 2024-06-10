@@ -90,7 +90,7 @@ export const ActivateRegistrationStatus = async (req: Request, res: Response) =>
         const data = {
           "data" : {
       "srecipient":emails,
-      "message" : "Registration Status is active",
+      "message" : "Registration period is active",
       "type" : "RegistrationStatus"
      },
       "name" : "student" , 
@@ -154,7 +154,7 @@ export const DeactivateRegistrationStatus = async (req: Request, res: Response) 
         const data = {
           "data" : {
       "srecipient":emails,
-      "message" : "Registration Status is Inactive",
+      "message" : "Registration period is Inactive",
       "type" : "RegistrationStatus"
      },
       "name" : "student" , 

@@ -28,10 +28,15 @@ const fileValidator2 = [
         return true;
       })
       .withMessage('File size must be less than 5MB'),
-    (req: Request, res: any, next: any) => {
+    (req: any, res: any, next: any) => {
       const errors = validationResult(req);
       if (errors.isEmpty()) {
+        const newFileName = `${req.body.id}-enroll.pdf`;
+        const oldFilePath = path.join('exports', "withdrawals", req.file.filename);
+        const newFilePath = path.join('exports', "withdrawals", newFileName);
+        fs.renameSync(oldFilePath, newFilePath);
         return next();
+       
       }
       res.status(400).json({ errors: errors.array() });
     },
