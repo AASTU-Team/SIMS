@@ -1,11 +1,13 @@
-const axios = require('axios');
+const axios = require("axios");
 
-async function Notification(data:any) {
+async function Notification(data: any) {
   const { srecipient, message, type } = data.data;
   const { name, dept_id } = data;
 
+  console.log(srecipient, dept_id, message, type);
+
   try {
-    const response = await axios.post('http://localhost:6000/notification', {
+    const response = await axios.post("http://localhost:6000/notification", {
       data: {
         srecipient,
         message,
@@ -17,7 +19,7 @@ async function Notification(data:any) {
 
     return response.status === 200;
   } catch (error) {
-    console.error('Error in Notification function:', error);
+    console.error("Error in Notification function:", error);
     return false;
   }
 }

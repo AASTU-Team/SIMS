@@ -30,6 +30,7 @@ const Course = require("../../models/course.model");
 const Curriculum = require("../../models/curriculum.model");
 const Assignment = require("../../models/Assignment.model");
 const InstructorAssignment = require("../../models/teacherAssignmentHist.model");
+const Notification = require("../../helper/Notification");
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
 
@@ -83,21 +84,38 @@ export const getAssignmentById = async (req: Request, res: Response) => {
 export const updateAssignment = async (req: Request, res: Response) => {
   const { id } = req.params;
   const assignment = req.body;
+
   try {
     // const conflict = await checkConflict(assignment, id);
     // console.log(conflict);
     // if (conflict) {
     //   return res.status(400).json(conflict);
     // }
+    const staff = await Staff.findById(assignment.instructor_id);
+    if (!staff) {
+      return res.status(400).json({ error: "staff not found" });
+    }
     const updatedAssignment = await Assignment.findByIdAndUpdate(
       id,
       assignment,
+      { populate: ["course_id", "section_id"] },
       { new: true }
     );
 
     if (!updatedAssignment) {
       return res.status(404).json({ error: "Assignment not found" });
     }
+
+    const data = {
+      data: {
+        srecipient: [staff.email],
+        message: `You have been assigned to ${updatedAssignment.course_id?.name} ${updatedAssignment.Lab_Lec} for ${updatedAssignment.section_id.name} year ${updatedAssignment.section_id.year} semester ${updatedAssignment.section_id.semester}`,
+        type: "Assignment",
+      },
+      user_id: staff._id,
+    };
+    const notification = await Notification(data);
+
     const assignmentData = await Assignment.findById(id);
 
     const assignmenthistory = await InstructorAssignment.create({

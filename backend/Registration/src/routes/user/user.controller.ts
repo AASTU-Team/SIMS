@@ -48,6 +48,7 @@ const RegistrationStatus = require("../../models/RegistrationStatus.model");
 const Withdrawal = require("../../models/Withdrawal.model");
 
 import path from "path";
+import { populate } from "dotenv";
 
 export const UploadFile = (req: Request, res: Response) => {
   if (!req.file) {
@@ -576,23 +577,14 @@ function validateStudent(student: any) {
 }; */
 
 export const UploadStudentImage = async (req: Request, res: Response) => {
-
   const file = req.file;
-  const id = req.body.id
+  const id = req.body.id;
 
-  console.log(id)
+  console.log(id);
 
- 
-
- 
   if (file) {
     const fileName = `${id}.jpg`;
-    const filePath = path.join(
-      __dirname,
-      "../exports",
-      "images",
-      fileName
-    );
+    const filePath = path.join(__dirname, "../exports", "images", fileName);
   }
 
   return res.status(200).json({ message: "successfully uploaded image" });
@@ -1077,7 +1069,9 @@ export const deactivateUser = async (req: Request, res: Response) => {
     } else {
       const error = await response.json();
       console.log(error.message);
-      return res.status(400).json({ message: "An error happened, please try again" });
+      return res
+        .status(400)
+        .json({ message: "An error happened, please try again" });
     }
   } catch (error: any) {
     console.log(error.message);
@@ -1104,7 +1098,9 @@ export const activateUser = async (req: Request, res: Response) => {
     } else {
       const error = await response.json();
       console.log(error.message);
-      return res.status(400).json({ message: "An error happened, please try again" });
+      return res
+        .status(400)
+        .json({ message: "An error happened, please try again" });
     }
   } catch (error: any) {
     console.log(error.message);
@@ -1252,74 +1248,63 @@ export const getStudentCourseStatus = async (req: Request, res: Response) => {
       Allcourses.push(course.courseID);
       if (course.status === "Active") {
         enrolled.push(course.courseID);
+      } else if (course.status === "Completed") {
+        completed.push(course.courseID);
+      } else if (course.status === "Incomplete" || course.grade == "NG") {
+        incomplete.push(course.courseID);
+      } else if (course.grade === "F") {
+        fail.push(course.courseID);
       }
-      else if(course.status === "Completed")
-        {
-          completed.push(course.courseID);
-
-        }
-        else if(course.status === "Incomplete" || course.grade == "NG")
-          {
-            incomplete.push(course.courseID);
-  
-          }
-          else if(course.grade === "F")
-            {
-              fail.push(course.courseID);
-    
-            }
     });
   });
-   const student = await Student.findById(student_id)
-  if(!student) return
-  const departmentId = student.department_id
-  const type = student.type
+  const student = await Student.findById(student_id);
+  if (!student) return;
+  const departmentId = student.department_id;
+  const type = student.type;
   const highestCombination = await Registration.findOne({ stud_id: student_id })
-  .sort({ year: -1, semester: -1 })
-  .select("year semester")
-  .limit(1); 
+    .sort({ year: -1, semester: -1 })
+    .select("year semester")
+    .limit(1);
 
- if (highestCombination) {
- const highestYear = highestCombination.year;
-const highestSemester = highestCombination.semester;
-try {
-  const curricula = await Curriculum.find({
-    year: { $gte: highestYear },
-    semester: { $gte: highestSemester },
-    department_id: departmentId,
-    type: type,
-  })
-  .sort({ year: 1, semester: 1 })
-  .populate({
-    path: "courses",
-    select: "code name credits lec lab description ",
+  if (highestCombination) {
+    const highestYear = highestCombination.year;
+    const highestSemester = highestCombination.semester;
+    try {
+      const curricula = await Curriculum.find({
+        year: { $gte: highestYear },
+        semester: { $gte: highestSemester },
+        department_id: departmentId,
+        type: type,
+      })
+        .sort({ year: 1, semester: 1 })
+        .populate({
+          path: "courses",
+          select: "code name credits lec lab description ",
+        });
+
+      const courses = curricula.reduce((allCourses: any, curriculum: any) => {
+        return [...allCourses, ...curriculum.courses];
+      }, []);
+
+      courses.map((course: any) => {
+        left.push(course);
+      });
+      left = left.filter(
+        (course) => !Allcourses.some((c) => c.code === course.code)
+      );
+    } catch (error) {
+      console.error("Error getting curriculum courses:", error);
+      throw error;
+    }
+  }
+
+  return res.status(200).json({
+    enrolled: enrolled,
+    left: left,
+    completed: completed,
+    incomplete: incomplete,
+    fail: fail,
   });
-
-  const courses = curricula.reduce((allCourses:any, curriculum:any) => {
-    return [...allCourses, ...curriculum.courses];
-  }, []);
-
-  courses.map((course:any) => {
-
-    left.push(course)
-    
-  
-})
-left = left.filter(course => !Allcourses.some(c => c.code === course.code));
-
-  
-
-
-} catch (error) {
-  console.error('Error getting curriculum courses:', error);
-  throw error;
-} 
-
- }
-
-
-
-  return res.status(200).json({ enrolled: enrolled,left: left,completed: completed,incomplete: incomplete,fail: fail});
 };
 export const getstudentRegistrationCourses = async (
   req: Request,
@@ -1500,11 +1485,12 @@ export const getStudentRegistrationHistory = async (
 ) => {
   const student_id = req.params.student_id;
 
-  const registrations = await Registration.find({ stud_id: student_id })
-  .populate({
+  const registrations = await Registration.find({
+    stud_id: student_id,
+  }).populate({
     path: "courses.courseID",
     select: "name code credits lec lab tut",
-  })
+  });
 
   if (!registrations) {
     return res.status(200).json({ message: [] });
@@ -1613,38 +1599,31 @@ export const studentRegistration = async (req: Request, res: Response) => {
       console.log("Registration saved successfully:", savedRegistration);
       ////////////////////////////////////////////////////////////////
 
-       const modifiedCourses:any = []
-      const courses:any = savedRegistration.courses
+      const modifiedCourses: any = [];
+      const courses: any = savedRegistration.courses;
 
-      courses.map((course:any) => {
-
-        modifiedCourses.push(
-          {
-            course_id:course.courseID,
-            instructor_id:""
-          }
-        )
-        
-      
-    })
-
-
-
-    
-        const response = await axios.post('http://localhost:9000/grades/multiple', {
-        students: [
-          {
-            studentId: savedRegistration.stud_id,
-            courses: modifiedCourses,
-          }
-        ]
+      courses.map((course: any) => {
+        modifiedCourses.push({
+          course_id: course.courseID,
+          instructor_id: "",
+        });
       });
+
+      const response = await axios.post(
+        "http://localhost:9000/grades/multiple",
+        {
+          students: [
+            {
+              studentId: savedRegistration.stud_id,
+              courses: modifiedCourses,
+            },
+          ],
+        }
+      );
 
       // Handle the response
       console.log(response.data);
-      const data = response.data; 
-
-
+      const data = response.data;
 
       ///////////////////////////////////////////////////////////////////////////
       return res.status(200).json({
@@ -2107,10 +2086,25 @@ export const acceptReject = async (req: Request, res: Response) => {
   }
   console.log(addDrop);
   if (status === "reject") {
-    const registration = await AddDrop.findByIdAndUpdate(addDrop_id, {
-      status: "rejected",
-      reason: reason,
-    });
+    const registration = await AddDrop.findByIdAndUpdate(
+      addDrop_id,
+      {
+        status: "rejected",
+        reason: reason,
+      },
+      {
+        populate: "stud_id",
+      }
+    );
+    const data = {
+      data: {
+        srecipient: [registration.stud_id?.email],
+        message: `Your ADD and Drop request is Rejected`,
+        type: "ADDDRP",
+      },
+      user_id: registration.stud_id._id,
+    };
+    const notification = await Notification(data);
     return res.status(200).send({ message: "rejected" });
   }
   if (assignSec.length !== addDrop.courseToAdd.length) {
@@ -2185,8 +2179,18 @@ export const acceptRejectRegistrar = async (req: Request, res: Response) => {
         { _id: addDrop_id },
         {
           registrarStatus: "Accepted",
-        }
+        },
+        { populate: "stud_id" }
       );
+      const data = {
+        data: {
+          srecipient: [registration.stud_id?.email],
+          message: `Your ADD and Drop request is accetpted`,
+          type: "ADDDRP",
+        },
+        user_id: registration.stud_id._id,
+      };
+      const notification = await Notification(data);
       return res.status(200).send({ message: "success" });
     } else {
       return res
@@ -2611,7 +2615,10 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
   const file = req.file;
 
   const student = await Student.findById(id);
-  const withdrawal = await Withdrawal.findOne({ stud_id:id,status:"Registrar-withdrawal"})
+  const withdrawal = await Withdrawal.findOne({
+    stud_id: id,
+    status: "Registrar-withdrawal",
+  });
   if (!withdrawal) {
     return res.status(200).json({ message: "Can't Ask for Enrollment" });
   }
@@ -2873,7 +2880,7 @@ export const AcceptRegistrarWithdrawalRequest = async (
   const ids: any = req.body.data;
   const errors: any = [];
   const success: any = [];
-  const emails:any = []
+  const emails: any = [];
 
   for (const id of ids) {
     const student = await Student.findById(id);
@@ -2881,7 +2888,7 @@ export const AcceptRegistrarWithdrawalRequest = async (
     if (!student) {
       errors.push(`Could not find student with id ${id}`);
     }
-    emails.push(student.email)
+    emails.push(student.email);
     const highestCombination = await Registration.findOne({ stud_id: id })
       .sort({ year: -1, semester: -1 })
       .select("year semester")
@@ -2922,16 +2929,15 @@ export const AcceptRegistrarWithdrawalRequest = async (
     } else {
       success.push(` updated student with name ${student.name}`);
       const data = {
-        "data" : {
-    "srecipient":emails,
-    "message" : "Registration period is Inactive",
-    "type" : "RegistrationStatus"
-   },
-    "name" : "student" , 
-   "dept_id" : "6627f1cb16bcc35f5d498f30"
-        
-        }
-         //await Notification(data)
+        data: {
+          srecipient: emails,
+          message: "Registration period is Inactive",
+          type: "RegistrationStatus",
+        },
+        name: "student",
+        dept_id: "6627f1cb16bcc35f5d498f30",
+      };
+      //await Notification(data)
     }
   }
 
