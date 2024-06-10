@@ -1,228 +1,82 @@
-### Sample Request without Filters
-# This request fetches all grades for all courses taught by the instructor with ID "6627f3543267383b7d6046e6".
-GET http://localhost:3005/instructor/6627f3543267383b7d6046e6/courses
-Content-Type: application/json
-
-### Sample Response
-# The response will contain a list of grades for the courses matching the filters, including details about the course, student, assessments, total score, grade, and instructor.
-
-HTTP/1.1 200 OK
+### Create a grade document for a student in a course
+POST http://localhost:3000/api/grades
 Content-Type: application/json
 
 {
-  "courseId": "66658dc0c08179a1fd83af98",
-  "courseName": "Sample Course",
-  "studentId": "66279e0dda5951ab06556ed5",
-  "studentName": "John Doe",
-  "assessments": [
-    {
-      "assessment_id": "66658dc0c08179a1fd83af99",
-      "name": "Midterm Exam",
-      "value": 100,
-      "completed": true,
-      "marks_obtained": 85
-    },
-    {
-      "assessment_id": "66658dc0c08179a1fd83af9a",
-      "name": "Final Exam",
-      "value": 100,
-      "completed": true,
-      "marks_obtained": 90
-    }
-  ],
-  "totalScore": 175,
-  "grade": "A",
-  "instructorId": "6627f3543267383b7d6046e6"
+    "courseId": "62c71df7d9b2d1119e3a3e8a",
+    "studentId": "62c71df7d9b2d1119e3a3e8b",
+    "instructorId": "62c71df7d9b2d1119e3a3e8c"
 }
 
-### Create a Grade Document for a Student in a Course
-POST http://localhost:3005/grades
+### Create grade documents for multiple students and their courses
+POST http://localhost:3000/api/grades/multiple
 Content-Type: application/json
 
 {
-  "courseId": "<COURSE_ID>",
-  "studentId": "<STUDENT_ID>",
-  "instructorId": "<INSTRUCTOR_ID>"
-}
-
-# Expected Response:
-# {
-#   "message": "Grade document created successfully"
-# }
-
-### Update an Assessment within a Grade Document
-PUT http://localhost:3005/grades/<GRADE_ID>/assessments/<ASSESSMENT_ID>
-Content-Type: application/json
-
-{
-  "marks_obtained": 85,
-  "feedback": "Good performance"
-}
-
-# Expected Response:
-# {
-#   "message": "Assessment updated successfully",
-#   "grade": {
-#     "_id": "<GRADE_ID>",
-#     "student_id": "<STUDENT_ID>",
-#     "course_id": "<COURSE_ID>",
-#     "assessments": [
-#       {
-#         "assessment_id": "<ASSESSMENT_ID>",
-#         "name": "Midterm Exam",
-#         "value": 100,
-#         "completed": true,
-#         "marks_obtained": 85,
-#         "feedback": "Good performance"
-#       },
-#       ...
-#     ],
-#     "total_score": 85,
-#     "grade": "B"
-#   }
-# }
-
-### Get All Grades for a Specific Student
-GET http://localhost:3005/grades/6665f273c9e64fead1243b42
-Content-Type: application/json
-
-# Expected Response:
-# [
-#   {
-#     "_id": "<GRADE_ID>",
-#     "student_id": "<STUDENT_ID>",
-#     "course_id": "<COURSE_ID>",
-#     "assessments": [
-#       {
-#         "assessment_id": "<ASSESSMENT_ID>",
-#         "name": "Midterm Exam",
-#         "value": 100,
-#         "completed": true,
-#         "marks_obtained": 85,
-#         "feedback": "Good performance"
-#       },
-#       ...
-#     ],
-#     "total_score": 85,
-#     "grade": "B"
-#   },
-#   ...
-# ]
-
-### Get a Specific Grade for a Student in a Course
-GET http://localhost:3005/grades/6665f273c9e64fead1243b42/6665daa4bfc61fcd8ae966f9
-Content-Type: application/json
-
-# Expected Response:
-# {
-#   "_id": "<GRADE_ID>",
-#   "student_id": "<STUDENT_ID>",
-#   "course_id": "<COURSE_ID>",
-#   "assessments": [
-#     {
-#       "assessment_id": "<ASSESSMENT_ID>",
-#       "name": "Midterm Exam",
-#       "value": 100,
-#       "completed": true,
-#       "marks_obtained": 85,
-#       "feedback": "Good performance"
-#     },
-#     ...
-#   ],
-#   "total_score": 85,
-#   "grade": "B"
-# }
-
-### List All Students with Their Assessments and Grades for a Given Course and Optional Filters
-GET http://localhost:3005/instructor/664718164bdb605b328f311d/courses?courseId=6665daa4bfc61fcd8ae966f9
-Content-Type: application/json
-
-# Expected Response:
-# [
-#   {
-#     "studentId": "<STUDENT_ID>",
-#     "studentName": "John Doe",
-#     "year": 1,
-#     "semester": "Fall 2024",
-#     "section": "A",
-#     "courses": [
-#       {
-#         "courseId": "<COURSE_ID>",
-#         "courseName": "Mathematics",
-#         "sectionId": "A",
-#         "grade": "B",
-#         "status": "Completed"
-#       },
-#       ...
-#     ]
-#   },
-#   ...
-# ]
-
-### Calculate GPAs for a List of Students and Their Courses
-POST http://localhost:3005/calculateGPAs
-Content-Type: application/json
-
-{
-  "students": [
-    {
-      "studentId": "<STUDENT_ID>",
-      "courses": [
+    "students": [
         {
-          "courseId": "<COURSE_ID>"
+            "studentId": "62c71df7d9b2d1119e3a3e8d",
+            "courses": [
+                { "course_id": "62c71df7d9b2d1119e3a3e8a" }
+            ]
         },
-        ...
-      ]
-    },
-    ...
-  ]
+        {
+            "studentId": "62c71df7d9b2d1119e3a3e8e",
+            "courses": [
+                { "course_id": "62c71df7d9b2d1119e3a3e8a" }
+            ]
+        }
+    ]
 }
 
-# Expected Response:
-# [
-#   {
-#     "studentId": "<STUDENT_ID>",
-#     "studentName": "John Doe",
-#     "totalCredits": 15,
-#     "semesterGPA": 3.5,
-#     "courseGrades": [
-#       {
-#         "courseId": "<COURSE_ID>",
-#         "courseName": "Mathematics",
-#         "grade": "B"
-#       },
-#       ...
-#     ]
-#   },
-#   ...
-# ]
-
-### List All Students with Their Assessments and Grades for a Given Course
-GET http://localhost:3005/courses/6665daa4bfc61fcd8ae966f9/students/664718164bdb605b328f311d
+### Update an assessment within a grade document
+PUT http://localhost:3000/api/grades/62c71df7d9b2d1119e3a3e8f/assessments/62c71df7d9b2d1119e3a3e90
 Content-Type: application/json
 
-# Expected Response:
-# {
-#   "courseId": "<COURSE_ID>",
-#   "courseName": "Mathematics",
-#   "students": [
-#     {
-#       "studentId": "<STUDENT_ID>",
-#       "studentName": "John Doe",
-#       "assessments": [
-#         {
-#           "assessment_id": "<ASSESSMENT_ID>",
-#           "name": "Midterm Exam",
-#           "value": 100,
-#           "completed": true,
-#           "marks_obtained": 85,
-#           "feedback": "Good performance"
-#         },
-#         ...
-#       ],
-#       "totalScore": 85,
-#       "grade": "B"
-#     },
-#     ...
-#   ]
-# }
+{
+    "marks_obtained": 85,
+    "feedback": "Great improvement"
+}
+
+### Get grades for a course by course ID
+GET http://localhost:3000/api/grades/course/62c71df7d9b2d1119e3a3e8a
+
+### Get filtered courses taught by an instructor with optional filters
+GET http://localhost:3000/api/grades/instructor/62c71df7d9b2d1119e3a3e8c
+Content-Type: application/json
+
+{
+    "courseId": "62c71df7d9b2d1119e3a3e8a",
+    "semester": 2,
+    "year": 2023
+}
+
+### Get students by course and instructor
+GET http://localhost:3000/api/grades/courses/62c71df7d9b2d1119e3a3e8a/students/62c71df7d9b2d1119e3a3e8c
+
+### Calculate GPAs for students
+POST http://localhost:3000/api/grades/calculateGPAs
+Content-Type: application/json
+
+{
+    "students": [
+        {
+            "studentId": "62c71df7d9b2d1119e3a3e8d",
+            "courses": [
+                { "courseId": "62c71df7d9b2d1119e3a3e8a" }
+            ]
+        },
+        {
+            "studentId": "62c71df7d9b2d1119e3a3e8e",
+            "courses": [
+                { "courseId": "62c71df7d9b2d1119e3a3e8a" }
+            ]
+        }
+    ]
+}
+
+### Get all grades for a specific student
+GET http://localhost:3000/api/grades/62c71df7d9b2d1119e3a3e8d
+
+### Get a specific grade for a student in a course
+GET http://localhost:3000/api/grades/62c71df7d9b2d1119e3a3e8d/62c71df7d9b2d1119e3a3e8a
