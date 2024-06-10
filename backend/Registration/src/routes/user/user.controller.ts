@@ -10,6 +10,7 @@ const deleteCsv = require("../../helper/deleteCsv");
 const checkPrerequisite = require("../../helper/checkPrerequisite");
 const isCourseTaken = require("../../helper/isCourseTaken");
 const getCourseToAdd = require("../../helper/getCoursetoAdd");
+const Notification = require("../../helper/Notification");
 async function getCredit(Id: String): Promise<any> {
   const course = await Course.findById(Id);
   if (!course) {
@@ -573,6 +574,29 @@ function validateStudent(student: any) {
     return res.status(500).json({ message: error.message });
   }
 }; */
+
+export const UploadStudentImage = async (req: Request, res: Response) => {
+
+  const file = req.file;
+  const id = req.body.id
+
+  console.log(id)
+
+ 
+
+ 
+  if (file) {
+    const fileName = `${id}.jpg`;
+    const filePath = path.join(
+      __dirname,
+      "../exports",
+      "images",
+      fileName
+    );
+  }
+
+  return res.status(200).json({ message: "successfully uploaded image" });
+};
 export const getAllStudent = async (req: Request, res: Response) => {
   try {
     const { year, semester, search, department_id } = req.query;
@@ -1035,82 +1059,55 @@ export const deleteStaff = async (req: Request, res: Response) => {
 };
 
 export const deactivateUser = async (req: Request, res: Response) => {
-  //const staff = req.body.staff_id;
   const email = req.body.email;
 
   try {
-    try {
-      const response: any = await fetch(
-        "http://localhost:5000/auth/deactivate",
-        {
-          method: "patch",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-          }),
-        }
-      );
+    const response = await fetch("http://localhost:5000/auth/deactivate", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
 
-      if (response.status === 200) {
-        const r = await response.json();
-        console.log(r.message);
-
-        return res.status(200).json({ message: "success" });
-      } else {
-        const r = await response.json();
-
-        console.log(r.message);
-        return res
-          .status(400)
-          .json({ message: "An error happend please try again" });
-      }
-    } catch (error: any) {
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data.message);
+      return res.status(200).json({ message: "success" });
+    } else {
+      const error = await response.json();
       console.log(error.message);
-
-      return res.status(500).json({ message: error.message });
+      return res.status(400).json({ message: "An error happened, please try again" });
     }
   } catch (error: any) {
+    console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
 };
 
 export const activateUser = async (req: Request, res: Response) => {
-  //const staff = req.body.staff_id;
   const email = req.body.email;
 
   try {
-    try {
-      const response: any = await fetch("http://localhost:5000/auth/activate", {
-        method: "patch",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-        }),
-      });
+    const response = await fetch("http://localhost:5000/auth/activate", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
 
-      if (response.status === 200) {
-        const r = await response.json();
-        console.log(r.message);
-
-        return res.status(200).json({ message: "success" });
-      } else {
-        const r = await response.json();
-
-        console.log(r.message);
-        return res
-          .status(400)
-          .json({ message: "An error happend please try again" });
-      }
-    } catch (error: any) {
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data.message);
+      return res.status(200).json({ message: "success" });
+    } else {
+      const error = await response.json();
       console.log(error.message);
-
-      return res.status(500).json({ message: error.message });
+      return res.status(400).json({ message: "An error happened, please try again" });
     }
   } catch (error: any) {
+    console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -1502,8 +1499,13 @@ export const getStudentRegistrationHistory = async (
   res: Response
 ) => {
   const student_id = req.params.student_id;
+  const student_id = req.params.student_id;
 
-  const registrations = await Registration.find({ stud_id: student_id });
+  const registrations = await Registration.find({ stud_id: student_id })
+  .populate({
+    path: "courses.courseID",
+    select: "name code credits lec lab tut",
+  })
 
   if (!registrations) {
     return res.status(200).json({ message: [] });
@@ -2588,7 +2590,7 @@ export const exportWithdrawalFile = async (req: Request, res: Response) => {
 
         "exports",
         "withdrawals",
-        `${id}.pdf`
+        `${id}-withdrawal.pdf`
       );
       console.log(__dirname);
       res.download(file);
@@ -2610,10 +2612,7 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
   const file = req.file;
 
   const student = await Student.findById(id);
-  const withdrawal = await Withdrawal.findOne({ stud_id:id,status:"Registrar-withdrawal"})
-  if (!withdrawal) {
-    return res.status(200).json({ message: "Can't Ask for Enrollment" });
-  }
+
   if (!student) {
     return res.status(404).json({ message: "Student not found" });
   }
@@ -2669,7 +2668,7 @@ export const exportEnrollmentFile = async (req: Request, res: Response) => {
 
         "exports",
         "enrollments",
-        `${id}.pdf`
+        `${id}-enroll.pdf`
       );
       console.log(__dirname);
       res.download(file);
@@ -2871,6 +2870,7 @@ export const AcceptRegistrarWithdrawalRequest = async (
   const ids: any = req.body.data;
   const errors: any = [];
   const success: any = [];
+  const emails:any = []
 
   for (const id of ids) {
     const student = await Student.findById(id);
@@ -2878,6 +2878,7 @@ export const AcceptRegistrarWithdrawalRequest = async (
     if (!student) {
       errors.push(`Could not find student with id ${id}`);
     }
+    emails.push(student.email)
     const highestCombination = await Registration.findOne({ stud_id: id })
       .sort({ year: -1, semester: -1 })
       .select("year semester")
@@ -2917,6 +2918,17 @@ export const AcceptRegistrarWithdrawalRequest = async (
       errors.push(`Could not update student with name ${student.name}`);
     } else {
       success.push(` updated student with name ${student.name}`);
+      const data = {
+        "data" : {
+    "srecipient":emails,
+    "message" : "Registration period is Inactive",
+    "type" : "RegistrationStatus"
+   },
+    "name" : "student" , 
+   "dept_id" : "6627f1cb16bcc35f5d498f30"
+        
+        }
+         //await Notification(data)
     }
   }
 

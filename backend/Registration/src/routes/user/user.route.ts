@@ -77,11 +77,16 @@ const validateCsv = require("../../middlware/validateCsv")
 const checkRegistrationStatus = require("../../middlware/checkRegistrationStatus");
 const checkRegistrationStatus2 = require("../../middlware/checkRegistrationStatus2");
 
+const checkAddStatus = require("../../middlware/checkAddStatus");
+const checkAddStatus2 = require("../../middlware/checkAddStatus2");
+
 const Student  = require("../../models/student.model")
 
 const multer = require("multer");
 const csv = require("csv-parser");
 const fs = require("fs");
+
+import { UploadStudentImage } from "./user.controller";
 
 const storage = multer.diskStorage({
   destination: (req:any, file:any, cb:any) => {
@@ -101,10 +106,20 @@ const storage2 = multer.diskStorage({
     cb(null, fileName);
   }
 });
+const storage3 = multer.diskStorage({
+  destination: (req:any, file:any, cb:any) => {
+    cb(null, 'exports/images');
+  },
+  filename: (req:any, file:any, cb:any) => {
+    const fileName = `${req.body.id}.jpg`;
+    cb(null, fileName);
+  }
+});
 
 const upload = multer({ dest: "uploads/" });
 const upload2 =  multer({ storage });
 const upload3 =  multer({ storage2 });
+const upload4 =  multer({ storage3 });
 
 const ValidatePdf = require("../../middlware/validatePdf")
 const ValidatePdf2 = require("../../middlware/validatePdf2")
@@ -162,10 +177,12 @@ Studentrouter.post("/student/stausUpdateRegistrar", acceptRejectRegistrar);
 Studentrouter.get("/student/addDrop", getAddDrop);
 Studentrouter.get("/student/activeAddDrop/:stud_id", getActiveAddDrop);
 
-Studentrouter.post("/student/withdrawalRequest",  upload2.single("file"),ValidatePdf, WithdrawalRequest);
+
 Studentrouter.get("/student/withdrawalFile/:id", exportWithdrawalFile);
 Studentrouter.get("/student/enrollmentFile/:id", exportEnrollmentFile);
-Studentrouter.post("/student/enrollmentRequest",  upload3.single("file"),ValidatePdf2, EnrollmentRequest);
+Studentrouter.post("/student/withdrawalRequest",  upload2.single("file"),ValidatePdf, WithdrawalRequest);
+Studentrouter.post("/student/enrollmentRequest",  upload2.single("file"),ValidatePdf2, EnrollmentRequest);
+Studentrouter.post("/student/uploadImage",  upload4.single("file"), UploadStudentImage);
 Studentrouter.get("/student/withdrawalStatus/:id", getWithdrawalStatus);
 
 Studentrouter.get(

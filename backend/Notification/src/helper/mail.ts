@@ -10,6 +10,9 @@ require("dotenv").config();
 //   },
 // });
 
+const email = "contactminatech@gmail.com"
+const password = "cnwdnrateznivdgr"
+
 const transporter = nodemailer.createTransport({
   service: "gmail",
   host: "smtp.gmail.com",
@@ -19,8 +22,8 @@ const transporter = nodemailer.createTransport({
   },
   secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
-    user: process.env.USER,
-    pass: process.env.PASS,
+    user: email,
+    pass: password,
   },
 });
 
