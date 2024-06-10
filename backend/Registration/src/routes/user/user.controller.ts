@@ -573,6 +573,29 @@ function validateStudent(student: any) {
     return res.status(500).json({ message: error.message });
   }
 }; */
+
+export const UploadStudentImage = async (req: Request, res: Response) => {
+
+  const file = req.file;
+  const id = req.body.id
+
+  console.log(id)
+
+ 
+
+ 
+  if (file) {
+    const fileName = `${id}.jpg`;
+    const filePath = path.join(
+      __dirname,
+      "../exports",
+      "images",
+      fileName
+    );
+  }
+
+  return res.status(200).json({ message: "successfully uploaded image" });
+};
 export const getAllStudent = async (req: Request, res: Response) => {
   try {
     const { year, semester, search, department_id } = req.query;
