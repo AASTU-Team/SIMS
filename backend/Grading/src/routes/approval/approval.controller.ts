@@ -70,7 +70,7 @@ class ApprovalController {
 
     const requests = await ApprovalProcess.find({
       $or: [
-        { status: "Pending" },
+        { department_approval: "Pending" },
         {
           dean_approval:"Rejected",
           
