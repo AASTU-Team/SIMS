@@ -6,7 +6,7 @@ dotenv.config();
 export default async function mongo(): Promise<void> {
   mongoose.connection.on("connected", () => {
     console.log("connected to MongoDB");
-    setupAssignmentWatcher(); 
+    // setupAssignmentWatcher(); 
   });
 
   mongoose.connection.on("error", (err: Error) => {
