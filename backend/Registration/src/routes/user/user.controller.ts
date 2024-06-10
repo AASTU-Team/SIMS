@@ -1499,8 +1499,6 @@ export const getStudentRegistrationHistory = async (
   res: Response
 ) => {
   const student_id = req.params.student_id;
-  const student_id = req.params.student_id;
-
   const registrations = await Registration.find({ stud_id: student_id })
   .populate({
     path: "courses.courseID",
