@@ -116,6 +116,7 @@ class GradeController {
                 }
             }
             else {
+                assessment.marks_obtained = 0;
                 assessment.completed = false;
             }
 
