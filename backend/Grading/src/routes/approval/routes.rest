@@ -1,3 +1,11 @@
+### Get Department Requests
+GET http://localhost:3005/approval/department/requests
+Content-Type: application/json
+
+### Get Dean Requests
+GET http://localhost:3005/approval/dean/requests
+Content-Type: application/json
+
 ### Submit Grade for Approval
 POST http://localhost:3005/approval/submit
 Content-Type: application/json
