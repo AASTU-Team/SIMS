@@ -51,7 +51,6 @@ const studentAssessmentSchema = new Schema<StudentAssessment>({
     required: false,
   }
 });
-
 const gradeSchema = new Schema<GradeDocument>({
   student_id: {
     type: mongoose.Schema.Types.ObjectId,

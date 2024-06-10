@@ -66,6 +66,53 @@ class ApprovalController {
     }
   }
 
+  static async getDepartmentRequests(req: Request, res: Response) {
+
+    const requests = await ApprovalProcess.find({
+      $or: [
+        { status: "Pending" },
+        {
+          dean_approval:"Rejected",
+          
+        },
+      ],
+    })
+
+    if(requests.length > 0)
+      {
+        res.status(200).json({message:requests})
+      }
+      else{
+        res.status(200).json({message:"No requests"})
+      }
+
+
+
+
+  }
+
+  static async getDeanRequests(req: Request, res: Response) {
+
+    const requests = await ApprovalProcess.find({department_approval:"Approved"})
+    if(requests.length > 0)
+      {
+        res.status(200).json({message:requests})
+      }
+    
+
+    if(requests.length > 0)
+      {
+        res.status(200).json({message:requests})
+      }
+      else{
+        res.status(200).json({message:"No requests"})
+      }
+
+
+
+
+  }
+
   static async departmentApproval(req: Request, res: Response) {
     const { approvalId } = req.params;
     const { status, by, reason } = req.body;
