@@ -13,6 +13,7 @@ const AddStatusRoute = require("./routes/AddStatus/AddStatus.route");
 const sectionRouter = require("./routes/section/section.router");
  
 const SemesterRoute = require("./routes/Semester/Semester.route");
+const reportRoute = require("./routes/report/report.route");
  
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/AddStatus", AddStatusRoute);
 app.use("/section", sectionRouter);
  
 app.use("/Semester", SemesterRoute);
+app.use("/report", reportRoute);
  
 // app.get("/", (req , res) => {
 //   res.send("Hello World!");
