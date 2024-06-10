@@ -77,6 +77,9 @@ const validateCsv = require("../../middlware/validateCsv")
 const checkRegistrationStatus = require("../../middlware/checkRegistrationStatus");
 const checkRegistrationStatus2 = require("../../middlware/checkRegistrationStatus2");
 
+const checkAddStatus = require("../../middlware/checkAddStatus");
+const checkAddStatus2 = require("../../middlware/checkAddStatus2");
+
 const Student  = require("../../models/student.model")
 
 const multer = require("multer");
