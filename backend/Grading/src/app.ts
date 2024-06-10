@@ -11,7 +11,7 @@ import approvalRoutes from "./routes/approval/approval.route";
 import limiter from "./middlewares/rate.middleware";
 const app = express();
 
-app.use(limiter);
+// app.use(limiter);
 app.use(cors());
 app.use(bodyParser.json());
 app.use(cookieParser());

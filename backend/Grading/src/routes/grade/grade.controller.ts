@@ -106,7 +106,8 @@ class GradeController {
             }
 
             // Check if the updateData contains marks_obtained
-            if (marks_obtained !== undefined) {
+            // console.log(marks_obtained)
+            if (marks_obtained !== undefined && marks_obtained !== null) {
                 if (marks_obtained > assessment.value) {
                     return res.status(400).json({ error: 'marks_obtained cannot be greater than the assessment value' });
                 }
@@ -116,6 +117,8 @@ class GradeController {
                 }
             }
             else {
+                console.log('here')
+                assessment.marks_obtained = 0;
                 assessment.completed = false;
             }
 
