@@ -151,7 +151,7 @@ Studentrouter.get(
   "/student/registrationCourses/:student_id",
   getstudentRegistrationCourses
 );
-Studentrouter.get("/student/registrationStatus", getStudentRegistrationHistory);
+Studentrouter.get("/student/registrationStatus/:student_id", getStudentRegistrationHistory);
 Studentrouter.get("/student/addcourses/:student_id", ListAddCourses);
 
 // Studentrouter.post("/student/dropcourse/:id", dropCourse);

@@ -161,7 +161,7 @@ Content-Type: application/json
 # ]
 
 ### List All Students with Their Assessments and Grades for a Given Course
-GET http://localhost:3005/courses/<COURSE_ID>/students
+GET http://localhost:3005/courses/6665daa4bfc61fcd8ae966f9/students/664718164bdb605b328f311d
 Content-Type: application/json
 
 # Expected Response:

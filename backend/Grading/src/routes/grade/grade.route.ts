@@ -18,7 +18,7 @@ router.get('/grades/:studentId', GradeController.getGrades);
 router.get('/grades/:studentId/:courseId', GradeController.getGrade);
 
 // Route to list all students with their assessments and grades for a given course and optional filters
-router.get('/instructor/:instructorId/courses', GradeController.getFilteredCourses);
+router.get('/instructor/:instructorId/courses/', GradeController.getFilteredCourses);
 
 router.post('/calculateGPAs', GradeController.calculateGPAs);
 

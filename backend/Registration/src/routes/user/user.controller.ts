@@ -1501,7 +1501,7 @@ export const getStudentRegistrationHistory = async (
   req: Request,
   res: Response
 ) => {
-  const student_id = req.body.student_id;
+  const student_id = req.params.student_id;
 
   const registrations = await Registration.find({ stud_id: student_id });
 
@@ -2610,13 +2610,16 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
   const file = req.file;
 
   const student = await Student.findById(id);
-
+  const withdrawal = await Withdrawal.findOne({ stud_id:id,status:"Registrar-withdrawal"})
+  if (!withdrawal) {
+    return res.status(200).json({ message: "Can't Ask for Enrollment" });
+  }
   if (!student) {
     return res.status(404).json({ message: "Student not found" });
   }
-  if (student.status !== "Withdrawn") {
-    return res.status(200).json({ message: "Cant Ask for Enrollment" });
-  }
+  // if (student.status !== "Withdrawn") {
+  //   return res.status(200).json({ message: "Cant Ask for Enrollment" });
+  // }
 
   const withdrawalRequest = await new Withdrawal({
     stud_id: id,
