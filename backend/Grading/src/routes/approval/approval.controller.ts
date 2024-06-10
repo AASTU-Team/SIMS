@@ -124,7 +124,11 @@ class ApprovalController {
 
   static async getDeanRequests(req: Request, res: Response) {
 
-    const requests = await ApprovalProcess.find({"department_approval.status":"Approved"})
+    const requests = await ApprovalProcess.find({
+      "dean_approval.status": "Pending",
+   
+      "department_approval.by": { $exists: true, $ne: null },
+    })
     .populate({
       path: "grade_id",
       select: "total_score grade",
