@@ -183,9 +183,24 @@ if(!semester)
                         case 'A':
                           gradePoints = 4.0;
                           break;
+                          case 'A+':
+                            gradePoints = 4.0;
+                            break;
+                            case 'A-':
+                              gradePoints = 3.75;
+                              break;
+                              case 'B+':
+                                gradePoints = 3.5;
+                                break;
                         case 'B':
                           gradePoints = 3.0;
                           break;
+                          case 'B-':
+                            gradePoints = 2.75;
+                            break;
+                            case 'C+':
+                              gradePoints = 2.5;
+                              break;
                         case 'C':
                           gradePoints = 2.0;
                           break;
@@ -202,8 +217,8 @@ if(!semester)
                     //  console.log("course",course)
             
                       // Add the grade points to the total
-                      totalGradePoints += gradePoints * parseInt(course.courseID.credits);
-                      totalCreditHours +=parseInt(course.courseID.credits) ;
+                      totalGradePoints += gradePoints * parseFloat(course.courseID.credits);
+                      totalCreditHours +=parseFloat(course.courseID.credits) ;
                     }
                   }
                 }
