@@ -27,7 +27,7 @@ export const accessAuth = async (
     // Attach the user data to the request object
     req.user = user;
     // If the user's role is 'student', call next()
-    if (req.user?.role.includes("department")) {
+    if (req.user?.role.includes("departmentMan")) {
       return next();
     } else {
       // Otherwise, send a 403 Forbidden response

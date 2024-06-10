@@ -97,7 +97,7 @@ export const ActivateRegistrationStatus = async (req: Request, res: Response) =>
      "dept_id" : "6627f1cb16bcc35f5d498f30"
           
           }
-          // await Notification(data)
+           await Notification(data)
           
 
         return res.status(200).json({ message: "success", staus: RegStatus });
@@ -161,7 +161,7 @@ export const DeactivateRegistrationStatus = async (req: Request, res: Response) 
      "dept_id" : "6627f1cb16bcc35f5d498f30"
           
           }
-          // await Notification(data)
+          await Notification(data)
         return res.status(200).json({ message: "success", staus: RegStatus });
 
       }

@@ -1,4 +1,6 @@
 import express from "express";
+const accessAuth = require("../../middlware/role/auth")
+const studentAuth = require('../../middlware/role/student.middleware')
 
 import {
   addCourse,
@@ -132,7 +134,7 @@ Studentrouter.get("/exportLogFile", exportLogFile);
 
 // Register a student
 
-Studentrouter.post("/register/student", validateRegistration, registerStudent);
+Studentrouter.post("/register/student",accessAuth, validateRegistration, registerStudent);
 Studentrouter.post(
   "/register/studentCsv",
   upload.single("file"),
@@ -141,7 +143,7 @@ Studentrouter.post(
 );
 Studentrouter.post("/register/staff", validateSRegistration, registerStaff);
 Studentrouter.post("/register/add", registerDependency);
-Studentrouter.post("/me", getStudentProfile);
+Studentrouter.post("/me",accessAuth, getStudentProfile);
 
 Studentrouter.post("/upload", upload.single("file"), uploadFile);
 Studentrouter.get("/student/all", getAllStudent);

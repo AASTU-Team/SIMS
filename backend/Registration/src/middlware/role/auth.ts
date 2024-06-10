@@ -7,8 +7,7 @@ interface Reqq extends Request {
     role: [];
   };
 }
-
-export const accessAuth = async (
+ const accessAuth = async (
   req: Reqq,
   res: Response,
   next: NextFunction
@@ -21,7 +20,7 @@ export const accessAuth = async (
     }
 
     // Call the /me endpoint in the authentication service
-    const response = await fetch("/me", {
+    const response = await fetch("http://localhost:5000/auth/me", {
       headers: {
         Authorization: `Bearer ${accessToken}`,
       },
@@ -37,7 +36,11 @@ export const accessAuth = async (
       email,
       role,
     };
+    console.log(email)
+    next()
   } catch (e: any) {
     return res.status(500).send(e.message);
   }
 };
+
+module.exports =accessAuth

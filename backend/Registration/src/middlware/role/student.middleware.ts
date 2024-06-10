@@ -10,7 +10,7 @@ interface Reqq extends Request {
   };
 }
 
-export const accessAuth = async (
+ const accessAuth = async (
   req: Reqq,
   res: Response,
   next: NextFunction
@@ -27,7 +27,7 @@ export const accessAuth = async (
     // Attach the user data to the request object
     req.user = user;
     // If the user's role is 'student', call next()
-    if (req.user?.role.includes("student")) {
+    if (req.user?.role.includes("studentMan")) {
       return next();
     } else {
       // Otherwise, send a 403 Forbidden response
@@ -91,3 +91,6 @@ export const accessAuth = async (
 //     return res.status(500).send(e.message);
 //   }
 // };
+
+
+module.exports = accessAuth
