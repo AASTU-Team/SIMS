@@ -1525,9 +1525,13 @@ export const getStudentRegistrationHistory = async (
   req: Request,
   res: Response
 ) => {
-  const student_id = req.body.student_id;
+  const student_id = req.params.student_id;
 
-  const registrations = await Registration.find({ stud_id: student_id });
+  const registrations = await Registration.find({ stud_id: student_id })
+  .populate({
+    path: "courses.courseID",
+    select: "name code credits lec lab tut",
+  })
 
   if (!registrations) {
     return res.status(200).json({ message: [] });
