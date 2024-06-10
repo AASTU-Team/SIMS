@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import Grade from '../../models/grade.model';
 import Course from '../../models/course.model';
 import Student from '../../models/student.model';
+import ApprovalProcess from '../../models/approvalProcess.model';
 import { assign } from '../../helper/helper';
 
 class GradeController {
@@ -16,7 +17,6 @@ class GradeController {
             if (!course) {
                 return res.status(404).json({ error: 'Course not found' });
             }
-            console.log(course)
             // Initialize assessments from the course assessments
             const assessments = course.assessments.map((assessment: any) => ({
                 assessment_id: assessment._id,
@@ -40,7 +40,6 @@ class GradeController {
             return res.status(201).json({ newGrade, message: 'Grade document created successfully' });
         } catch (error) {
             console.error('Error creating grade document:', error);
-            assign();
             return res.status(500).json({ error: 'Internal server error' });
         }
     }
@@ -80,7 +79,7 @@ class GradeController {
                     await newGrade.save();
                 }
             }
-            assign();
+
             return res.status(201).json({ message: 'Grade documents created successfully' });
         } catch (error) {
             console.error('Error creating grade documents:', error);
@@ -98,9 +97,14 @@ class GradeController {
             if (!grade) {
                 return res.status(404).json({ error: 'Grade not found' });
             }
+
+            const approvalProcess = await ApprovalProcess.findOne({ grade_id: gradeId }).exec();
+            if (approvalProcess && (approvalProcess.status === 'Pending' || approvalProcess.status === 'Approved')) {
+                return res.status(400).json({ error: 'Grade cannot be updated while approval is pending or already approved.' });
+            }
+
             // Find the assessment within the assessments array
-            const assessment = grade.assessments.find((assess:any) => assess.assessment_id === assessmentId);
-            console.log(assessment)
+            const assessment = grade.assessments.find((assess: any) => assess.assessment_id === assessmentId);
             if (!assessment) {
                 return res.status(404).json({ error: 'Assessment not found' });
             }
@@ -137,7 +141,7 @@ class GradeController {
     // get grades for a course id
     static async getGradesByCourse(req: Request, res: Response) {
         const { courseId } = req.params;
-        
+
         await assign();
         try {
             // Find all grades for the given course
@@ -146,19 +150,28 @@ class GradeController {
             if (!grades || grades.length === 0) {
                 return res.status(404).json({ error: 'No grades found for this course' });
             }
-            console.log(grades)
+
             // Prepare the response data
-            const studentGrades = grades.map(grade => {
+            const studentGrades = [];
+            for (const grade of grades) {
                 const studentDoc = grade.student_id as any;  // Assuming student_id is populated
-                return {
-                    studentId: studentDoc?.id,
+
+                const approvalProcess = await ApprovalProcess.findOne({ grade_id: grade._id }).exec();
+                let approvalStatus = 'Uninitiated';
+                if (approvalProcess) {
+                    approvalStatus = approvalProcess.status;
+                }
+
+                studentGrades.push({
+                    studentId: studentDoc?._id,
                     studentName: studentDoc?.name,
                     assessments: grade.assessments,
                     totalScore: grade.total_score,
                     grade: grade.grade,
-                    instructorId: grade.instructor_id
-                };
-            });
+                    instructorId: grade.instructor_id,
+                    approval_status: approvalStatus
+                });
+            }
 
             return res.status(200).json({
                 courseId,
@@ -174,17 +187,16 @@ class GradeController {
         const { instructorId } = req.params;
         const { sectionId, courseId, semester, year } = req.query;
 
-        await assign();
         try {
-            // Build the grade filter query
+            await assign();
+
             const gradeFilter: any = { instructor_id: instructorId };
             if (courseId) {
                 gradeFilter.course_id = courseId;
             }
-            
+
             let studentIds: mongoose.Types.ObjectId[] = [];
 
-            // Filter by semester and year from Student model
             if (semester || year) {
                 const studentFilter: any = {};
                 if (semester) {
@@ -203,18 +215,24 @@ class GradeController {
                 gradeFilter.student_id = { $in: studentIds };
             }
 
-            // Find the grades matching the filter
             const grades = await Grade.find(gradeFilter).populate('course_id').populate('student_id');
 
             if (!grades || grades.length === 0) {
                 return res.status(404).json({ error: 'No grades found for these filters' });
             }
 
-            // Prepare the response data
-            const results = grades.map(grade => {
-                const course = grade.course_id as any;  // Assuming course_id is populated
-                const student = grade.student_id as any;  // Assuming student_id is populated
-                return {
+            const results = [];
+            for (const grade of grades) {
+                const course = grade.course_id as any;
+                const student = grade.student_id as any;
+
+                const approvalProcess = await ApprovalProcess.findOne({ grade_id: grade._id }).exec();
+                let approvalStatus = 'Uninitiated';
+                if (approvalProcess) {
+                    approvalStatus = approvalProcess.status;
+                }
+
+                results.push({
                     courseId: course?._id,
                     courseName: course?.name,
                     studentId: student?._id,
@@ -223,9 +241,10 @@ class GradeController {
                     totalScore: grade.total_score,
                     gradeId: grade._id,
                     grade: grade.grade,
+                    approval_status: approvalStatus,
                     instructorId: grade.instructor_id
-                };
-            });
+                });
+            }
 
             return res.status(200).json(results);
         } catch (error) {
@@ -253,17 +272,26 @@ class GradeController {
             }
 
             // Prepare the response data
-            const studentGrades = grades.map(grade => {
-                const student = grade.student_id as any;  
-                return {
+            const studentGrades = [];
+            for (const grade of grades) {
+                const student = grade.student_id as any;
+
+                const approvalProcess = await ApprovalProcess.findOne({ grade_id: grade._id }).exec();
+                let approvalStatus = 'Uninitiated';
+                if (approvalProcess) {
+                    approvalStatus = approvalProcess.status;
+                }
+
+                studentGrades.push({
                     studentId: student?._id,
                     studentName: student?.name,
                     assessments: grade.assessments,
                     totalScore: grade.total_score,
                     grade: grade.grade,
-                    instructorId: grade.instructor_id
-                };
-            });
+                    instructorId: grade.instructor_id,
+                    approval_status: approvalStatus
+                });
+            }
 
             return res.status(200).json({
                 courseId: course._id,
@@ -360,12 +388,25 @@ class GradeController {
     // Get all grades for a specific student
     static async getGrades(req: Request, res: Response) {
         const { studentId } = req.params;
-        
+
         await assign();
 
         try {
             const grades = await Grade.find({ student_id: studentId }).populate('course_id');
-            return res.status(200).json(grades);
+
+            const gradesWithApprovalStatus = await Promise.all(grades.map(async (grade) => {
+                const approvalProcess = await ApprovalProcess.findOne({ grade_id: grade._id }).exec();
+                let approvalStatus = 'Uninitiated';
+                if (approvalProcess) {
+                    approvalStatus = approvalProcess.status;
+                }
+                return {
+                    ...grade.toObject(),
+                    approvalStatus
+                };
+            }));
+
+            return res.status(200).json(gradesWithApprovalStatus);
         } catch (error) {
             console.error('Error getting grades:', error);
             return res.status(500).json({ error: 'Internal server error' });
@@ -375,14 +416,28 @@ class GradeController {
     // Get a specific grade for a student in a course
     static async getGrade(req: Request, res: Response) {
         const { studentId, courseId } = req.params;
-        
+
         await assign();
         try {
             const grade = await Grade.findOne({ student_id: studentId, course_id: courseId }).populate('course_id');
             if (!grade) {
                 return res.status(404).json({ error: 'Grade not found' });
             }
-            return res.status(200).json(grade);
+
+            // Fetch the approval status for the grade
+            const approvalProcess = await ApprovalProcess.findOne({ grade_id: grade._id }).exec();
+            let approvalStatus = 'Uninitiated';
+            if (approvalProcess) {
+                approvalStatus = approvalProcess.status;
+            }
+
+            // Add the approval status to the grade response
+            const gradeWithApprovalStatus = {
+                ...grade.toObject(),
+                approvalStatus
+            };
+
+            return res.status(200).json(gradeWithApprovalStatus);
         } catch (error) {
             console.error('Error getting grade:', error);
             return res.status(500).json({ error: 'Internal server error' });
