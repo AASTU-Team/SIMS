@@ -154,10 +154,7 @@ class ApprovalController {
       }
     
 
-    if(requests.length > 0)
-      {
-        res.status(200).json({message:requests})
-      }
+   
       else{
         res.status(200).json({message:"No requests"})
       }
