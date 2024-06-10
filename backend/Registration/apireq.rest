@@ -164,4 +164,8 @@ Content-Type:  application/json
 GET  http://localhost:3000/user/student/addDrop?skip=0&limit=10&registrarStatus=pending
 Content-Type:  application/json
 
+###  reg get all req that are pending
+GET  http://localhost:5000/section/department?department_id=663646030666c2aea17b217c&semester=1 
+Content-Type:  application/json
+
 
