@@ -1669,7 +1669,7 @@ export const getStudentSemesters = async (
 ) => {
 
   const id = req.params.student_id
-  const data:any = []
+  //const data:any = []
 
   const student = await Student.findById(id)
   if(!student)
@@ -1688,16 +1688,13 @@ export const getStudentSemesters = async (
         res.status(200).send({message:[]})
       }
 
-    registrations.map((registration:any) =>{
-      data.push({
-        year:registration.year,
-        semester:registration.semester,
-        status:registration.status,
-        GPA:registration.GPA,
-        courses:registration.courses
-      })
-
-    })
+      const data = registrations.map((registration:any) => ({
+        year: registration.year,
+        semester: registration.semester,
+        status: registration.status,
+        GPA: registration.GPA,
+        courses: registration.courses.filter((course:any) => course.status === "Complete"),
+      }));
 
     res.status(200).send({message:data,CGPA:CGPA})
 
