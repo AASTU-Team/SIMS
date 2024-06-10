@@ -1,4 +1,5 @@
 import mongoose, { Document, Schema } from "mongoose";
+import ApprovalProcess from "./approvalProcess.model";
 
 interface StudentAssessment {
   assessment_id: string;
@@ -17,6 +18,7 @@ interface GradeDocument extends Document {
   assessments: StudentAssessment[];
   total_score: number;
   grade: string;
+  approvalStatus: string;
   calculateTotalScore(): void;
 }
 
