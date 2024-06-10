@@ -3,6 +3,7 @@ const Student = require('../models/student.model')
 const Semester = require('../models/Semesters.model')
 
 const Registration = require('../models/registration.model')
+const Notification = require('../helper/Notification')
 
 import axios from "axios"
 async function calculateCGPA(studentId:any) {
@@ -64,6 +65,7 @@ async function reAssignSemester(id: any): Promise<any> {
 const semester:any = await Semester.findById(id)
 const errors:any = []
 const success:any = []
+const emails:any = []
   
 
 
@@ -275,9 +277,22 @@ if(!semester)
           student.year = year
           student.semester = semester
           student.save()
+          emails.push(student.email)
 
         
       }
+      const data = {
+        "data" : {
+    "srecipient":emails,
+    "message" : "You have successfully passed the semester! Check your Grades and",
+    "type" : "Grades",
+    },
+    "name" : "student" , 
+    "dept_id" : "6627f1cb16bcc35f5d498f30"
+        
+        }
+         await Notification(data)
+
 
     }
 
