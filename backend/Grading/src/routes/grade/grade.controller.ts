@@ -90,7 +90,7 @@ class GradeController {
 
     static async updateAssessment(req: Request, res: Response) {
         const { gradeId, assessmentId } = req.params;
-        const updateData = req.body;
+        const { marks_obtained, feedback } = req.body;
 
         try {
             // Find the grade document by ID
@@ -99,24 +99,29 @@ class GradeController {
                 return res.status(404).json({ error: 'Grade not found' });
             }
             // Find the assessment within the assessments array
-            const assessment = grade.assessments.find(assess => assess.assessment_id === assessmentId);
+            const assessment = grade.assessments.find((assess:any) => assess.assessment_id === assessmentId);
+            console.log(assessment)
             if (!assessment) {
                 return res.status(404).json({ error: 'Assessment not found' });
             }
 
             // Check if the updateData contains marks_obtained
-            if (updateData.marks_obtained !== undefined) {
-                if (updateData.marks_obtained > assessment.value) {
+            if (marks_obtained !== undefined) {
+                if (marks_obtained > assessment.value) {
                     return res.status(400).json({ error: 'marks_obtained cannot be greater than the assessment value' });
                 }
+                else {
+                    assessment.marks_obtained = marks_obtained;
+                    assessment.completed = true;
+                }
+            }
+            else {
+                assessment.completed = false;
             }
 
-            // Update the assessment fields
-            Object.keys(updateData).forEach(key => {
-                if (updateData.hasOwnProperty(key)) {
-                    (assessment as any)[key] = updateData[key];
-                }
-            });
+            if (feedback !== undefined) {
+                assessment.feedback = feedback;
+            }
 
             // Save the updated grade document
             await grade.save();
@@ -313,13 +318,13 @@ class GradeController {
                         switch (grade) {
                             case 'A+': score = 4.0; break;
                             case 'A': score = 4.0; break;
-                            case 'A-': score = 3.7; break;
-                            case 'B+': score = 3.3; break;
+                            case 'A-': score = 3.75; break;
+                            case 'B+': score = 3.5; break;
                             case 'B': score = 3.0; break;
-                            case 'B-': score = 2.7; break;
-                            case 'C+': score = 2.3; break;
+                            case 'B-': score = 2.75; break;
+                            case 'C+': score = 2.5; break;
                             case 'C': score = 2.0; break;
-                            case 'C-': score = 1.7; break;
+                            case 'C-': score = 1.75; break;
                             case 'F': score = 0.0; break;
                         }
 
