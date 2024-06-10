@@ -128,6 +128,41 @@ class GradeController {
         }
     }
 
+    // get grades for a course id
+    static async getGradesByCourse(req: Request, res: Response) {
+        const { courseId } = req.params;
+
+        try {
+            // Find all grades for the given course
+            const grades = await Grade.find({ course_id: courseId }).populate('student_id');
+
+            if (!grades || grades.length === 0) {
+                return res.status(404).json({ error: 'No grades found for this course' });
+            }
+            console.log(grades)
+            // Prepare the response data
+            const studentGrades = grades.map(grade => {
+                const studentDoc = grade.student_id as any;  // Assuming student_id is populated
+                return {
+                    studentId: studentDoc?.id,
+                    studentName: studentDoc?.name,
+                    assessments: grade.assessments,
+                    totalScore: grade.total_score,
+                    grade: grade.grade,
+                    instructorId: grade.instructor_id
+                };
+            });
+
+            return res.status(200).json({
+                courseId,
+                students: studentGrades
+            });
+        } catch (error) {
+            console.error('Error fetching grades by course:', error);
+            return res.status(500).json({ error: 'Internal server error' });
+        }
+    }
+
     // Filter courses taught by the instructor with optional filters
     static async getFilteredCourses(req: Request, res: Response) {
         const { instructorId } = req.params;

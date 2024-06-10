@@ -22,6 +22,8 @@ router.get('/instructor/:instructorId/courses', GradeController.getFilteredCours
 
 router.post('/calculateGPAs', GradeController.calculateGPAs);
 
+router.get('/courses/:courseId/grades', GradeController.getGradesByCourse)
+
 router.get('/courses/:courseId/students/:instructorId', GradeController.getStudentsByCourseAndInstructor);
 
 export default router;
