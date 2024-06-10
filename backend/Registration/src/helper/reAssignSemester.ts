@@ -41,17 +41,18 @@ async function calculateCGPA(studentId: any) {
               gradePoints = 0.0;
           }
 
-          console.log("course", course);
+          // console.log("course",course)
 
           // Add the grade points to the total
-          totalGradePoints += gradePoints * course.courseID.credits;
-          totalCreditHours += course.courseID.credits;
+          totalGradePoints += gradePoints * parseInt(course.courseID.credits);
+          totalCreditHours += parseInt(course.courseID.credits);
         }
       }
     }
 
     // Calculate the CGPA
     const cgpa = totalGradePoints / totalCreditHours;
+    await Student.findByIdAndUpdate(studentId, { CGPA: cgpa });
     return cgpa;
   } catch (err) {
     console.error(err);
@@ -77,10 +78,11 @@ async function reAssignSemester(id: any): Promise<any> {
     semester: semestersAsIneger,
     year: { $in: batchesAsIntegers },
   });
+  //console.log(students)
   if (students.length > 0) {
     for (const student of students) {
-      const CGPA = await calculateCGPA(student._id);
-      console.log(CGPA);
+      // const CGPA = await calculateCGPA(student._id)
+      //  console.log(CGPA)
       let isPass = "PASS";
 
       const regData = await Registration.findOne({
@@ -88,30 +90,26 @@ async function reAssignSemester(id: any): Promise<any> {
         year: student.year,
         semester: student.semester,
       });
-      // reset
-      const secNull = await Registration.findByIdAndUpdate(
-        regData._id.toString(),
-        { section_id: null }
-      );
-      //
-
       if (regData) {
-        console.log(regData.status);
+        //   console.log(regData.status)
         if (regData.status != "Registrar") {
           continue;
         }
-        if (student.CGPA) {
-          if (student.CGPA < 1.75) {
-            continue;
-          }
-        }
+        /*    if(student.CGPA)
+                {
+                  if(student.CGPA < 1.75)
+                    {
+                      continue
+                    }
 
-        console.log("here");
+                } */
+
+        // console.log("here")
         const courses = regData.courses;
         const modifiedCourses = courses.map((course: any) => ({
           courseId: course.courseID,
         }));
-        console.log(modifiedCourses);
+        // console.log(modifiedCourses)
 
         try {
           const response = await axios.post(
@@ -127,10 +125,10 @@ async function reAssignSemester(id: any): Promise<any> {
           );
 
           // Handle the response
-          console.log(response.data);
+          //  console.log(response.data);
           const data = response.data;
 
-          console.log("insidle loop", data[0].courseGrades);
+          // console.log("insidle loop",data[0].courseGrades)
 
           const getCourses = data[0].courseGrades;
 
@@ -160,13 +158,91 @@ async function reAssignSemester(id: any): Promise<any> {
             courses: newArray,
           });
           if (newReg) {
-            console.log("success");
+            ///////////////////////////////////////////////////////////////////////////////
+            //  console.log("here")
+            try {
+              const allRegistrations = await Registration.find({
+                stud_id: student._id,
+              }).populate("courses.courseID");
+
+              let totalGradePoints = 0;
+              let totalCreditHours = 0;
+
+              for (const registration of allRegistrations) {
+                for (const course of registration.courses) {
+                  // Check if the course has a valid grade
+                  if (course.grade && course.status !== "Incomplete") {
+                    console.log(course);
+
+                    // Calculate the grade points for the course
+                    let gradePoints;
+                    switch (course.grade) {
+                      case "A":
+                        gradePoints = 4.0;
+                        break;
+                      case "A+":
+                        gradePoints = 4.0;
+                        break;
+                      case "A-":
+                        gradePoints = 3.75;
+                        break;
+                      case "B+":
+                        gradePoints = 3.5;
+                        break;
+                      case "B":
+                        gradePoints = 3.0;
+                        break;
+                      case "B-":
+                        gradePoints = 2.75;
+                        break;
+                      case "C+":
+                        gradePoints = 2.5;
+                        break;
+                      case "C":
+                        gradePoints = 2.0;
+                        break;
+                      case "D":
+                        gradePoints = 1.0;
+                        break;
+                      case "F":
+                        gradePoints = 0.0;
+                        break;
+                      default:
+                        gradePoints = 0.0;
+                    }
+
+                    //  console.log("course",course)
+
+                    // Add the grade points to the total
+                    totalGradePoints +=
+                      gradePoints * parseFloat(course.courseID.credits);
+                    totalCreditHours += parseFloat(course.courseID.credits);
+                  }
+                }
+              }
+
+              // Calculate the CGPA
+              const cgpa = totalGradePoints / totalCreditHours;
+              await Student.findByIdAndUpdate(student._id, { CGPA: cgpa });
+              if (cgpa < 1.75) {
+                continue;
+              }
+              //  return cgpa;
+              console.log("cgpa", cgpa);
+            } catch (err) {
+              console.error(err);
+              throw err;
+            }
+
+            ////////////////////////////////////////////////////////////////////
           } else {
             console.log("error");
           }
         } catch (error) {
           console.error("An error occurred:", error);
         }
+      } else {
+        continue;
       }
       if (isPass == "Fail") {
         //continue

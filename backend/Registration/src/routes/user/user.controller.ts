@@ -1642,6 +1642,52 @@ export const studentRegistration = async (req: Request, res: Response) => {
   }
 };
 
+export const getStudentSemesters = async (
+  req: Request,
+  res: Response
+) => {
+
+  const id = req.params.student_id
+  const data:any = []
+
+  const student = await Student.findById(id)
+  if(!student)
+    {
+      res.status(200).send({message:[]})
+    }
+    const CGPA = student.CGPA
+
+    const registrations = await Registration.find({stud_id:id})
+    .populate({
+      path: "courses.courseID",
+      select: "code name credits lec lab description ",
+    })
+    if(!registrations)
+      {
+        res.status(200).send({message:[]})
+      }
+
+    registrations.map((registration:any) =>{
+      data.push({
+        year:registration.year,
+        semester:registration.semester,
+        status:registration.status,
+        GPA:registration.GPA,
+        courses:registration.courses
+      })
+
+    })
+
+    res.status(200).send({message:data,CGPA:CGPA})
+
+
+
+
+
+
+}
+
+
 export const getDepartmentRegistrationStatus = async (
   req: Request,
   res: Response
@@ -1937,6 +1983,7 @@ export const confirmRegistrarRegistration = async (
   const department: any = req.body.department;
   const isAll: any = req.body.isAll;
   const data: any[] = req.body.data;
+  const emails: any[] = [];
 
   const ids: any[] = [];
   const errors: any[] = [];
@@ -1954,6 +2001,9 @@ export const confirmRegistrarRegistration = async (
             registration.status = "Registrar";
             await registration.save();
             success.push(`updated student ${registration.stud_id}`);
+            const student = await Student.findById(registration.stud_id);
+            if(student) 
+            emails.push(student.email)
           } catch (err: any) {
             errors.push(
               `failed to update student ${registration.stud_id}: ${err.message}`
@@ -1962,6 +2012,19 @@ export const confirmRegistrarRegistration = async (
         });
 
         await Promise.all(updatePromises);
+        const data = {
+          "data" : {
+      "srecipient":emails,
+      "message" : "Registration is Accepted",
+      "type" : "Registration",
+      },
+      "name" : "student" , 
+      "dept_id" : "6627f1cb16bcc35f5d498f30"
+          
+          }
+           //await Notification(data)
+        
+        
       } else {
         res.status(400).json({ error: "unable to find requests " });
       }
@@ -2003,6 +2066,9 @@ export const confirmRegistrarRegistration = async (
           registration.status = "Registrar";
           await registration.save();
           success.push(`updated student ${id}`);
+          const student = await Student.findById(id);
+          if(student)
+            emails.push(student.email)
         } else {
           errors.push(`can't find student ${id}`);
         }
@@ -2011,6 +2077,17 @@ export const confirmRegistrarRegistration = async (
         errors.push(`can't update student ${id}`);
       }
     }
+    const datas = {
+      "data" : {
+  "srecipient":emails,
+  "message" : "Withdrawal request is Accepted",
+  "type" : "Withdrawal Request",
+  },
+  "name" : "student" , 
+  "dept_id" : "6627f1cb16bcc35f5d498f30"
+      
+      }
+       //await Notification(datas)
     if (success.length > 0) {
       return res
         .status(200)
@@ -2032,6 +2109,7 @@ export const rejectRegistrarRegistration = async (
   const ids: any[] = [];
   const errors: any[] = [];
   const success: any[] = [];
+  const emails: any[] = []
 
   for (const id of data) {
     // console.log(id)
@@ -2049,6 +2127,9 @@ export const rejectRegistrarRegistration = async (
         };
         await registration.save();
         success.push(`updated student ${id.id}`);
+        const student = await Student.findById(id.id);
+        if(student) 
+          emails.push(student.email)
       } else {
         errors.push(`can't find student ${id.id}`);
       }
@@ -2057,6 +2138,17 @@ export const rejectRegistrarRegistration = async (
       errors.push(`can't update student ${id.id}`);
     }
   }
+  const datas = {
+    "data" : {
+"srecipient":emails,
+"message" : "Withdrawal request is Accepted",
+"type" : "Withdrawal Request",
+},
+"name" : "student" , 
+"dept_id" : "6627f1cb16bcc35f5d498f30"
+    
+    }
+     //await Notification(datas)
   if (success.length > 0) {
     return res
       .status(200)
@@ -2928,18 +3020,21 @@ export const AcceptRegistrarWithdrawalRequest = async (
       errors.push(`Could not update student with name ${student.name}`);
     } else {
       success.push(` updated student with name ${student.name}`);
-      const data = {
-        data: {
-          srecipient: emails,
-          message: "Registration period is Inactive",
-          type: "RegistrationStatus",
-        },
-        name: "student",
-        dept_id: "6627f1cb16bcc35f5d498f30",
-      };
-      //await Notification(data)
+   
     }
+
   }
+  const data = {
+    "data" : {
+"srecipient":emails,
+"message" : "Withdrawal request is Accepted",
+"type" : "Withdrawal Request",
+},
+"name" : "student" , 
+"dept_id" : "6627f1cb16bcc35f5d498f30"
+    
+    }
+     //await Notification(data)
 
   return res.status(200).json({ success: success, errors: errors });
 };
@@ -2950,6 +3045,7 @@ export const AcceptRegistrarEnrollmentRequest = async (
   const ids: any = req.body.data;
   const errors: any = [];
   const success: any = [];
+  const emails:any = []
 
   for (const id of ids) {
     const student = await Student.findById(id);
@@ -2957,6 +3053,7 @@ export const AcceptRegistrarEnrollmentRequest = async (
     if (!student) {
       errors.push(`Could not find student with id ${id}`);
     }
+    emails.push(student.email)
 
     const updated = await Withdrawal.findOneAndUpdate(
       { stud_id: id },
@@ -2975,6 +3072,17 @@ export const AcceptRegistrarEnrollmentRequest = async (
       success.push(` updated student with name ${student.name}`);
     }
   }
+  const data = {
+    "data" : {
+"srecipient":emails,
+"message" : "Enrollment request is Accepted",
+"type" : "Enrollment Request",
+},
+"name" : "student" , 
+"dept_id" : "6627f1cb16bcc35f5d498f30"
+    
+    }
+     //await Notification(data)
 
   return res.status(200).json({ success: success, errors: errors });
 };
@@ -3021,6 +3129,7 @@ export const RejectRegistrarWithdrawalRequest = async (
   const ids: any = req.body.data;
   const errors: any = [];
   const success: any = [];
+  const emails:any = [];
 
   for (const id of ids) {
     const student = await Student.findById(id.id);
@@ -3028,6 +3137,7 @@ export const RejectRegistrarWithdrawalRequest = async (
     if (!student) {
       errors.push(`Could not find student with id ${id.id}`);
     }
+    emails.push(student.email)
 
     const updated = await Withdrawal.findOneAndUpdate(
       { stud_id: id.id },
@@ -3046,6 +3156,17 @@ export const RejectRegistrarWithdrawalRequest = async (
       success.push(` updated student with name ${student.name}`);
     }
   }
+  const data = {
+    "data" : {
+"srecipient":emails,
+"message" : "Withdrawal request is Rejected",
+"type" : "Withdrawal Request",
+},
+"name" : "student" , 
+"dept_id" : "6627f1cb16bcc35f5d498f30"
+    
+    }
+     //await Notification(data)
 
   return res.status(200).json({ success: success, errors: errors });
 };
@@ -3057,6 +3178,7 @@ export const RejectRegistrarEnrollmentRequest = async (
   const ids: any = req.body.data;
   const errors: any = [];
   const success: any = [];
+  const emails:any = []
 
   for (const id of ids) {
     const student = await Student.findById(id.id);
@@ -3064,6 +3186,7 @@ export const RejectRegistrarEnrollmentRequest = async (
     if (!student) {
       errors.push(`Could not find student with id ${id.id}`);
     }
+    emails.push(student.email)
 
     const updated = await Withdrawal.findOneAndUpdate(
       { stud_id: id.id },
@@ -3082,6 +3205,17 @@ export const RejectRegistrarEnrollmentRequest = async (
       success.push(` updated student with name ${student.name}`);
     }
   }
+  const data = {
+    "data" : {
+"srecipient":emails,
+"message" : "enrollment request is rejected",
+"type" : "Enrollment Request",
+},
+"name" : "student" , 
+"dept_id" : "6627f1cb16bcc35f5d498f30"
+    
+    }
+     //await Notification(data)
 
   return res.status(200).json({ success: success, errors: errors });
 };

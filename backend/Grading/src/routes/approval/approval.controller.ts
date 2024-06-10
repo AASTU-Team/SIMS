@@ -1,69 +1,166 @@
 import { Request, Response } from 'express';
 import ApprovalProcess from '../../models/approvalProcess.model';
 import Grade from '../../models/grade.model';
+const Staff = require('../../models/staff.model')
 import axios from 'axios';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 dotenv.config();
 
 class ApprovalController {
-    //TODO: Notify
+  //TODO: Notify
   static async notifyInstructor(instructorId: mongoose.Types.ObjectId, message: string) {
     console.log(`Notify instructor ${instructorId}: ${message}`);
   }
 
   static async submitForApproval(req: Request, res: Response) {
-    const { gradeId, requestedBy } = req.body;
+    const { instructorId, courseId, listOfStudents } = req.body;
 
     try {
-      // Check if the grade exists
-      const grade = await Grade.findById(gradeId);
-      if (!grade) {
-        return res.status(404).json({ error: 'Grade not found' });
+      const results: any[] = [];
+
+      for (const studentId of listOfStudents) {
+        // Check if the grade exists
+        const grade = await Grade.findOne({
+          student_id: studentId,
+          course_id: courseId,
+          instructor_id: instructorId
+        });
+
+        if (!grade) {
+          results.push({ studentId, courseId, instructorId, error: 'Grade not found' });
+          continue;
+        }
+
+        var attendancePercentage = 0;
+        try {
+          const attendanceApiUrl = `${process.env.ATTENDANCE_SERVICE_URL}/attendance/student`;
+          const attendanceResponse = await axios.post(attendanceApiUrl, {
+            course_id: grade.course_id.toString(),
+            student_id: grade.student_id.toString()
+          });
+          const attendanceRecords = attendanceResponse.data;
+          if (attendanceRecords || attendanceRecords.length !== 0) {
+            // Calculate attendance percentage
+            const totalClasses = attendanceRecords[0].attendances.length;
+            const presentClasses = attendanceRecords[0].attendances.filter((att: any) => att.status === 'Present').length;
+            attendancePercentage = (presentClasses / totalClasses) * 100;
+          }
+        }
+        catch (error) {
+          console.error('Error fetching attendance:', error);
+        }
+
+
+
+        // Create an approval process document
+        const approvalProcess = new ApprovalProcess({
+          grade_id: new mongoose.Types.ObjectId(grade._id),
+          status: 'Pending',
+          department_approval: {
+            status: 'Pending',
+            by: null,
+            reason: '',
+          },
+          dean_approval: {
+            status: 'Pending',
+            by: null,
+            reason: '',
+          },
+          requested_by: new mongoose.Types.ObjectId(instructorId),
+          requested_at: new Date(),
+          attendance_percentage: attendancePercentage
+        });
+
+        await approvalProcess.save();
+        results.push({ studentId, courseId, instructorId, message: 'Grade submitted for approval', approvalProcess });
       }
 
-      const attendanceApiUrl = `${process.env.ATTENDANCE_SERVICE_URL}/attendance/student`;
-      const attendanceResponse = await axios.post(attendanceApiUrl, {
-        course_id: grade.course_id.toString(),
-        student_id: grade.student_id.toString()
-      });
-
-      const attendanceRecords = attendanceResponse.data;
-      if (!attendanceRecords || attendanceRecords.length === 0) {
-        return res.status(404).json({ error: 'Attendance records not found' });
-      }
-
-      // Calculate attendance percentage
-      const totalClasses = attendanceRecords[0].attendances.length;
-      const presentClasses = attendanceRecords[0].attendances.filter((att: any) => att.status === 'Present').length;
-      const attendancePercentage = (presentClasses / totalClasses) * 100;
-
-      // Create an approval process document
-      const approvalProcess = new ApprovalProcess({
-        grade_id: new mongoose.Types.ObjectId(gradeId),
-        status: 'Pending',
-        department_approval: {
-          status: 'Pending',
-          by: null,
-          reason: '',
-        },
-        dean_approval: {
-          status: 'Pending',
-          by: null,
-          reason: '',
-        },
-        requested_by: new mongoose.Types.ObjectId(requestedBy),
-        requested_at: new Date(),
-        attendance_percentage: attendancePercentage
-      });
-
-      await approvalProcess.save();
-      return res.status(201).json({ message: 'Grade submitted for approval', approvalProcess });
+      return res.status(201).json(results);
 
     } catch (error) {
       console.error('Error submitting grade for approval:', error);
       return res.status(500).json({ error: 'Internal server error' });
     }
+  }
+
+  static async getDepartmentRequests(req: Request, res: Response) {
+
+    const requests = await ApprovalProcess.find({
+      $or: [
+        { "department_approval.status": "Pending" },
+        {
+          dean_approval:"Rejected",
+          
+        },
+      ],
+    }).populate({
+      path: "grade_id",
+      select: "total_score grade",
+      populate: [
+        {
+          path: "student_id",
+          select: "name email id department_id semester year type",
+        },
+        {
+          path: "course_id",
+          select: "name code credits type code lec lab tut",
+        },
+        {
+          path: "instructor_id",
+          select: "name email department_id",
+        },
+      ],
+    })
+
+    if(requests.length > 0)
+      {
+        res.status(200).json({message:requests})
+      }
+      else{
+        res.status(200).json({message:"No requests"})
+      }
+  }
+
+  static async getDeanRequests(req: Request, res: Response) {
+
+    const requests = await ApprovalProcess.find({"department_approval.status":"Approved"})
+    .populate({
+      path: "grade_id",
+      select: "total_score grade",
+      populate: [
+        {
+          path: "student_id",
+          select: "name email id department_id semester year type",
+        },
+        {
+          path: "course_id",
+          select: "name code credits type code lec lab tut",
+        },
+        {
+          path: "instructor_id",
+          select: "name email department_id",
+        },
+      ],
+    })
+   
+    if(requests.length > 0)
+      {
+        res.status(200).json({message:requests})
+      }
+    
+
+    if(requests.length > 0)
+      {
+        res.status(200).json({message:requests})
+      }
+      else{
+        res.status(200).json({message:"No requests"})
+      }
+
+
+
+
   }
 
   static async departmentApproval(req: Request, res: Response) {
