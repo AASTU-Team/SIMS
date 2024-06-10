@@ -213,6 +213,7 @@ class GradeController {
                     studentName: student?.name,
                     assessments: grade.assessments,
                     totalScore: grade.total_score,
+                    gradeId: grade._id,
                     grade: grade.grade,
                     instructorId: grade.instructor_id
                 };

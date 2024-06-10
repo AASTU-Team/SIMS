@@ -6,7 +6,6 @@ let registrationSchema = new mongoose.Schema({
     ref: "Student",
     required: false,
   },
-
   section_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Section",
@@ -26,22 +25,21 @@ let registrationSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["Pending","Student", "Department","Registrar","Rejected"],
+    enum: ["Pending", "Student", "Department", "Registrar", "Rejected"],
     required: false,
   },
   rejections: {
     by: {
       type: String,
-      enum: ['Department', 'Registrar'],
+      enum: ["Department", "Registrar"],
       required: false,
     },
     reason: {
       type: String,
       required: false,
     },
-    
   },
- 
+
   courses: [
     {
       courseID: {
@@ -55,7 +53,7 @@ let registrationSchema = new mongoose.Schema({
       },
       status: {
         type: String,
-        enum: ["Active", "Completed", "Dropped","Incomplete"],
+        enum: ["Active", "Completed", "Dropped", "Incomplete"],
         required: true,
       },
       isRetake: {
@@ -73,12 +71,11 @@ let registrationSchema = new mongoose.Schema({
     type: Date,
     required: false,
   },
-  GPA:{
+  GPA: {
     type: Number,
     required: false,
-    default:0
-   
-  }
+    default: 0,
+  },
 });
 
 module.exports =

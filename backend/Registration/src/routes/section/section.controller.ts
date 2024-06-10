@@ -9,6 +9,7 @@ let results: any = [];
 
 const Section = require("../../models/section.model");
 const Course = require("../../models/course.model");
+const Registration = require("../../models/registration.model");
 const {
   assignSectionSchedule,
 } = require("../assignment/assignment.controller");
@@ -75,6 +76,30 @@ export const createSection = async (req: Request, res: Response) => {
     return res.status(500).json({ message: error.message });
   }
 };
+export const getSectionss = async (req: Request, res: Response) => {
+  const { department_id, semester } = req.query;
+
+  try {
+    const sections = await Section.find({
+      department: department_id,
+      semester: Number(semester),
+    });
+    const sectionData = [];
+    for (const sec of sections) {
+      const data = await Registration.find({
+        section_id: sec._id.toString(),
+      })
+        .select("stud_id")
+        .populate("stud_id");
+
+      sectionData.push({ section: sec, data: data });
+    }
+    res.status(200).json({ data: sectionData });
+  } catch (error: any) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 // export const updateStatus = async (req: Request, res: Response) => {
 //   try {
 //     const { id } = req.params;
