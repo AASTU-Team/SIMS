@@ -1059,82 +1059,55 @@ export const deleteStaff = async (req: Request, res: Response) => {
 };
 
 export const deactivateUser = async (req: Request, res: Response) => {
-  //const staff = req.body.staff_id;
   const email = req.body.email;
 
   try {
-    try {
-      const response: any = await fetch(
-        "http://localhost:5000/auth/deactivate",
-        {
-          method: "patch",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            email: email,
-          }),
-        }
-      );
+    const response = await fetch("http://localhost:5000/auth/deactivate", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
 
-      if (response.status === 200) {
-        const r = await response.json();
-        console.log(r.message);
-
-        return res.status(200).json({ message: "success" });
-      } else {
-        const r = await response.json();
-
-        console.log(r.message);
-        return res
-          .status(400)
-          .json({ message: "An error happend please try again" });
-      }
-    } catch (error: any) {
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data.message);
+      return res.status(200).json({ message: "success" });
+    } else {
+      const error = await response.json();
       console.log(error.message);
-
-      return res.status(500).json({ message: error.message });
+      return res.status(400).json({ message: "An error happened, please try again" });
     }
   } catch (error: any) {
+    console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
 };
 
 export const activateUser = async (req: Request, res: Response) => {
-  //const staff = req.body.staff_id;
   const email = req.body.email;
 
   try {
-    try {
-      const response: any = await fetch("http://localhost:5000/auth/activate", {
-        method: "patch",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: email,
-        }),
-      });
+    const response = await fetch("http://localhost:5000/auth/activate", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email }),
+    });
 
-      if (response.status === 200) {
-        const r = await response.json();
-        console.log(r.message);
-
-        return res.status(200).json({ message: "success" });
-      } else {
-        const r = await response.json();
-
-        console.log(r.message);
-        return res
-          .status(400)
-          .json({ message: "An error happend please try again" });
-      }
-    } catch (error: any) {
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data.message);
+      return res.status(200).json({ message: "success" });
+    } else {
+      const error = await response.json();
       console.log(error.message);
-
-      return res.status(500).json({ message: error.message });
+      return res.status(400).json({ message: "An error happened, please try again" });
     }
   } catch (error: any) {
+    console.log(error.message);
     return res.status(500).json({ message: error.message });
   }
 };
