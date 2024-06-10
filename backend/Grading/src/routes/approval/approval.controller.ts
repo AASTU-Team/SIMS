@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import ApprovalProcess from '../../models/approvalProcess.model';
 import Grade from '../../models/grade.model';
+const Staff = require('../../models/staff.model')
 import axios from 'axios';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
@@ -111,10 +112,6 @@ class ApprovalController {
       else{
         res.status(200).json({message:"No requests"})
       }
-
-
-
-
   }
 
   static async getDeanRequests(req: Request, res: Response) {
