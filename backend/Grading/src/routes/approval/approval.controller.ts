@@ -87,12 +87,21 @@ class ApprovalController {
 
     const requests = await ApprovalProcess.find({
       $or: [
-        { department_approval: "Pending" },
+        { "department_approval.status": "Pending" },
         {
           dean_approval:"Rejected",
           
         },
       ],
+    }).populate({
+      path: "grade_id",
+      select: "student_id course_id instructor_id total_score grade",
+    }).populate({
+      path: "department_approval.status",
+      select: "name email department_id",
+    }).populate({
+      path: "dean_approval.status",
+      select: "name email department_id",
     })
 
     if(requests.length > 0)
@@ -110,7 +119,16 @@ class ApprovalController {
 
   static async getDeanRequests(req: Request, res: Response) {
 
-    const requests = await ApprovalProcess.find({department_approval:"Approved"})
+    const requests = await ApprovalProcess.find({"department_approval.status":"Approved"}).populate({
+      path: "grade_id",
+      select: "student_id course_id instructor_id total_score grade",
+    }).populate({
+      path: "department_approval.status",
+      select: "name email department_id",
+    }).populate({
+      path: "dean_approval.status",
+      select: "name email department_id",
+    })
     if(requests.length > 0)
       {
         res.status(200).json({message:requests})

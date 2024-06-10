@@ -1662,6 +1662,52 @@ export const studentRegistration = async (req: Request, res: Response) => {
   }
 };
 
+export const getStudentSemesters = async (
+  req: Request,
+  res: Response
+) => {
+
+  const id = req.params.student_id
+  const data:any = []
+
+  const student = await Student.findById(id)
+  if(!student)
+    {
+      res.status(200).send({message:[]})
+    }
+    const CGPA = student.CGPA
+
+    const registrations = await Registration.find({stud_id:id})
+    .populate({
+      path: "courses.courseID",
+      select: "code name credits lec lab description ",
+    })
+    if(!registrations)
+      {
+        res.status(200).send({message:[]})
+      }
+
+    registrations.map((registration:any) =>{
+      data.push({
+        year:registration.year,
+        semester:registration.semester,
+        status:registration.status,
+        GPA:registration.GPA,
+        courses:registration.courses
+      })
+
+    })
+
+    res.status(200).send({message:data,CGPA:CGPA})
+
+
+
+
+
+
+}
+
+
 export const getDepartmentRegistrationStatus = async (
   req: Request,
   res: Response
