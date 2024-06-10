@@ -8,7 +8,7 @@ Content-Type:  application/json
 } , "name" : "student" , 
      "dept_id" : "663a8a581f5ac9b89475633m"}
 ### notification spec
-POST http://localhost:4000/notification 
+POST http://localhost:5000/notification 
 Content-Type:  application/json
 
 {"data" : {

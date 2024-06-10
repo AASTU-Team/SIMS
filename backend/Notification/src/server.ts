@@ -8,32 +8,22 @@ export const io = new Server(server, {});
 // const clientToSocketMap = new Map();
 
 io.use((socket: any, next) => {
-  const token = socket.handshake?.headers.authentication;
+  const id = socket.handshake?.headers.authentication;
   console.log(socket);
   // Verify the token here
-  if (token === "admin") {
-    socket["id"] = "663a8a581f5ac9b89475633b";
-    next();
-  } else if (token === "your-bearer-token") {
-    socket["id"] = "663a8a581f5ac9b89475633a";
-    next();
-  } else if (token === "stud2") {
-    socket["id"] = "663a8a581f5ac9b89475633c";
-    next();
-  } else {
-    next(new Error("Authentication error"));
-  }
+  socket["id"] = id;
+  next();
 });
 
 io.on("connection", (socket: any) => {
   console.log(socket.id, socket.user_id);
   // notify students about registration req id and name=student
   socket.on("registrarion", (registrationGroup: any) => {
-    registrationGroup = JSON.parse(registrationGroup);
-    socket.join(registrationGroup.name + registrationGroup.id);
-    console.log(
-      `User joined group: ${registrationGroup.name + registrationGroup.id}`
-    );
+    // registrationGroup = JSON.parse(registrationGroup);
+    socket.join("student");
+    // console.log(
+    //   `User joined group: ${registrationGroup.name + registrationGroup.id}`
+    // );
   });
   socket.on("send_registration_message", (registrationGroup: any) => {
     registrationGroup = JSON.parse(registrationGroup);

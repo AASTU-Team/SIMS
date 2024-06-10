@@ -7,7 +7,7 @@ Content-Type:  application/json
 
 ### register
 
-POST http://localhost:4000/attendance/new
+POST http://localhost:6000/attendance/new
 Content-Type:  application/json
 
 {
@@ -16,12 +16,12 @@ Content-Type:  application/json
 	"date":"2024-09-09",
 	"attendance":[
 		{
-			"student_id":"66279e0dda5951ab06556ed7",
-			"status":"Present"
+			"student_id":"6646788517b2c61fd5e52d84",
+			"status":"Absent"
 			
 },
 		{
-				"student_id":"66279e2fda5951ab06556ed8",
+				"student_id":"6646788517b2c61fd5e52d84",
 			"status":"Present"
 			
 		}

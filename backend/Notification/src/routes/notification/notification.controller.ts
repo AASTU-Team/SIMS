@@ -19,8 +19,9 @@ export const sendNotification = async (req: Request, res: Response) => {
   try {
     const notification = await Notification.create(data);
     await notification.save();
+    console.log(stud_id);
     if (dept_id) {
-      io.to(name + dept_id).emit("registrarion", notification);
+      io.to("student").emit("registrarion", notification);
     } else if (stud_id) {
       io.to(stud_id).emit("privatedata", notification);
     }
