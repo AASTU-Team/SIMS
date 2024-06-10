@@ -6,8 +6,6 @@ import Student from '../../models/student.model';
 import Registration from '../../models/registration.model';
 import assignInstructor from '../../helper/assignInstructor';
  
-
-
 class GradeController {
     // Create a grade document for a student in a course
     static async createGrade(req: Request, res: Response) {
@@ -212,28 +210,15 @@ class GradeController {
                 return res.status(404).json({ error: 'Course not found' });
             }
 
-            // Find all grades for the given course
-            const grades = await Grade.find({ course_id: courseId });
+            // Find all grades for the given course with the specified instructor
+            const grades = await Grade.find({ course_id: courseId, instructor_id: instructorId }).populate('student_id');
 
             if (!grades || grades.length === 0) {
-                return res.status(404).json({ error: 'No grades found for this course' });
-            }
-
-            // Collect student IDs and assign instructors if missing
-            const studentIds = grades.map(grade => grade.student_id.toString());
-            for (const studentId of studentIds) {
-                await assignInstructor(studentId, [courseId]);
-            }
-
-            // Find grades with the specified courseId and instructorId
-            const filteredGrades = await Grade.find({ course_id: courseId, instructor_id: instructorId });
-
-            if (!filteredGrades || filteredGrades.length === 0) {
                 return res.status(404).json({ error: 'No grades found for this course and instructor' });
             }
 
             // Prepare the response data
-            const studentGrades = filteredGrades.map(grade => {
+            const studentGrades = grades.map(grade => {
                 const student = grade.student_id as any;  // Assuming student_id is populated
                 return {
                     studentId: student._id,
@@ -251,7 +236,7 @@ class GradeController {
                 students: studentGrades
             });
         } catch (error) {
-            console.error('Error fetching students by course and instructor:', error);
+            console.error('Error fetching students by course:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
     }
