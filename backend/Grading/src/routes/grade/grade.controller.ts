@@ -3,8 +3,7 @@ import mongoose from 'mongoose';
 import Grade from '../../models/grade.model';
 import Course from '../../models/course.model';
 import Student from '../../models/student.model';
-import Registration from '../../models/registration.model';
-import assignInstructor from '../../helper/assignInstructor';
+import { assign } from '../../helper/helper';
 
 class GradeController {
     // Create a grade document for a student in a course
@@ -41,6 +40,7 @@ class GradeController {
             return res.status(201).json({ newGrade, message: 'Grade document created successfully' });
         } catch (error) {
             console.error('Error creating grade document:', error);
+            assign();
             return res.status(500).json({ error: 'Internal server error' });
         }
     }
@@ -80,7 +80,7 @@ class GradeController {
                     await newGrade.save();
                 }
             }
-
+            assign();
             return res.status(201).json({ message: 'Grade documents created successfully' });
         } catch (error) {
             console.error('Error creating grade documents:', error);
@@ -138,7 +138,8 @@ class GradeController {
     // get grades for a course id
     static async getGradesByCourse(req: Request, res: Response) {
         const { courseId } = req.params;
-
+        
+        await assign();
         try {
             // Find all grades for the given course
             const grades = await Grade.find({ course_id: courseId }).populate('student_id');
@@ -174,6 +175,7 @@ class GradeController {
         const { instructorId } = req.params;
         const { sectionId, courseId, semester, year } = req.query;
 
+        await assign();
         try {
             // Build the grade filter query
             const gradeFilter: any = { instructor_id: instructorId };
@@ -236,7 +238,7 @@ class GradeController {
     // Get students by course and instructor, and assign instructors if missing
     static async getStudentsByCourseAndInstructor(req: Request, res: Response) {
         const { courseId, instructorId } = req.params;
-
+        await assign();
         try {
             // Find the course
             const course = await Course.findById(courseId);
@@ -359,6 +361,8 @@ class GradeController {
     // Get all grades for a specific student
     static async getGrades(req: Request, res: Response) {
         const { studentId } = req.params;
+        
+        await assign();
 
         try {
             const grades = await Grade.find({ student_id: studentId }).populate('course_id');
@@ -372,7 +376,8 @@ class GradeController {
     // Get a specific grade for a student in a course
     static async getGrade(req: Request, res: Response) {
         const { studentId, courseId } = req.params;
-
+        
+        await assign();
         try {
             const grade = await Grade.findOne({ student_id: studentId, course_id: courseId }).populate('course_id');
             if (!grade) {

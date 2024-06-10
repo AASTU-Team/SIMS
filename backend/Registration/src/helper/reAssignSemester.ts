@@ -97,14 +97,14 @@ if(!semester)
               {
                 continue
               }
-              if(student.CGPA)
+           /*    if(student.CGPA)
                 {
                   if(student.CGPA < 1.75)
                     {
                       continue
                     }
 
-                }
+                } */
             
              // console.log("here")
                       const courses = regData.courses;
@@ -226,6 +226,10 @@ if(!semester)
                 // Calculate the CGPA
                 const cgpa = totalGradePoints / totalCreditHours;
                await Student.findByIdAndUpdate(student._id,{CGPA:cgpa})
+               if(cgpa < 1.75)
+                {
+                  continue
+                }
               //  return cgpa;
               console.log("cgpa",cgpa)
               } catch (err) {
