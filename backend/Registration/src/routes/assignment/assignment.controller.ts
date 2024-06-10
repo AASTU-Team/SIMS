@@ -351,6 +351,10 @@ export const getAssignmentHistory = async (req: Request, res: Response) => {
       .skip(skip)
       .limit(limit);
 
+    if (!assignment) {
+      return res.status(200).json({ message: [] });
+    }
+
     const totalCount = await InstructorAssignment.countDocuments(filter);
     const totalPages = Math.ceil(totalCount / limit);
 
