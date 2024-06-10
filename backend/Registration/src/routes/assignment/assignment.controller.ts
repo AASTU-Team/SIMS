@@ -29,6 +29,7 @@ const Department = require("../../models/department.model");
 const Course = require("../../models/course.model");
 const Curriculum = require("../../models/curriculum.model");
 const Assignment = require("../../models/Assignment.model");
+const InstructorAssignment = require("../../models/teacherAssignmentHist.model");
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
 
@@ -97,6 +98,17 @@ export const updateAssignment = async (req: Request, res: Response) => {
     if (!updatedAssignment) {
       return res.status(404).json({ error: "Assignment not found" });
     }
+    const assignmentData = await Assignment.findById(id);
+
+    const assignmenthistory = await InstructorAssignment.create({
+      assignedBy: assignment.instructor_id,
+      assigned: assignment.instructor_id,
+      date: new Date(),
+      course: assignmentData.course_id,
+      Lab_Lec: assignmentData.Lab_Lec,
+    });
+
+    assignmenthistory.save();
 
     return res.json(updatedAssignment);
   } catch (e) {
@@ -311,5 +323,46 @@ export const assignSectionSchedule = async (data: any) => {
     return;
   } catch (error) {
     return;
+  }
+};
+export const getAssignmentHistory = async (req: Request, res: Response) => {
+  try {
+    const page = parseInt(req.query.page as string) || 1;
+    const limit = parseInt(req.query.limit as string) || 10;
+    const skip = (page - 1) * limit;
+
+    const startDate = req.query.startDate
+      ? new Date(req.query.startDate as string)
+      : undefined;
+    const endDate = req.query.endDate
+      ? new Date(req.query.endDate as string)
+      : undefined;
+
+    const filter: any = {};
+    if (startDate && endDate) {
+      filter.createdAt = { $gte: startDate, $lte: endDate };
+    }
+
+    const assignment = await InstructorAssignment.find(filter)
+      .populate("assignedBy", "name")
+      .populate("assigned", "name")
+      .populate("course", "name code")
+      .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit);
+
+    const totalCount = await InstructorAssignment.countDocuments(filter);
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return res.status(200).json({
+      data: assignment,
+      page: page,
+      limit: limit,
+      totalPages: totalPages,
+      totalCount: totalCount,
+    });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "An error occurred" });
   }
 };
