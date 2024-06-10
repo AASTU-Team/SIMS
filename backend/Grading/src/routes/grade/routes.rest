@@ -1,3 +1,40 @@
+### Sample Request without Filters
+# This request fetches all grades for all courses taught by the instructor with ID "6627f3543267383b7d6046e6".
+GET http://localhost:3005/instructor/6627f3543267383b7d6046e6/courses
+Content-Type: application/json
+
+### Sample Response
+# The response will contain a list of grades for the courses matching the filters, including details about the course, student, assessments, total score, grade, and instructor.
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "courseId": "66658dc0c08179a1fd83af98",
+  "courseName": "Sample Course",
+  "studentId": "66279e0dda5951ab06556ed5",
+  "studentName": "John Doe",
+  "assessments": [
+    {
+      "assessment_id": "66658dc0c08179a1fd83af99",
+      "name": "Midterm Exam",
+      "value": 100,
+      "completed": true,
+      "marks_obtained": 85
+    },
+    {
+      "assessment_id": "66658dc0c08179a1fd83af9a",
+      "name": "Final Exam",
+      "value": 100,
+      "completed": true,
+      "marks_obtained": 90
+    }
+  ],
+  "totalScore": 175,
+  "grade": "A",
+  "instructorId": "6627f3543267383b7d6046e6"
+}
+
 ### Create a Grade Document for a Student in a Course
 POST http://localhost:3005/grades
 Content-Type: application/json

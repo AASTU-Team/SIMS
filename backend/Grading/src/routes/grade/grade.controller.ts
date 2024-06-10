@@ -5,7 +5,7 @@ import Course from '../../models/course.model';
 import Student from '../../models/student.model';
 import Registration from '../../models/registration.model';
 import assignInstructor from '../../helper/assignInstructor';
- 
+
 class GradeController {
     // Create a grade document for a student in a course
     static async createGrade(req: Request, res: Response) {
@@ -74,7 +74,7 @@ class GradeController {
                         course_id: new mongoose.Types.ObjectId(course_id),
                         assessments,
                         total_score: 0,
-                        grade: 'NG'  
+                        grade: 'NG'
                     });
 
                     await newGrade.save();
@@ -163,73 +163,64 @@ class GradeController {
         }
     }
 
-    // Filter courses taught by the instructor with optional filters
     static async getFilteredCourses(req: Request, res: Response) {
         const { instructorId } = req.params;
         const { sectionId, courseId, semester, year } = req.query;
 
         try {
-            // Build the course filter query
-            const courseFilter: any = { instructors: { $in: [instructorId] } };
+            // Build the grade filter query
+            const gradeFilter: any = { instructor_id: instructorId };
             if (courseId) {
-                courseFilter._id = courseId;
+                gradeFilter.course_id = courseId;
+            }
+            
+            let studentIds: mongoose.Types.ObjectId[] = [];
+
+            // Filter by semester and year from Student model
+            if (semester || year) {
+                const studentFilter: any = {};
+                if (semester) {
+                    studentFilter.semester = semester;
+                }
+                if (year) {
+                    studentFilter.year = year;
+                }
+
+                const students = await Student.find(studentFilter);
+                if (students.length === 0) {
+                    return res.status(404).json({ error: 'No students found for these filters' });
+                }
+
+                studentIds = students.map(student => student._id);
+                gradeFilter.student_id = { $in: studentIds };
             }
 
-            // Find the courses taught by the instructor
-            const courses = await Course.find(courseFilter);
-            if (!courses || courses.length === 0) {
-                return res.status(404).json({ error: 'No courses found for this instructor' });
-            }
+            // Find the grades matching the filter
+            const grades = await Grade.find(gradeFilter).populate('course_id').populate('student_id');
 
-            // Get the course IDs
-            const courseIds = courses.map(course => course._id);
-
-            // Build the registration filter query
-            const registrationFilter: any = {
-                'courses.courseID': { $in: courseIds },
-            };
-            if (sectionId) {
-                registrationFilter.section_id = sectionId;
-            }
-            if (semester) {
-                registrationFilter.semester = semester;
-            }
-            if (year) {
-                registrationFilter.year = year;
-            }
-
-            // Find the registrations matching the filter
-            const registrations = await Registration.find(registrationFilter).populate('stud_id courses.courseID');
-            if (!registrations || registrations.length === 0) {
-                return res.status(404).json({ error: 'No students found for these courses' });
+            if (!grades || grades.length === 0) {
+                return res.status(404).json({ error: 'No grades found for these filters' });
             }
 
             // Prepare the response data
-            const results = registrations.map(registration => {
-                const student = registration.stud_id as any;  // Assuming stud_id is populated
-                const studentCourses = registration.courses.map((course: any) => {
-                    const courseDetails = course.courseID as any;  // Assuming courseID is populated
-                    return {
-                        courseId: courseDetails._id,
-                        courseName: courseDetails.name,
-                        sectionId: course.section,
-                        grade: course.grade,
-                        status: course.status,
-                    };
-                });
+            const results = grades.map(grade => {
+                const course = grade.course_id as any;  // Assuming course_id is populated
+                const student = grade.student_id as any;  // Assuming student_id is populated
                 return {
-                    studentId: student._id,
-                    studentName: student.name,
-                    year: registration.year,
-                    semester: registration.semester,
-                    section: registration.section_id,
-                    courses: studentCourses,
+                    courseId: course?._id,
+                    courseName: course?.name,
+                    studentId: student?._id,
+                    studentName: student?.name,
+                    assessments: grade.assessments,
+                    totalScore: grade.total_score,
+                    grade: grade.grade,
+                    instructorId: grade.instructor_id
                 };
             });
 
             return res.status(200).json(results);
         } catch (error) {
-            console.error('Error fetching filtered courses:', error);
+            console.error('Error fetching filtered grades:', error);
             return res.status(500).json({ error: 'Internal server error' });
         }
     }
@@ -254,10 +245,10 @@ class GradeController {
 
             // Prepare the response data
             const studentGrades = grades.map(grade => {
-                const student = grade.student_id as any;  // Assuming student_id is populated
+                const student = grade.student_id as any;  
                 return {
-                    studentId: student._id,
-                    studentName: student.name,
+                    studentId: student?._id,
+                    studentName: student?.name,
                     assessments: grade.assessments,
                     totalScore: grade.total_score,
                     grade: grade.grade,
