@@ -31,22 +31,26 @@ class ApprovalController {
           continue;
         }
 
-        const attendanceApiUrl = `${process.env.ATTENDANCE_SERVICE_URL}/attendance/student`;
-        const attendanceResponse = await axios.post(attendanceApiUrl, {
-          course_id: grade.course_id.toString(),
-          student_id: grade.student_id.toString()
-        });
-
-        const attendanceRecords = attendanceResponse.data;
-        if (!attendanceRecords || attendanceRecords.length === 0) {
-          results.push({ studentId, courseId, instructorId, error: 'Attendance records not found' });
-          continue;
+        var attendancePercentage = 0;
+        try {
+          const attendanceApiUrl = `${process.env.ATTENDANCE_SERVICE_URL}/attendance/student`;
+          const attendanceResponse = await axios.post(attendanceApiUrl, {
+            course_id: grade.course_id.toString(),
+            student_id: grade.student_id.toString()
+          });
+          const attendanceRecords = attendanceResponse.data;
+          if (attendanceRecords || attendanceRecords.length !== 0) {
+            // Calculate attendance percentage
+            const totalClasses = attendanceRecords[0].attendances.length;
+            const presentClasses = attendanceRecords[0].attendances.filter((att: any) => att.status === 'Present').length;
+            attendancePercentage = (presentClasses / totalClasses) * 100;
+          }
+        }
+        catch (error) {
+          console.error('Error fetching attendance:', error);
         }
 
-        // Calculate attendance percentage
-        const totalClasses = attendanceRecords[0].attendances.length;
-        const presentClasses = attendanceRecords[0].attendances.filter((att: any) => att.status === 'Present').length;
-        const attendancePercentage = (presentClasses / totalClasses) * 100;
+
 
         // Create an approval process document
         const approvalProcess = new ApprovalProcess({
