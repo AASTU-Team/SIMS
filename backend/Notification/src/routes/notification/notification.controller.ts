@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const Notification = require("../../models/Notification.model");
 const UserNotification = require("../../models/UserNorification.model");
 import { io } from "../../server";
+import { sendEmail } from "../../helper/mail";
 const Joi = require("joi");
 
 export const hi = async (req: Request, res: Response) => {
@@ -14,7 +15,7 @@ export const sendNotification = async (req: Request, res: Response) => {
   const data = req.body.data;
   const { name, dept_id, stud_id } = req.body;
   //list of students from the data base using dept id
-
+  // const info = await sendEmail(user);
   try {
     const notification = await Notification.create(data);
     await notification.save();
@@ -27,7 +28,7 @@ export const sendNotification = async (req: Request, res: Response) => {
     const norify = await Promise.all(
       data.srecipient.map(async (data: String) => {
         console.log(data);
-        const user = await UserNotification.findOne({ user_id: data });
+        const user = await UserNotification.findOne({ user_email: data });
         console.log(user);
         if (user) {
           user.notifications.push({
@@ -37,7 +38,7 @@ export const sendNotification = async (req: Request, res: Response) => {
           await user.save();
         } else {
           const newUser = await UserNotification.create({
-            user_id: data,
+            user_email: data,
             notifications: [
               {
                 notification_id: notification._id,
@@ -49,7 +50,13 @@ export const sendNotification = async (req: Request, res: Response) => {
         }
       })
     );
-
+    console.log("data");
+    const emaildata = {
+      emails: data.srecipient,
+      message: data.message,
+    };
+    const info = await sendEmail(emaildata);
+    console.log(info);
     return res.send(notification);
   } catch (e) {
     return res.status(400).send({ message: "error" });
@@ -61,7 +68,7 @@ export const getNotificationById = async (req: Request, res: Response) => {
     console.log(id);
 
     const userNorification = await UserNotification.findOne({
-      user_id: id,
+      user_email: id,
     });
 
     if (!UserNotification) {
@@ -78,10 +85,10 @@ export const getNotificationById = async (req: Request, res: Response) => {
 export const getNotificationByisRead = async (req: Request, res: Response) => {
   try {
     const { id, isRead } = req.query;
-    console.log(id);
+    const read = isRead == "true" ? true : false;
 
     const userNorification = await UserNotification.findOne({
-      user_id: id,
+      user_email: id,
     }).populate({
       path: "notifications.notification_id",
       select: "message type",
@@ -92,7 +99,8 @@ export const getNotificationByisRead = async (req: Request, res: Response) => {
     }
 
     const notification = userNorification.notifications.filter((data: any) => {
-      return data.isRead === false;
+      console.log(data.isRead, isRead);
+      return data.isRead == read;
     });
 
     return res
@@ -111,8 +119,8 @@ export const deleteNotification = async (req: Request, res: Response) => {
     const notification = await Notification.findById(id);
     console.log(notification);
     const userNotification = await Promise.all(
-      notification?.srecipient.map(async (user_id: any) => {
-        const userNotification = await UserNotification.findOne({ user_id });
+      notification?.srecipient.map(async (user_email: any) => {
+        const userNotification = await UserNotification.findOne({ user_email });
 
         // Check if the UserNotification document exists
         if (!userNotification) {
@@ -141,33 +149,33 @@ export const deleteNotification = async (req: Request, res: Response) => {
 };
 
 export const trueNotification = async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const data = req.body.data;
+  const { email, data } = req.body;
   try {
     // Find the UserNotification document with the notification_id
-    const userNotification = await Promise.all(
-      data?.map(async (id: any) => {
-        const userNotification = await UserNotification.findOne({ _id: id });
+    const userNotification = await UserNotification.findOne({
+      user_email: email,
+    });
 
-        // Check if the UserNotification document exists
-        if (!userNotification) {
-          return;
-        }
+    // Check if the UserNotification document exists
+    if (!userNotification) {
+      return res.status(200).send([]);
+    }
+    console.log(userNotification);
+    // Find the index of the notification to be deleted
+    const notificationData = userNotification.notifications.map((n: any) => {
+      console.log(n, data);
+      if (data.includes(n.notification_id.toString())) {
+        console.log("changd false");
+        return { ...n, isRead: true };
+      }
+      return n;
+    });
+    userNotification.notifications = notificationData;
 
-        // Find the index of the notification to be deleted
-        const notificationIndex = userNotification.notifications.map((n: any) =>
-          n.notification_id.equals(id)
-        );
-        console.log(notificationIndex);
-
-        // Remove the notification from the notifications array
-        userNotification.notifications(notificationIndex).isRead = true;
-        console.log(userNotification);
-        // Save the updated UserNotification document
-        await userNotification.save();
-      })
-    );
-
+    // Remove the notification from the notifications array
+    console.log(userNotification);
+    // Save the updated UserNotification document
+    await userNotification.save();
     return res.status(200).json({ message: "success" });
   } catch (error) {
     console.error(error);

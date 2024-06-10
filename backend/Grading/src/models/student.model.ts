@@ -35,12 +35,22 @@ let studentSchema = new mongoose.Schema({
     required: false,
     ref: "Department",
   },
-  status_id: {
-    type: mongoose.Schema.Types.ObjectId,
+  status: {
+    type: String,
+    enum: [
+      "Active",
+      "Inactive",
+      "Completed",
+      "Withdrawn",
+      "Pending-Withdrawal",
+    ],
     required: false,
-    ref: "Status",
   },
   year: {
+    type: Number,
+    required: true,
+  },
+  semester: {
     type: Number,
     required: true,
   },
@@ -52,9 +62,10 @@ let studentSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
-  contact: {
+  type: {
     type: String,
-    required: true,
+    enum: ["Undergraduate", "Masters", "PhD"],
+    required: false,
   },
   address: {
     type: String,
@@ -72,7 +83,10 @@ let studentSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  CGPA: {
+    type: Number,
+    required: false,
+  },
 });
-
 const Student = mongoose.models.Student || mongoose.model("Student", studentSchema);
 export default Student;

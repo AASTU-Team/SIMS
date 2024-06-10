@@ -1231,9 +1231,10 @@ export const getStudentCourseStatus = async (req: Request, res: Response) => {
   const { student_id } = req.params;
   const completed: any[] = [];
   const enrolled: any[] = [];
-  const left: any[] = [];
+  let left: any[] = [];
   const incomplete: any[] = [];
   const fail: any[] = [];
+  const Allcourses: any[] = [];
 
   const registration = await Registration.find({
     stud_id: student_id,
@@ -1251,6 +1252,7 @@ export const getStudentCourseStatus = async (req: Request, res: Response) => {
   registrationData.map((registration) => {
     registration.courses.map((course: any) => {
       // console.log(course)
+      Allcourses.push(course.courseID);
       if (course.status === "Active") {
         enrolled.push(course.courseID);
       }
@@ -1271,9 +1273,10 @@ export const getStudentCourseStatus = async (req: Request, res: Response) => {
             }
     });
   });
- /*  const student = await Student.findById(student_id)
+   const student = await Student.findById(student_id)
   if(!student) return
-  const departmentId - student
+  const departmentId = student.department_id
+  const type = student.type
   const highestCombination = await Registration.findOne({ stud_id: student_id })
   .sort({ year: -1, semester: -1 })
   .select("year semester")
@@ -1290,23 +1293,36 @@ try {
     type: type,
   })
   .sort({ year: 1, semester: 1 })
-  .populate('courses');
+  .populate({
+    path: "courses",
+    select: "code name credits lec lab description ",
+  });
 
-  const courses = curricula.reduce((allCourses, curriculum) => {
+  const courses = curricula.reduce((allCourses:any, curriculum:any) => {
     return [...allCourses, ...curriculum.courses];
   }, []);
 
-  return courses;
+  courses.map((course:any) => {
+
+    left.push(course)
+    
+  
+})
+left = left.filter(course => !Allcourses.some(c => c.code === course.code));
+
+  
+
+
 } catch (error) {
   console.error('Error getting curriculum courses:', error);
   throw error;
-} */
+} 
 
- //}
+ }
 
 
 
-  return res.status(200).json({ enrolled: enrolled });
+  return res.status(200).json({ enrolled: enrolled,left: left,completed: completed,incomplete: incomplete,fail: fail});
 };
 export const getstudentRegistrationCourses = async (
   req: Request,

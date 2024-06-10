@@ -1,4 +1,5 @@
-
+GET  https://localhost:4000/attendance-service/attendance/hi
+Content-Type:  application/json
 
 ### register
 
@@ -56,7 +57,7 @@ Content-Type:  application/json
 	]
 }
 ### Get stud Attendance
-POST http://localhost:6000/attendance/student
+POST http://localhost:4000/attendance-service/attendance/student
 Content-Type:  application/json
 
 {
