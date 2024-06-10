@@ -24,4 +24,9 @@ router.get('/status/:approvalId', ApprovalController.getApprovalStatus);
 // Route to get approval status by grade ID
 router.get('/status/grade/:gradeId', ApprovalController.getApprovalStatusByGrade);
 
+router.get('/department/requests', ApprovalController.getDepartmentRequests);
+
+// Route to get approved department requests for dean approval
+router.get('/dean/requests', ApprovalController.getDeanRequests);
+
 export default router;
