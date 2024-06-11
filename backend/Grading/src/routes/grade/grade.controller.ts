@@ -155,7 +155,7 @@ class GradeController {
             // Prepare the response data
             const studentGrades = [];
             for (const grade of grades) {
-                const studentDoc = grade.student_id as any;  // Assuming student_id is populated
+                const studentDoc = grade.student_id as any;
 
                 const approvalProcess = await ApprovalProcess.findOne({ grade_id: grade._id }).exec();
                 let approvalStatus = 'Uninitiated';
@@ -342,6 +342,12 @@ class GradeController {
                         continue;
                     }
 
+                    const approvalProcess = await ApprovalProcess.findOne({ grade_id: gradeDoc._id }).exec();
+                    if (!approvalProcess || approvalProcess.status !== 'Approved') {
+                        courseGrades.push({ courseId: course._id, courseName: course.name, grade: 'NG' });
+                        continue;
+                    }
+
                     const courseCredit = course.credits;
                     const grade = gradeDoc.grade;
 
@@ -358,6 +364,7 @@ class GradeController {
                             case 'C': score = 2.0; break;
                             case 'C-': score = 1.75; break;
                             case 'F': score = 0.0; break;
+                            default: score = 0.0; break;
                         }
 
                         totalScore += score * courseCredit;
@@ -385,6 +392,7 @@ class GradeController {
             return res.status(500).json({ error: 'Internal server error' });
         }
     }
+
 
     // Get all grades for a specific student
     static async getGrades(req: Request, res: Response) {

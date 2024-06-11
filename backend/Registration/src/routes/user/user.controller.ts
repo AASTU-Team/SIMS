@@ -596,6 +596,7 @@ export const getStudentImage = async (req: Request, res: Response) => {
     .status(200)
     .json({ message: `http://localhost:3000/profile-images/${id}-image.jpg` });
 };
+
 export const getAllStudent = async (req: Request, res: Response) => {
   try {
     const { year, semester, search, department_id } = req.query;
@@ -635,16 +636,39 @@ export const getAllStudent = async (req: Request, res: Response) => {
         select: "name",
       });
 
-    const myStudents = students.map((student: any) => {
-      return {
-        ...student.toObject(),
-        department_name: student.department_id?.name,
-        department_id: student.department_id?._id,
-      };
-    });
+    const data: any = await Promise.all(
+      students.map(async (student:any) => {
+        let authStatus = "";
+        try {
+          const params = {
+            email: student.email,
+          };
+          const queryString = new URLSearchParams(params).toString();
+          const response = await fetch(`http://localhost:5000/auth/status/${student.email}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          });
+          if (response.ok) {
+            const user = await response.json();
+            authStatus = user.status;
+          }
+        } catch (error) {
+          console.log(error);
+        }
+
+        return {
+          ...student.toObject(),
+          department_name: student.department_id?.name,
+          department_id: student.department_id?._id,
+          userStatus: authStatus,
+        };
+      })
+    );
 
     res.status(200).json({
-      message: myStudents,
+      message: data,
       currentPage: Number(page),
       totalPages: totalPages,
       totalItems: totalItems,
@@ -815,9 +839,36 @@ export const getAllStaff = async (req: Request, res: Response) => {
         department_id: person.department_id?._id,
       };
     });
+    const data: any = await Promise.all(
+      staff.map(async (student:any) => {
+        let authStatus = "";
+        try {
+         
+          const response = await fetch(`http://localhost:5000/auth/status/${staff.email}`, {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/x-www-form-urlencoded",
+            },
+          });
+          if (response.ok) {
+            const user = await response.json();
+            authStatus = user.status;
+          }
+        } catch (error) {
+          console.log(error);
+        }
+
+        return {
+          ...student.toObject(),
+          department_name: student.department_id?.name,
+          department_id: student.department_id?._id,
+          userStatus: authStatus,
+        };
+      })
+    );
 
     res.status(200).json({
-      message: myStaff,
+      message: data,
       currentPage: Number(page),
       totalPages: totalPages,
       totalItems: totalItems,
