@@ -2674,7 +2674,7 @@ export const exportWithdrawalFile = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   try {
-    const filePath = path.join("./exports", "withdrawals", `${id}.pdf`);
+    const filePath = path.join("./exports", "withdrawals", `${id}-withdrawal.pdf`);
 
     // Read the CSV file contents
     fs.readFile(filePath, (err: any, data: any) => {
@@ -2730,9 +2730,9 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
   if (!student) {
     return res.status(404).json({ message: "Student not found" });
   }
-  if (student.status !== "Withdrawn") {
+/*   if (student.status !== "Withdrawn") {
     return res.status(200).json({ message: "Cant Ask for Enrollment" });
-  }
+  } */
 
   const withdrawalRequest = await new Withdrawal({
     stud_id: id,
