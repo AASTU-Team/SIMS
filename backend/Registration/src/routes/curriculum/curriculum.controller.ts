@@ -330,6 +330,8 @@ export const createCurriculumCsv = async (req: Request, res: Response) => {
               year: results[index].year,
               semester: results[index].semester,
               courses: courses,
+              type:results[index].type
+
             };
           })
         );

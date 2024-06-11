@@ -536,7 +536,7 @@ function validateStudent(student: any) {
     type: Joi.string().optional(),
     status: Joi.string().optional(),
     year: Joi.number().integer(),
-    semester: Joi.number(),
+    semester: Joi.number().optional(),
     CGPA: Joi.number().optional(),
     //admission_date: Joi.date().format('YYYY-MM-DD').withMessage('Admission date must be in the format YYYY-MM-DD'),
     //grad_date: Joi.date().format('YYYY-MM-DD').withMessage('Graduation date must be in the format YYYY-MM-DD'),
@@ -583,7 +583,6 @@ export const UploadStudentImage = async (req: Request, res: Response) => {
   console.log(id)
 
  
-
  
   if (file) {
     const fileName = `${id}.jpg`;
@@ -596,6 +595,15 @@ export const UploadStudentImage = async (req: Request, res: Response) => {
   }
 
   return res.status(200).json({ message: "successfully uploaded image" });
+};
+
+export const getStudentImage = async (req: Request, res: Response) => {
+
+
+  const id = req.body.id
+
+
+  return res.status(200).json({ message: `http://localhost:3000/profile-images/${id}-image.jpg` });
 };
 export const getAllStudent = async (req: Request, res: Response) => {
   try {
