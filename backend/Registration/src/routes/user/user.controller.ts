@@ -2604,7 +2604,12 @@ export const addCourse = async ({
 
 export const ListAddCourses = async (req: Request, res: Response) => {
   const { student_id } = req.params;
-  res.status(200).send(await getCourseToAdd(student_id));
+  try{
+  const course = await getCourseToAdd(student_id)
+  res.status(200).send(course)
+}catch(e){
+  return res.status(500).send({})
+}
 };
 
 function checkOverLoad(total_credit: Number, credits: Number, add: boolean) {
