@@ -536,7 +536,7 @@ function validateStudent(student: any) {
     type: Joi.string().optional(),
     status: Joi.string().optional(),
     year: Joi.number().integer(),
-    semester: Joi.number(),
+    semester: Joi.number().optional(),
     CGPA: Joi.number().optional(),
     //admission_date: Joi.date().format('YYYY-MM-DD').withMessage('Admission date must be in the format YYYY-MM-DD'),
     //grad_date: Joi.date().format('YYYY-MM-DD').withMessage('Graduation date must be in the format YYYY-MM-DD'),
