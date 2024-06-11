@@ -583,7 +583,6 @@ export const UploadStudentImage = async (req: Request, res: Response) => {
   console.log(id)
 
  
-
  
   if (file) {
     const fileName = `${id}.jpg`;
@@ -596,6 +595,15 @@ export const UploadStudentImage = async (req: Request, res: Response) => {
   }
 
   return res.status(200).json({ message: "successfully uploaded image" });
+};
+
+export const getStudentImage = async (req: Request, res: Response) => {
+
+
+  const id = req.body.id
+
+
+  return res.status(200).json({ message: `http://localhost:3000/profile-images/${id}-image.jpg` });
 };
 export const getAllStudent = async (req: Request, res: Response) => {
   try {
