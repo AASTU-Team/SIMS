@@ -41,7 +41,6 @@ class ApprovalController {
           });
           const attendanceRecords = attendanceResponse.data;
           if (attendanceRecords || attendanceRecords.length !== 0) {
-            // Calculate attendance percentage
             const totalClasses = attendanceRecords[0].attendances.length;
             const presentClasses = attendanceRecords[0].attendances.filter((att: any) => att.status === 'Present').length;
             attendancePercentage = (presentClasses / totalClasses) * 100;
@@ -157,10 +156,6 @@ class ApprovalController {
       else{
         res.status(200).json({message:"No requests"})
       }
-
-
-
-
   }
 
   static async departmentApproval(req: Request, res: Response) {
@@ -175,7 +170,6 @@ class ApprovalController {
       }
 
       // Update department approval
-      approvalProcess.department_approval.status = status;
       approvalProcess.department_approval.by = new mongoose.Types.ObjectId(by);
       if (status === 'Rejected') {
         if (!reason) {
@@ -187,7 +181,12 @@ class ApprovalController {
         await ApprovalController.notifyInstructor(approvalProcess.requested_by, `Your grade request has been rejected by the department: ${reason}`);
       } else if (status === 'Approved') {
         approvalProcess.status = 'Pending';
+        approvalProcess.department_approval.status = 'Approved';
         approvalProcess.department_approval.reason = reason || '';
+
+      }
+      else{
+        approvalProcess.department_approval.status = 'Pending';
 
       }
 
