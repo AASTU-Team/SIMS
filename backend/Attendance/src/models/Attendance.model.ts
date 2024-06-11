@@ -10,19 +10,16 @@ const Joi = require("joi");
 // Define the interface for the document
 
 interface DAttendance {
-  
- 
   date: Date;
   status: "Present" | "Absent" | "Late" | "Excused";
 }
 interface IAttendance {
-  
   student_id: mongoose.Types.ObjectId;
   course_id: mongoose.Types.ObjectId;
   instructor_id: mongoose.Types.ObjectId;
-  attendances:DAttendance[]
- // semester_id: Number;
- // date: Date;
+  attendances: DAttendance[];
+  // semester_id: Number;
+  // date: Date;
   //status: "Present" | "Absent" | "Late" | "Excused";
 }
 interface IAttendanceMethods {
@@ -35,7 +32,6 @@ const AttendacneSchema: Schema = new Schema<
   AttendanceModel,
   IAttendance
 >({
- 
   student_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Student",
@@ -51,12 +47,12 @@ const AttendacneSchema: Schema = new Schema<
     ref: "Instructor",
     required: true,
   },
- /*  semester_id: {
+  /*  semester_id: {
     type:Number,
    // ref: "Semester",
     required: true,
   }, */
-/*   date: { type: Date, required: true },
+  /*   date: { type: Date, required: true },
   status: {
     type: String,
     enum: ["Present", "Absent", "Late", "Excused"],
