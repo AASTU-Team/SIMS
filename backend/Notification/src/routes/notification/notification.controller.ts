@@ -19,8 +19,9 @@ export const sendNotification = async (req: Request, res: Response) => {
   try {
     const notification = await Notification.create(data);
     await notification.save();
+    console.log(stud_id);
     if (dept_id) {
-      io.to(name + dept_id).emit("registrarion", notification);
+      io.to("student").emit("registrarion", notification);
     } else if (stud_id) {
       io.to(stud_id).emit("privatedata", notification);
     }
@@ -69,7 +70,7 @@ export const getNotificationById = async (req: Request, res: Response) => {
 
     const userNorification = await UserNotification.findOne({
       user_email: id,
-    });
+    }).populate("notifications.notification_id");
 
     if (!UserNotification) {
       return res.status(200).json({ message: [] });

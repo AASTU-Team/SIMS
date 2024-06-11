@@ -36,11 +36,11 @@ Content-Type:  application/json
 GET  http://localhost:3000/user/student/addDrop?skip=0&limit=2&status=Accepted
 Content-Type:  application/json
 ### 18 registrar : accept or reject 
-POST http://localhost:3000/user/student/stausUpdateRegistrar
+POST http://localhost:5000/user/student/stausUpdateRegistrar
 Content-Type:  application/json
 
 {
-  "addDrop_id" : "6664d35bc108aa3394aea698",
+  "addDrop_id" : "6664c9ef4cd5173a2228ae11",
   "status" : "accept"
 }
 ### 17 dept : get rejected req from registrar

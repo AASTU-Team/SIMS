@@ -1,8 +1,11 @@
 import { Request, Response } from "express";
 import mongoose from "mongoose";
 const Course = require("../../models/course.model");
+const Student = require("../../models/student.model");
 //const ATtendance = require('../../models/Attendance.model');
 import Attendacne from "../../models/Attendance.model";
+import { populate } from "dotenv";
+const Notification = require("../../helper/Notification");
 
 interface Attendance2 {
   student_id: string;
@@ -11,6 +14,14 @@ interface Attendance2 {
 interface edit {
   attendance_id: string;
   status: "Present" | "Absent" | "Late" | "Excused";
+}
+
+interface Attendance {
+  student_id: {
+    email: string;
+    // Other student properties
+  };
+  // Other attendance properties
 }
 
 export const registerAttendance = async (req: Request, res: Response) => {
@@ -43,22 +54,46 @@ export const registerAttendance = async (req: Request, res: Response) => {
     });
     console.log(current_attendance);
     if (current_attendance) {
-      const updatedAttendance = await Attendacne.findOneAndUpdate(
-        {
-          course_id,
-          instructor_id: instructor_id,
-          student_id: attend.student_id,
-        },
-        {
-          $push: {
-            attendances: {
-              date: date,
-              status: attend.status,
+      const updatedAttendance: Attendance | any =
+        await Attendacne.findOneAndUpdate(
+          {
+            course_id,
+            instructor_id: instructor_id,
+            student_id: attend.student_id,
+          },
+          {
+            $push: {
+              attendances: {
+                date: date,
+                status: attend.status,
+              },
             },
           },
-        },
-        { new: true }
-      );
+          { new: true, populate: ["course_id", "student_id"] }
+        );
+      const attnd = updatedAttendance?.attendances || [];
+      console.log(attnd);
+      let count = 0;
+      for (const att of attnd) {
+        if (att.status == "Absent") {
+          count = count + 1;
+        }
+      }
+      const Present = ((attnd.length - count) / attnd.length) * 100;
+      const student = updatedAttendance?.student_id?.email;
+      //send notification
+      if (Present < 80) {
+        const notification = await Notification({
+          data: {
+            srecipient: [student],
+            message: `You have less than 80% attendance in ${updatedAttendance?.course_id?.name}`,
+            type: "Attendance",
+          },
+          user_id: updatedAttendance?.student_id?._id.toString(),
+        });
+        console.log(Present);
+        console.log("send notification");
+      }
     } else {
       const newAttendance = new Attendacne({
         course_id: course_id,
@@ -242,7 +277,7 @@ export const getAttendance = async (req: Request, res: Response) => {
     course_id: course_id,
     student_id: student_id,
   });
-  
+
   if (!attendance) {
     return res.status(400).json({ message: "Attendance not found" });
   }
