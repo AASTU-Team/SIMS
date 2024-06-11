@@ -134,7 +134,11 @@ Content-Type:  application/json
 
 
 ### get list of courses for teacher 
-GET  http://localhost:3000/assignment/instructor/66636b758cb6b6bc394fbc60
+GET  http://localhost:5000/assignment/instructor/66636b758cb6b6bc394fbc60
+Content-Type:  application/json
+
+### get list of courses for teacher 
+GET  http://localhost:5000/assignment/instructorData/664217adf8b1cf7706c8c48c
 Content-Type:  application/json
 
 ### check active add drop
