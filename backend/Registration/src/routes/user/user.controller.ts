@@ -2040,7 +2040,7 @@ export const confirmRegistrarRegistration = async (
       "dept_id" : "6627f1cb16bcc35f5d498f30"
           
           }
-           //await Notification(data)
+           await Notification(data)
         
         
       } else {
@@ -2105,7 +2105,7 @@ export const confirmRegistrarRegistration = async (
   "dept_id" : "6627f1cb16bcc35f5d498f30"
       
       }
-       //await Notification(datas)
+       await Notification(datas)
     if (success.length > 0) {
       return res
         .status(200)
@@ -2166,7 +2166,7 @@ export const rejectRegistrarRegistration = async (
 "dept_id" : "6627f1cb16bcc35f5d498f30"
     
     }
-     //await Notification(datas)
+     await Notification(datas)
   if (success.length > 0) {
     return res
       .status(200)
@@ -3024,7 +3024,7 @@ export const AcceptRegistrarWithdrawalRequest = async (
 "dept_id" : "6627f1cb16bcc35f5d498f30"
     
     }
-     //await Notification(data)
+     await Notification(data)
 
   return res.status(200).json({ success: success, errors: errors });
 };
@@ -3072,7 +3072,7 @@ export const AcceptRegistrarEnrollmentRequest = async (
 "dept_id" : "6627f1cb16bcc35f5d498f30"
     
     }
-     //await Notification(data)
+     await Notification(data)
 
   return res.status(200).json({ success: success, errors: errors });
 };
@@ -3156,7 +3156,7 @@ export const RejectRegistrarWithdrawalRequest = async (
 "dept_id" : "6627f1cb16bcc35f5d498f30"
     
     }
-     //await Notification(data)
+     await Notification(data)
 
   return res.status(200).json({ success: success, errors: errors });
 };
@@ -3205,7 +3205,7 @@ export const RejectRegistrarEnrollmentRequest = async (
 "dept_id" : "6627f1cb16bcc35f5d498f30"
     
     }
-     //await Notification(data)
+    await Notification(data)
 
   return res.status(200).json({ success: success, errors: errors });
 };
