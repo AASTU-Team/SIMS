@@ -8,11 +8,6 @@ import mongoose from 'mongoose';
 dotenv.config();
 
 class ApprovalController {
-  //TODO: Notify
-  static async notifyInstructor(instructorId: mongoose.Types.ObjectId, message: string) {
-    console.log(`Notify instructor ${instructorId}: ${message}`);
-  }
-
   static async submitForApproval(req: Request, res: Response) {
     const { instructorId, courseId, listOfStudents } = req.body;
 
@@ -175,10 +170,10 @@ class ApprovalController {
         if (!reason) {
           return res.status(400).json({ error: 'Reason is required for rejection' });
         }
+        approvalProcess.department_approval.status = 'Rejected';
         approvalProcess.department_approval.reason = reason;
         approvalProcess.status = 'Rejected';
 
-        await ApprovalController.notifyInstructor(approvalProcess.requested_by, `Your grade request has been rejected by the department: ${reason}`);
       } else if (status === 'Approved') {
         approvalProcess.status = 'Pending';
         approvalProcess.department_approval.status = 'Approved';
@@ -225,13 +220,9 @@ class ApprovalController {
         approvalProcess.dean_approval.reason = reason;
         approvalProcess.status = 'Rejected';
 
-        // Notify the instructor
-        await ApprovalController.notifyInstructor(approvalProcess.requested_by, `Your grade request has been rejected by the dean: ${reason}`);
       } else if (status === 'Approved') {
         approvalProcess.status = 'Approved';
         approvalProcess.dean_approval.reason = reason || '';
-        // Notify the instructor
-        await ApprovalController.notifyInstructor(approvalProcess.requested_by, 'Your grade request has been approved by the dean.');
       }
 
       await approvalProcess.save();
@@ -245,12 +236,12 @@ class ApprovalController {
 
   // Approve all grades in bulk by department
   static async bulkDepartmentApproval(req: Request, res: Response) {
-    const { gradeIds, by } = req.body;
+    const { approvalIds, by } = req.body;
 
     try {
       // Update department approval for all grades
       const approvalProcesses = await ApprovalProcess.updateMany(
-        { grade_id: { $in: gradeIds } },
+        { grade_id: { $in: approvalIds } },
         {
           $set: {
             'department_approval.status': 'Approved',
@@ -260,7 +251,7 @@ class ApprovalController {
         }
       );
 
-      return res.status(200).json({ message: `Department approval updated for ${gradeIds.length} grades`, approvalProcesses });
+      return res.status(200).json({ message: `Department approval updated for ${approvalIds.length} grades`, approvalProcesses });
 
     } catch (error) {
       console.error('Error updating department approval in bulk:', error);
@@ -270,13 +261,13 @@ class ApprovalController {
 
   // Approve all grades in bulk by dean
   static async bulkDeanApproval(req: Request, res: Response) {
-    const { gradeIds, by } = req.body;
+    const { approvalIds, by } = req.body;
 
     try {
       // Update dean approval for all grades
       const approvalProcesses = await ApprovalProcess.updateMany(
         {
-          grade_id: { $in: gradeIds },
+          grade_id: { $in: approvalIds },
           'department_approval.status': 'Approved',
         },
         {
@@ -288,7 +279,7 @@ class ApprovalController {
         }
       );
 
-      return res.status(200).json({ message: `Dean approval updated for ${gradeIds.length} grades`, approvalProcesses });
+      return res.status(200).json({ message: `Dean approval updated for ${approvalIds.length} grades`, approvalProcesses });
 
     } catch (error) {
       console.error('Error updating dean approval in bulk:', error);
