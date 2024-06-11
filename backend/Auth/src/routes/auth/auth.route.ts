@@ -17,6 +17,7 @@ import { refAuth } from "../../middleware/refAuth";
 import { inviteAuth } from "../../middleware/inviteAuth";
 import { deactivateUser } from "./auth.controller";
 import { activateUser } from "./auth.controller";
+import { getUserStatus } from "./auth.controller";
 
 const auth = Router();
 
@@ -35,5 +36,6 @@ auth.patch("/password", accessAuth, changePassword);
 auth.patch("/invitePass", inviteAuth, changePassword);
 
 auth.patch("/forgotpassword", forgotPassword);
+auth.get("/status/:email", getUserStatus);
 
 export default auth;

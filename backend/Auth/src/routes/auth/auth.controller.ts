@@ -127,9 +127,22 @@ async function login(req: Request, res: Response): Promise<any> {
 }
 async function getUserProfile(req: any, res: Response) {
   try {
-    res.status(200).send({ email: req.user.email, role: req.user.role });
+    res.status(200).send({ email: req.user.email, role: req.user.role,status:req.user.status });
   } catch (e: any) {
     res.status(500).send(e.message);
+  }
+}
+async function getUserStatus(req: any, res: Response) {
+  const user:any = await Auth.findOne({ email: req.params.email})
+  if(!user)
+    {
+      return res.status(200).json({status:""});
+    }
+  try {
+    return res.status(200).json({status:user.status});
+  
+  } catch (e: any) {
+     return res.status(500).send(e.message);
   }
 }
 async function getNewAccessToken(req: any, res: Response): Promise<void> {
@@ -257,4 +270,5 @@ export {
   deactivateUser,
   activateUser,
   forgotPassword,
+  getUserStatus
 };
