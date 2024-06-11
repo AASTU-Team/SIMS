@@ -135,6 +135,8 @@ export const DeactivateSemesterStatus = async (req: Request, res: Response) => {
       {
         semesterStatus.status = "Inactive"
         await semesterStatus.save()
+        await reAssignSemester(id)
+
         return res.status(200).json({ message: "success", staus: semesterStatus });
 
       }

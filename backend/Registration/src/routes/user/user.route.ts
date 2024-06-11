@@ -77,6 +77,7 @@ const assignSection = require("../../helper/assignSection");
 const validateRegistration = require("../../middlware/validateRegistration");
 const validateSRegistration = require("../../middlware/validateSRegistration");
 const validateCsv = require("../../middlware/validateCsv")
+const validateImage = require("../../middlware/validateImage")
 const checkRegistrationStatus = require("../../middlware/checkRegistrationStatus");
 const checkRegistrationStatus2 = require("../../middlware/checkRegistrationStatus2");
 
@@ -90,6 +91,7 @@ const csv = require("csv-parser");
 const fs = require("fs");
 
 import { UploadStudentImage } from "./user.controller";
+import { getStudentImage } from "./user.controller";
 
 const storage = multer.diskStorage({
   destination: (req:any, file:any, cb:any) => {
@@ -186,7 +188,8 @@ Studentrouter.get("/student/withdrawalFile/:id", exportWithdrawalFile);
 Studentrouter.get("/student/enrollmentFile/:id", exportEnrollmentFile);
 Studentrouter.post("/student/withdrawalRequest",  upload2.single("file"),ValidatePdf, WithdrawalRequest);
 Studentrouter.post("/student/enrollmentRequest",  upload2.single("file"),ValidatePdf2, EnrollmentRequest);
-Studentrouter.post("/student/uploadImage",  upload4.single("file"), UploadStudentImage);
+Studentrouter.post("/student/uploadImage",  upload2.single("file"), validateImage, UploadStudentImage);
+Studentrouter.get("/student/getImage", getStudentImage);
 Studentrouter.get("/student/withdrawalStatus/:id", getWithdrawalStatus);
 
 Studentrouter.get(
