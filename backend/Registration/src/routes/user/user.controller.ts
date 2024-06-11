@@ -2730,9 +2730,9 @@ export const EnrollmentRequest = async (req: Request, res: Response) => {
   if (!student) {
     return res.status(404).json({ message: "Student not found" });
   }
-  // if (student.status !== "Withdrawn") {
-  //   return res.status(200).json({ message: "Cant Ask for Enrollment" });
-  // }
+/*   if (student.status !== "Withdrawn") {
+    return res.status(200).json({ message: "Cant Ask for Enrollment" });
+  } */
 
   const withdrawalRequest = await new Withdrawal({
     stud_id: id,
