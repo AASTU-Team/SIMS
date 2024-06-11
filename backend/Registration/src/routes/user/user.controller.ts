@@ -2623,7 +2623,7 @@ export const exportWithdrawalFile = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   try {
-    const filePath = path.join("./exports", "withdrawals", `${id}.pdf`);
+    const filePath = path.join("./exports", "withdrawals", `${id}-withdrawal.pdf`);
 
     // Read the CSV file contents
     fs.readFile(filePath, (err: any, data: any) => {
@@ -2708,7 +2708,7 @@ export const exportEnrollmentFile = async (req: Request, res: Response) => {
   const id = req.params.id;
 
   try {
-    const filePath = path.join("./exports", "enrollments", `${id}.pdf`);
+    const filePath = path.join("./exports", "enrollments", `${id}-enroll.pdf`);
 
     // Read the CSV file contents
     fs.readFile(filePath, (err: any, data: any) => {
