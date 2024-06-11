@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import mongoose, { Document, Schema, Types } from "mongoose";
-import Joi, { number } from "joi";
+import Joi, { array, number } from "joi";
+import { count } from "console";
 const NumberOfStudent = require("../../models/numberOfStudent.model");
 
 interface AssignmentI {
@@ -30,6 +31,7 @@ const Course = require("../../models/course.model");
 const Curriculum = require("../../models/curriculum.model");
 const Assignment = require("../../models/Assignment.model");
 const InstructorAssignment = require("../../models/teacherAssignmentHist.model");
+const Notification = require("../../helper/Notification");
 const Registration = require("../../models/registration.model");
 const RegistrationStatus = require("../../models/RegistrationStatus.model");
 
@@ -83,21 +85,38 @@ export const getAssignmentById = async (req: Request, res: Response) => {
 export const updateAssignment = async (req: Request, res: Response) => {
   const { id } = req.params;
   const assignment = req.body;
+
   try {
     // const conflict = await checkConflict(assignment, id);
     // console.log(conflict);
     // if (conflict) {
     //   return res.status(400).json(conflict);
     // }
+    const staff = await Staff.findById(assignment.instructor_id);
+    if (!staff) {
+      return res.status(400).json({ error: "staff not found" });
+    }
     const updatedAssignment = await Assignment.findByIdAndUpdate(
       id,
       assignment,
+      { populate: ["course_id", "section_id"] },
       { new: true }
     );
 
     if (!updatedAssignment) {
       return res.status(404).json({ error: "Assignment not found" });
     }
+
+    const data = {
+      data: {
+        srecipient: [staff.email],
+        message: `You have been assigned to ${updatedAssignment.course_id?.name} ${updatedAssignment.Lab_Lec} for ${updatedAssignment.section_id.name} year ${updatedAssignment.section_id.year} semester ${updatedAssignment.section_id.semester}`,
+        type: "Assignment",
+      },
+      user_id: staff._id,
+    };
+    const notification = await Notification(data);
+
     const assignmentData = await Assignment.findById(id);
 
     const assignmenthistory = await InstructorAssignment.create({
@@ -228,6 +247,52 @@ export const getAssignmentByInstId = async (req: Request, res: Response) => {
       return res.status(200).json({ message: [] });
     }
     return res.status(200).json(assignment);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "An error occurred" });
+  }
+};
+
+export const getDataForInstructor = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const assignment = await Assignment.find({ instructor_id: id });
+    console.log(assignment);
+    if (!assignment) {
+      return res.status(200).json({ message: [] });
+    }
+    const courseArray: any = [];
+    let studcount = 0;
+    const section: any = [];
+    for (const ass of assignment) {
+      const course_id = ass.course_id.toString();
+      console.log(course_id);
+      if (!courseArray.includes(course_id)) {
+        courseArray.push(course_id);
+        const assignment = await Assignment.find({
+          instructor_id: id,
+          course_id: ass.course_id,
+        });
+        for (const ass of assignment) {
+          const section_id = ass.section_id.toString();
+          if (!section.includes(section_id)) {
+            section.push(section_id);
+            const secstudent = await NumberOfStudent.findOne({
+              section_id: ass.section_id.toString(),
+              course_id,
+            });
+
+            console.log(secstudent);
+            studcount = studcount + (secstudent.numberOfStudent?.length || 0);
+          }
+        }
+      }
+    }
+    return res.status(200).send({
+      course: courseArray.length,
+      section: section.length,
+      student: studcount,
+    });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "An error occurred" });

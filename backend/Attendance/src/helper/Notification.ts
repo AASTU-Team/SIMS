@@ -15,6 +15,7 @@ async function Notification(data: any) {
       },
       name,
       dept_id,
+      user_id,
     });
 
     return response.status === 200;
