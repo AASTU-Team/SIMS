@@ -7,22 +7,22 @@ Content-Type:  application/json
 
 ### register
 
-POST http://localhost:6000/attendance/new
+POST http://localhost:8000/attendance/new
 Content-Type:  application/json
 
 {
-    "course_id":"662802ac728d90164b677588",
-	"instructor_id":"6627f3543267383b7d6046e6",
+    "course_id":"66658dc0c08179a1fd83af99",
+	"instructor_id":"6627d083bc65aace1ba4c794",
 	"date":"2024-09-09",
 	"attendance":[
 		{
-			"student_id":"6646788517b2c61fd5e52d84",
+			"student_id":"66604076d43809540cc7e7ee",
 			"status":"Absent"
 			
 },
 		{
-				"student_id":"6646788517b2c61fd5e52d84",
-			"status":"Present"
+				"student_id":"666591c19eec88796a7461a5",
+			"status":"Absent"
 			
 		}
 	]
