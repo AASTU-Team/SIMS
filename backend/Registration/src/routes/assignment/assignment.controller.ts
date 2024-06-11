@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import mongoose, { Document, Schema, Types } from "mongoose";
-import Joi, { number } from "joi";
+import Joi, { array, number } from "joi";
+import { count } from "console";
 const NumberOfStudent = require("../../models/numberOfStudent.model");
 
 interface AssignmentI {
@@ -246,6 +247,52 @@ export const getAssignmentByInstId = async (req: Request, res: Response) => {
       return res.status(200).json({ message: [] });
     }
     return res.status(200).json(assignment);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "An error occurred" });
+  }
+};
+
+export const getDataForInstructor = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const assignment = await Assignment.find({ instructor_id: id });
+    console.log(assignment);
+    if (!assignment) {
+      return res.status(200).json({ message: [] });
+    }
+    const courseArray: any = [];
+    let studcount = 0;
+    const section: any = [];
+    for (const ass of assignment) {
+      const course_id = ass.course_id.toString();
+      console.log(course_id);
+      if (!courseArray.includes(course_id)) {
+        courseArray.push(course_id);
+        const assignment = await Assignment.find({
+          instructor_id: id,
+          course_id: ass.course_id,
+        });
+        for (const ass of assignment) {
+          const section_id = ass.section_id.toString();
+          if (!section.includes(section_id)) {
+            section.push(section_id);
+            const secstudent = await NumberOfStudent.findOne({
+              section_id: ass.section_id.toString(),
+              course_id,
+            });
+
+            console.log(secstudent);
+            studcount = studcount + (secstudent.numberOfStudent?.length || 0);
+          }
+        }
+      }
+    }
+    return res.status(200).send({
+      course: courseArray.length,
+      section: section.length,
+      student: studcount,
+    });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "An error occurred" });

@@ -8,6 +8,7 @@ import {
   updateAssignment,
   getTeachersAssignment,
   getAssignmentHistory,
+  getDataForInstructor,
 } from "./assignment.controller";
 
 const Assignmentrouter = express.Router();
@@ -19,9 +20,10 @@ Assignmentrouter.get("/course", getAssignmentBycourse);
 Assignmentrouter.post("/teacher", getTeachersAssignment);
 Assignmentrouter.get("/:id", getAssignmentById);
 
+Assignmentrouter.get("/instructorData/:id", getDataForInstructor);
+
 Assignmentrouter.get("/instructor/:id", getAssignmentByInstId);
 Assignmentrouter.patch("/:id", updateAssignment);
 Assignmentrouter.delete("/:id", deleteAssignment);
-
 
 module.exports = Assignmentrouter;
