@@ -70,7 +70,7 @@ export const getNotificationById = async (req: Request, res: Response) => {
 
     const userNorification = await UserNotification.findOne({
       user_email: id,
-    });
+    }).populate("notifications.notification_id");
 
     if (!UserNotification) {
       return res.status(200).json({ message: [] });

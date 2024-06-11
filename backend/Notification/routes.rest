@@ -17,7 +17,7 @@ Content-Type:  application/json
  "type" : "blaaa"
 } , "stud_id" : "663a8a581f5ac9b89475633c"}
 ### get notification 
-GET http://localhost:5000/notification/sodrinarte@gufum.com
+GET http://localhost:5000/notification/bajakes638@jadsys.com
 Content-Type:  application/json
  
 ### delete notification
