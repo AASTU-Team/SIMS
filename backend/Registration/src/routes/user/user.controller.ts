@@ -2120,8 +2120,8 @@ export const confirmRegistrarRegistration = async (
     const datas = {
       data: {
         srecipient: emails,
-        message: "Withdrawal request is Accepted",
-        type: "Withdrawal Request",
+        message: "Registration is Accepted",
+        type: "Registration",
       },
       name: "student",
       dept_id: "6627f1cb16bcc35f5d498f30",
@@ -2179,8 +2179,8 @@ export const rejectRegistrarRegistration = async (
   const datas = {
     data: {
       srecipient: emails,
-      message: "Withdrawal request is Accepted",
-      type: "Withdrawal Request",
+      message: "Registration denied",
+      type: "Registration Request",
     },
     name: "student",
     dept_id: "6627f1cb16bcc35f5d498f30",
