@@ -2977,6 +2977,7 @@ export const AcceptDepartmentEnrollmentRequest = async (
 
   return res.status(200).json({ success: success, errors: errors });
 };
+
 export const AcceptRegistrarWithdrawalRequest = async (
   req: Request,
   res: Response
@@ -2985,7 +2986,6 @@ export const AcceptRegistrarWithdrawalRequest = async (
   const errors: any = [];
   const success: any = [];
   const emails: any = [];
-
   for (const id of ids) {
     const student = await Student.findById(id);
     let status: Boolean = false;
