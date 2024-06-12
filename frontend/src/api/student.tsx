@@ -68,10 +68,27 @@ client.interceptors.response.use(
     return Promise.reject(error);
   }}
 );
-export const getStudent = async () => {
+export const getStudent = async (year?: number, semester?: number, search?: string) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.get("/student/all");
+  let url = `/student/all`;
+  // if (year && semester && search) {
+  //   url += `?year=${year}&semester=${semester}&search=${search}`;
+  // } else if (year && semester) {
+  //   url += `?year=${year}&semester=${semester}`;}
+  //  else if (search && semester) {
+  //   url += `?search=${search}`;
+  //   } else if (search && year) {
+  //   url += `?search=${search}`;}
+  //   else if (search) {
+  //   url += `?year=${year}&semester=${semester}`;
+  //   } else if (year) {
+  //   url += `?year=${year}`;
+  //   } else if (semester) {
+  //   url += `?semester=${semester}`;
+  //   }
+  // console.log(url);
+  return await client.get(url);
 }
 
 export const registerStudent = async (data: StudentFields) => {
@@ -79,6 +96,8 @@ export const registerStudent = async (data: StudentFields) => {
   setHeaderToken(access_token);
   return await client.post("/register/student", data);
 }
+
+
 
 export const aboutMe = async () => {
   const access_token = getCookie("access_token") || "";
@@ -194,25 +213,50 @@ export const sendWithdrawalRequest = async (id: string, reason: string, file: Fi
 export const getWithdrawalRequestFile = async (id: string) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.get(`/student/withdrawalFile/${id}`);
+
+  const response = await client.get(`/student/withdrawalFile/${id}`, {
+    responseType: "blob",
+  });
+  const url = window.URL.createObjectURL(new Blob([response.data]));
+  const link = document.createElement("a");
+  link.href = url;
+  link.setAttribute("download", "WithdrawalAttachment.pdf"); // or any other extension
+  document.body.appendChild(link);
+  link.click();
 };
 
-export const getWithdrawalStatus = async (id: string) => {
+export const getReadmissionRequestFile = async (id: string) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  const response = await client.get(`/student/withdrawalStatus/${id}`);
-  const url = window.URL.createObjectURL(new Blob([response.data]));
+  console.log(id)
+  const response = await client.get(`/student/enrollmentFile/${id}`, {
+    responseType: "blob",
+  });
+  const url = window.URL.createObjectURL(new Blob([response?.data]));
   const link = document.createElement("a");
   link.href = url;
   link.setAttribute("download", "file.pdf"); // or any other extension
   document.body.appendChild(link);
   link.click();
 };
-
-export const sendReadmissionRequest = async (id: string) => {
+export const getWithdrawalStatus = async (id: string) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.post(`student/register/`, { student_id: id });
+  return await client.get(`/student/withdrawalStatus/${id}`);
+  
+};
+
+export const sendReadmissionRequest = async (id: string,reason:string,file:File | null) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+
+  const formData = new FormData();
+  formData.append("id", id);
+  formData.append("reason", reason);
+  if (file) {
+    formData.append("file", file);
+  }
+  return await client.post(`/student/enrollmentRequest/`, formData);
 };
 
 export const allocateSection = async (
@@ -250,4 +294,50 @@ export const acceptAddDropReg = async (
     addDrop_id,
     status: "accept",
   });
+};
+
+export const activateUser = async (email:string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch("activate", {email});
+};
+
+export const deactivateUser = async (email: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch("deactivate", { email });
+};
+
+export const sendStudentCsv = async (file: File | null) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+
+  const formData = new FormData();
+  if (!file) {
+    return;
+  }
+  formData.append("file", file);
+
+  return await client.post("/register/studentCsv", formData);
+};
+
+
+export const downloadLogFile = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  const response = await client.get("/exportLogFile", { responseType: "blob" });
+  const filename = getFilenameFromUrl("/exportLogFile.csv");
+  saveFile(response.data, filename);
+};
+
+export const getStudentCourseStatus = async (studentId: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/student/coursesStatus/${studentId}`);
+};
+
+export const getStudentCoursesSemesters = async (studentId: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/student/coursesSemesters/${studentId}`);
 };

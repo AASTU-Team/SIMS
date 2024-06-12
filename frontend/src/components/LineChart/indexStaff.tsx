@@ -124,10 +124,6 @@ const ChartStaff: React.FC = () => {
 const [state, setState] = useState<ChartOneState>({
     series: [
         {
-            name: "Your Students CGPA",
-            data: [3.0, 3.2, 2.8, 3.6, 3.9, 3.7, 3.5, 3.4, 3.6, 3.8]
-        },
-        {
             name: "Batch Average",
             data: [2.2, 3.4, 3.5, 3.6, 3.7, 3.8, 3.9, 3.7, 3.6, 3.5],
         },
@@ -145,15 +141,6 @@ const [state, setState] = useState<ChartOneState>({
     <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-8">
       <div className="flex flex-wrap items-start justify-between gap-3 sm:flex-nowrap">
         <div className="flex w-full flex-wrap gap-3 sm:gap-5">
-          <div className="flex min-w-47.5">
-            <span className="mr-2 mt-1 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-primary">
-              <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-primary"></span>
-            </span>
-            <div className="w-full">
-              <p className="font-semibold text-primary">Your Student's CGPA</p>
-              <p className="text-sm font-medium">2018 - 2023</p>
-            </div>
-          </div>
           <div className="flex min-w-47.5">
             <span className="mr-2 mt-1 flex h-4 w-full max-w-4 items-center justify-center rounded-full border border-secondary">
               <span className="block h-2.5 w-full max-w-2.5 rounded-full bg-secondary"></span>

@@ -13,8 +13,9 @@ import Loader from "../../components/Loader";
 import { RegistrationFields } from "../../type/registration";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
-import { acceptReadmissionRequestsReg, getRegistrarWithdrawal, rejectWithdrawalRequestsReg } from "../../api/registration";
+import { acceptWithdrawalRequestsReg, getRegistrarReadmission, rejectWithdrawalRequestsReg } from "../../api/registration";
 import { DownloadOutlined } from "@ant-design/icons";
+import { getWithdrawalRequestFile } from "../../api/student";
 
 export default function Withdrawal() {
   const [form] = useForm();
@@ -22,13 +23,13 @@ export default function Withdrawal() {
 
   const query = useQuery({
     queryKey: ["studentWithRegistrar"],
-    queryFn: () => getRegistrarWithdrawal()
+    queryFn: () => getRegistrarReadmission()
   });
   console.log(query);
 
   const ApproveRequestMutation = useMutation({
       mutationKey: ["approveWithRegistrar"],
-      mutationFn: (id: string) => acceptReadmissionRequestsReg(id),
+      mutationFn: (id: string) => acceptWithdrawalRequestsReg(id),
       onError: () => {
         notification.error({ message: "Request Not Approved" });
       },
@@ -139,7 +140,7 @@ export default function Withdrawal() {
       });
     }
   }
-
+  
   return (
     <div className="pt-2">
       {query.isPending ? (

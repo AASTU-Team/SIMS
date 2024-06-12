@@ -31,13 +31,13 @@ export default function CourseManagement() {
             <UserAddOutlined />
             Add Course
           </button>
-          <button
+          {/* <button
             onClick={() => setOpen(true)}
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
           >
             <UploadOutlined />
             Add Multiple Courses
-          </button>
+          </button> */}
           <button onClick={()=>exportCourse()} className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
             <DownloadOutlined />
             Export List

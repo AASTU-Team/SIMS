@@ -238,7 +238,7 @@ class ApprovalController {
   // Approve all grades in bulk by department
   static async bulkDepartmentApproval(req: Request, res: Response) {
     const { approvalIds, by } = req.body;
-
+    console.log(approvalIds, by)
     try {
       // Update department approval for all grades
       const approvalProcesses = await ApprovalProcess.updateMany(

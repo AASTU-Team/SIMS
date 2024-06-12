@@ -1,12 +1,12 @@
 import React from 'react';
-import { Table, notification, Popconfirm, Switch } from 'antd';
+import { Table, Switch, notification } from 'antd';
 import type { TableColumnsType } from 'antd';
-import {StudentFields, StudentDeleteFields} from "../../type/student";
+import {StudentFields} from "../../type/student";
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { deleteStudent, getStudent } from '../../api/student';
+import {  useMutation, useQuery } from '@tanstack/react-query';
+import {  activateUser, deactivateUser, getStudent } from '../../api/student';
 import Loader from '../../components/Loader';
-import { QuestionCircleOutlined } from '@ant-design/icons';
+// import { QuestionCircleOutlined } from '@ant-design/icons';
 
 
 const StudentTable: React.FC = () =>
@@ -17,21 +17,32 @@ const StudentTable: React.FC = () =>
         queryFn: getStudent,
       });
     console.log(query?.data?.data);
-    const DeleteStudentMutation = useMutation({
-        mutationKey: ["addStudent"],
-        mutationFn: (value: StudentDeleteFields) => deleteStudent(value),
+    const ActivateUserMutation = useMutation({
+        mutationKey: ["activateUser"],
+        mutationFn: (email:string) => activateUser(email),
         onError: () => {
-          notification.error({ message: "Student Not Deleted" });
+          notification.error({ message: "User Not Activated" });
         },
         onSuccess: () => {
-          notification.success({ message: "Student Deleted Successfully" });
+          notification.success({ message: "User Activated" });
           query.refetch();
         },
       });
+    const DeactivateUserMutation = useMutation({
+      mutationKey: ["deactivateUser"],
+      mutationFn: (email: string) => deactivateUser(email),
+      onError: () => {
+        notification.error({ message: "User Not Deactivated" });
+      },
+      onSuccess: () => {
+        notification.success({ message: "User Deactivated" });
+        query.refetch();
+      },
+    });
     
-    const ConfirmDelete = (student_id:string, email: string) => {
-        DeleteStudentMutation.mutate({student_id,email});
-      }
+    // const ConfirmDelete = (student_id:string, email: string) => {
+    //     DeleteStudentMutation.mutate({student_id,email});
+    //   }
       
   
     const columns: TableColumnsType<StudentFields> = [
@@ -41,7 +52,8 @@ const StudentTable: React.FC = () =>
         dataIndex: "name",
         key: "name",
         fixed: "left",
-        sorter: true,
+        sorter: (a, b) => a.name.localeCompare(b.name),
+        
       },
       {
         title: "ID",
@@ -49,13 +61,14 @@ const StudentTable: React.FC = () =>
         dataIndex: "id",
         key: "id",
         fixed: "left",
-        sorter: true,
+        sorter: (a, b) => a.name.localeCompare(b.name),
       },
       {
         title: "Email",
         dataIndex: "email",
         key: "email",
         width: 250,
+        
       },
       {
         title: "Phone",
@@ -79,13 +92,55 @@ const StudentTable: React.FC = () =>
         title: "Department",
         dataIndex: "department_name",
         key: "department_name",
-        width: 150,
+        width: 200,
       },
       {
         title: "Year",
         dataIndex: "year",
         key: "year",
         width: 150,
+        filters: [
+          {
+            text: "1",
+            value: 1,
+          },
+          {
+            text: "2",
+            value: 2,
+          },
+          {
+            text: "3",
+            value: 3,
+          },
+          {
+            text: "4",
+            value: 4,
+          },
+          {
+            text: "5",
+            value: 5,
+          },
+        ],
+      },
+      {
+        title: "Semester",
+        dataIndex: "semester",
+        key: "semester",
+        width: 150,
+        filters: [
+          {
+            text: "1",
+            value: 1,
+          },
+          {
+            text: "2",
+            value: 2,
+          },
+          {
+            text: "3",
+            value: 3,
+          },
+        ],
       },
       {
         title: "Admission Date",
@@ -130,7 +185,7 @@ const StudentTable: React.FC = () =>
         title: "Action",
         key: "operation",
         fixed: "right",
-        width: 180,
+        width: 100,
         render: (text, record) => (
           <div className="flex gap-4 px-4 font-semibold">
             <a
@@ -140,7 +195,7 @@ const StudentTable: React.FC = () =>
             >
               Edit
             </a>
-            <Popconfirm
+            {/* <Popconfirm
               title="Delete the student"
               description="Are you sure to delete this student?"
               onConfirm={() => ConfirmDelete(record._id, record.email)}
@@ -149,7 +204,7 @@ const StudentTable: React.FC = () =>
               icon={<QuestionCircleOutlined style={{ color: "red" }} />}
             >
               <a className=" hover:text-red">Delete</a>
-            </Popconfirm>
+            </Popconfirm> */}
           </div>
         ),
       },
@@ -163,9 +218,14 @@ const StudentTable: React.FC = () =>
             <Switch
               checkedChildren="Active"
               unCheckedChildren="Inactive"
-              defaultChecked={record.status === "Active"}
-              onChange={(checked) => {
-                console.log(checked);
+              defaultChecked={record.userStatus === "Active"}
+              onChange={() => {
+                if(record.userStatus === "Active"){
+                  DeactivateUserMutation.mutate(record.email || "")
+                }else{
+                  ActivateUserMutation.mutate(record.email || "")
+                }
+
               }}
             />
           </div>
@@ -185,6 +245,7 @@ const StudentTable: React.FC = () =>
             columns={columns}
             dataSource={query?.data?.data?.message || []} // Fix: Access the 'data' property of the resolved data
             scroll={{ x: 1300 }}
+            pagination={{ pageSize: 6 }}
           />
         )}
       </div>

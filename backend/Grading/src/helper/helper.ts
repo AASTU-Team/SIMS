@@ -19,14 +19,6 @@ export const assign = async () => {
 
             const studentIds = numberOfStudents.numberOfStudent.map((entry: any) => entry.student);
 
-<<<<<<< HEAD
-            const updateResult = await Grade.updateMany(
-                { student_id: { $in: studentIds }, course_id: course_id},
-                { $set: { instructor_id: instructor_id } }
-            );
-
-            // console.log(`Instructor ${instructor_id} updated for ${updateResult} students in course ${course_id}.`);
-=======
             for (const studentId of studentIds) {
                 let grade = await Grade.findOne({ student_id: studentId, course_id: course_id });
 
@@ -60,7 +52,6 @@ export const assign = async () => {
                     await grade.save();
                 }
             }
->>>>>>> 8c02d8e76272fcd7ad4f1f8af94e860c91b869bd
         }
     } catch (error) {
         return

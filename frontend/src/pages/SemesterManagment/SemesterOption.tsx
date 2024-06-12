@@ -204,7 +204,7 @@ export default function SemesterOption({
               }}
             />
           </div>
-          <div className="flex gap-2 justify-between">
+          {/* <div className="flex gap-2 justify-between">
             <span className="font-semibold">Add/Drop Status</span>
 
             <Switch
@@ -221,7 +221,7 @@ export default function SemesterOption({
                 }
               }}
             />
-          </div>
+          </div> */}
         </div>
       </div>
       <div className="flex flex-col gap-5 bg-transparent pb-2 px-4">

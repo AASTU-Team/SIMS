@@ -7,7 +7,7 @@ async function Notification(data: any) {
   console.log(srecipient, dept_id, message, type, user_id);
 
   try {
-    const response = await axios.post("http://localhost:6000/notification", {
+    const response = await axios.post("http://localhost:3300/notification", {
       data: {
         srecipient,
         message,

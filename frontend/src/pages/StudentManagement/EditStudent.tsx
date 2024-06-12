@@ -549,7 +549,7 @@ export default function EditStudent() {
                 </div>
               </Form.Item>
             </div>
-            <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
+            {/* <div className="mb-5.5 flex flex-col gap-5.5 sm:flex-row">
               <Form.Item>
                 <div>
                   <label
@@ -565,7 +565,7 @@ export default function EditStudent() {
                   </div>
                 </div>
               </Form.Item>
-            </div>
+            </div> */}
           </Form>
         </div>
       </div>

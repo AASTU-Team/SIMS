@@ -17,7 +17,7 @@ const reportRoute = require("./routes/report/report.route");
  
 import path from "path";
 const app = express();
-app.use('/profile-images', express.static(path.join(__dirname, '../exports','withdrawals')));
+// app.use('/profile-images', express.static(path.join(__dirname, '../exports','withdrawals')));
 
 app.use(cors());
 app.use(bodyParser.json());

@@ -35,12 +35,13 @@ export default function WithdrawalReadmission() {
 
   const requestReadmissionMutation = useMutation({
     mutationKey: ["requestReaddrawal"],
-    mutationFn: (reason: string) => sendReadmissionRequest(user._id, reason),
+    mutationFn: (reason: string) => sendReadmissionRequest(user._id, reason,file),
     onError: () => {
       notification.error({ message: "Readmission Request Unsuccessful" });
     },
     onSuccess: () => {
       notification.success({ message: "Readmission Request Successfully Sent" });
+      setFile(null)
       query.refetch();
     },
   });
@@ -52,8 +53,7 @@ const showReadmissionConfirm = () => {
     okText: "I'm sure.",
     onOk() {
       // console.log(form.getFieldValue("reason"))
-      requestWithdrawalMutation.mutate(
-        user._id,
+      requestReadmissionMutation.mutate(
         form.getFieldValue("reason") || ""
       );
       query.refetch();
@@ -146,7 +146,8 @@ const showReadmissionConfirm = () => {
           <div className="flex flex-col justify-end mr-5 gap-4 items-end">
             {file ? (
               <div className="flex gap-5 font-medium text-[15px]">
-                Attached Document:<span className='text-blue-900'> {file?.name}</span>
+                Attached Document:
+                <span className="text-blue-900"> {file?.name}</span>
                 <DeleteOutlined
                   className="text-red"
                   onClick={() => setFile(null)}
@@ -179,7 +180,7 @@ const showReadmissionConfirm = () => {
           Your registration is being processed by the Registrar Office.
         </div>
       ) : (
-        query?.data?.data?.message?.status === "Registrar-enroll" && (
+        query?.data?.data?.message?.status === "Registrar-withdrawal" && (
           <Form
             name="withdrawal_readmission"
             autoComplete="off"
@@ -194,7 +195,7 @@ const showReadmissionConfirm = () => {
               rules={[
                 {
                   required: false,
-                  message: "Please input the reason for readmission!",
+                  message: "Please input the reason for withdrawal!",
                 },
               ]}
             >
@@ -206,18 +207,32 @@ const showReadmissionConfirm = () => {
                   Reason For Readmission
                 </label>
                 <Input.TextArea
-                  placeholder="Enter the reason for readmission"
+                  placeholder="Enter the reason for withdrawal"
                   rows={10}
                   className=" rounded-lg w-200 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                 />
               </div>
             </Form.Item>
-            <Upload {...props}>
-              <Button icon={<UploadOutlined />}>
-                Upload Addition Documents (&lt;10MB)
-              </Button>
-            </Upload>
-            <div className="flex justify-end mr-5">
+            <div className="flex flex-col justify-end mr-5 gap-4 items-end">
+              {file ? (
+                <div className="flex gap-5 font-medium text-[15px]">
+                  Attached Document:
+                  <span className="text-blue-900"> {file?.name}</span>
+                  <DeleteOutlined
+                    className="text-red"
+                    onClick={() => setFile(null)}
+                  />
+                </div>
+              ) : (
+                <Upload {...props}>
+                  <Button
+                    className="py-2 flex justify-center align-middle items-center"
+                    icon={<UploadOutlined />}
+                  >
+                    Upload Additional Documents (&lt;10MB)
+                  </Button>
+                </Upload>
+              )}
               <button
                 className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray  hover:bg-opacity-90"
                 onClick={showReadmissionConfirm}

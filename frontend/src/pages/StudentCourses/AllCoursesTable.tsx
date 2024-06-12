@@ -4,13 +4,17 @@ import { useQuery } from "@tanstack/react-query";
 import Loader from "../../components/Loader";
 import { CourseFields } from "../../type/course";
 import CourseDetails from "./CourseDetails";
-import { getCourse } from "../../api/course";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import { getStudentCourseStatus } from "../../api/student";
 
 export default function AllCourseTable() {
-  const query = useQuery({
-    queryKey: ["getCourse"],
-    queryFn: getCourse,
-  });
+  const user = useSelector((state: RootState) => state.user);
+
+   const query = useQuery({
+     queryKey: ["countCourseStatus"],
+     queryFn: () => getStudentCourseStatus(user._id),
+   });
   console.log(query);
   const columns: TableColumnsType = [
     {
@@ -40,30 +44,6 @@ export default function AllCourseTable() {
       width: 70,
     },
     {
-      title: "Tutor Hour",
-      dataIndex: "tut",
-      key: "tut",
-      width: 70,
-    },
-    {
-      title: "HS Hour",
-      dataIndex: "hs",
-      key: "hs",
-      width: 70,
-    },
-    {
-      title: "Category",
-      dataIndex: "type",
-      key: "type",
-      width: 70,
-    },
-    {
-      title: "Option",
-      dataIndex: "option",
-      key: "option",
-      width: 70,
-    },
-    {
       title: "Credits",
       dataIndex: "credits",
       key: "credits",
@@ -77,11 +57,11 @@ export default function AllCourseTable() {
           <Loader />
         </div>
       ) : query.isError ? (
-        <>{`${query.error}`}</>
+        <Table columns={columns} dataSource={[]} scroll={{ x: 1300 }} />
       ) : (
         <Table
           columns={columns}
-          dataSource={query.data?.data?.data|| []}
+          dataSource={query.data?.data?.complete || []}
           scroll={{ x: 1300 }}
           rowKey={(record) => record._id || ""}
           expandable={{

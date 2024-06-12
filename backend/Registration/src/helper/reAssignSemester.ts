@@ -79,7 +79,7 @@ async function reAssignSemester(id: any): Promise<any> {
     semester: semestersAsIneger,
     year: { $in: batchesAsIntegers },
   });
-  //console.log(students)
+  console.log("students",students)
   if (students.length > 0) {
     for (const student of students) {
       // const CGPA = await calculateCGPA(student._id)
@@ -114,7 +114,7 @@ async function reAssignSemester(id: any): Promise<any> {
 
         try {
           const response = await axios.post(
-            "http://localhost:9000/calculateGPAs",
+            "http://localhost:3005/calculateGPAs",
             {
               students: [
                 {
@@ -128,6 +128,7 @@ async function reAssignSemester(id: any): Promise<any> {
           // Handle the response
           //  console.log(response.data);
           const data = response.data;
+          console.log(data)
 
           // console.log("insidle loop",data[0].courseGrades)
 
@@ -273,7 +274,7 @@ async function reAssignSemester(id: any): Promise<any> {
       name: "student",
       dept_id: "6627f1cb16bcc35f5d498f30",
     };
-    await Notification(data);
+  //  await Notification(data);
   }
 }
 

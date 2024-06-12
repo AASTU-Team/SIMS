@@ -2,6 +2,7 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import EnrolledCoursesTable from "./EnrolledCoursesTable";
 import AllCoursesTable from "./AllCoursesTable";
+import InCompleteCourses from "./IncompleCourses";
 
 const items: TabsProps["items"] = [
   {
@@ -11,9 +12,15 @@ const items: TabsProps["items"] = [
   },
   {
     key: "2",
-    label: "All Courses",
+    label: "Completed Courses",
     children: <AllCoursesTable />,
-  }
+  },
+  {
+    key: "3",
+    label: "Incomplete Courses",
+    children: <InCompleteCourses />,
+  },
+
 ];
 
 export default function StudentCourses() {

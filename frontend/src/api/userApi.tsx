@@ -67,6 +67,12 @@ export const setPassword = async ({invite_token,password}:ChangePasswordForm) =>
   return await client.patch("/invitePass", { password });
 };
 
+export const setForgetPass = async (email:string) => {
+  return await client.patch("/forgotpassword", { email });
+};
+
+
+
 export const useMe = () =>
   useQuery<AxiosResponse, AxiosError>({
     queryKey: ["me"],

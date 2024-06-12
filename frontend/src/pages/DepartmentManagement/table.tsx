@@ -18,6 +18,7 @@ const DepartmentTable: React.FC = () => {
     queryKey: ["department"],
     queryFn: getDepartment
   });
+  // console.log(query.data)
   
   const columns: TableColumnsType<DepartmentFields> = [
     {
@@ -25,14 +26,7 @@ const DepartmentTable: React.FC = () => {
       dataIndex: "name",
       key: "name",
       width: 150,
-      sorter: true,
-    },
-    {
-      title: "Code",
-      dataIndex: "code",
-      key: "code",
-      width: 150,
-      sorter: true,
+      sorter: (a, b) => (a.name ?? '').localeCompare(b.name ?? ''),
     },
     {
       title: "Department Head",
@@ -46,9 +40,7 @@ const DepartmentTable: React.FC = () => {
       title: "Head Email",
       width: 150,
       sorter: true,
-      render: (record) => (
-        <span>{record?.dep_head?.email}</span>
-      ),
+      render: (record) => <span>{record?.dep_head?.email}</span>,
     },
     {
       title: "Action",
@@ -64,7 +56,6 @@ const DepartmentTable: React.FC = () => {
           >
             Edit
           </a>
-          <a className=" hover:text-red">Delete</a>
         </Space>
       ),
     },
@@ -81,6 +72,7 @@ const DepartmentTable: React.FC = () => {
       ) : (
         <Table
           columns={columns}
+          pagination={{ pageSize: 5 }}
           dataSource={query?.data?.data?.data || []} // Fix: Access the 'data' property of the resolved data
           scroll={{ x: 450 }}
         />

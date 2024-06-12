@@ -19,6 +19,7 @@ export type CourseFields = {
 };
 
 export type Assessments = {
+    _id?: string;
     id:string;
     name?:string;
     value?:number;

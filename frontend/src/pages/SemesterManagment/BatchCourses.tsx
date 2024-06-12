@@ -2,6 +2,7 @@ import { Tabs } from "antd";
 import type { TabsProps } from "antd";
 import { Link, useLocation } from "react-router-dom";
 import CourseTable from "./CourseTable";
+import AssignmentHistory from "./AssignmentHistory";
 
 type BatchCoursesProps = {
     semesterId: string;
@@ -21,7 +22,7 @@ export default function BatchCourses() {
         {
             key: "2",
             label: "Course Assignment History",
-            children: <div>Course Assignment History</div>,
+            children: <AssignmentHistory/>
         },
     ];
   return (

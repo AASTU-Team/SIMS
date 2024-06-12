@@ -42,6 +42,7 @@ import StudentGradeReport from "../pages/StudentGradeReport";
 import DepartmentGradeApproval from "../pages/DepartmentGradeApproval";
 import DeanGradeApproval from "../pages/DeanGradeApproval";
 import RoleRoutes from "../hooks/roleBasedRoutes";
+import ForgetPassword from "../pages/ForgetPassoword";
 const AllRoutes = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -49,6 +50,7 @@ const AllRoutes = () => {
     <>
       <Routes>
         <Route path="/signin" element={<SignIn />} />
+        <Route path="/forgot_pass" element={<ForgetPassword />} />
         <Route path="/setpass/:id" element={<SetPassword />} />
         <Route path="/loading" element={<Loader />} />
 

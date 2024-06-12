@@ -51,7 +51,7 @@ export default function CourseTable(state:BatchCoursesProps) {
   }; 
 
   const query = useQuery({
-    queryKey: ["batchCourses"],
+    queryKey: ["batchCourses", user._id, state.batch, state.semester, state.type],
     queryFn: () =>
       getBatchCourses(
         user._id,
@@ -61,7 +61,7 @@ export default function CourseTable(state:BatchCoursesProps) {
       ),
   });
 
-  // console.log(query)
+  console.log(query)
   const columns: TableColumnsType<CourseFields> = [
     {
       title: "Course Name",
@@ -128,7 +128,14 @@ export default function CourseTable(state:BatchCoursesProps) {
           <Loader />
         </div>
       ) : query.isError ? (
-        <>{`${query.error}`}</>
+        <>{
+          <Table
+          columns={columns}
+          dataSource={[]}
+          scroll={{ x: 1300 }}
+          
+        />
+        }</>
       ) : (
         <Table
           columns={columns}
@@ -160,7 +167,7 @@ export default function CourseTable(state:BatchCoursesProps) {
             onClick={() => form.submit()}
             className="bg-primary"
           >
-            ALlocate
+            Allocate
           </Button>,
         ]}
       >

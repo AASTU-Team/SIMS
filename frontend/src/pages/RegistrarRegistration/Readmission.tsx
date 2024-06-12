@@ -14,6 +14,9 @@ import { RegistrationFields } from "../../type/registration";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import {  acceptReadmissionRequestsReg, getRegistrarReadmission, rejectReadmissionRequestsReg } from "../../api/registration";
+import { getReadmissionRequestFile } from "../../api/student";
+import { DownloadOutlined } from "@ant-design/icons";
+
 
 export default function Readmission() {
   const [form] = useForm();
@@ -124,17 +127,17 @@ export default function Readmission() {
   const [open, setOpen] = useState(false);
   if (
     query.isSuccess &&
-    query.data?.data?.requests
+    query.data?.data?.message
   ) {
-    for (let i = 0; i < (query.data?.data?.requests?.length || 0); i++) {
+    for (let i = 0; i < (query.data?.data?.message?.length || 0); i++) {
       data.push({
         key: i,
-        _id: query.data?.data?.requests[i]?.stud_id?._id,
-        name: query.data?.data?.requests[i]?.stud_id?.name,
-        id: query.data?.data?.requests[i]?.stud_id?.id,
-        email: query.data?.data?.requests[i]?.stud_id?.email,
-        phone: query.data?.data?.requests[i]?.stud_id?.phone,
-        reason: query.data?.data?.requests[i]?.reason,
+        _id: query.data?.data?.message[i]?.stud_id?._id,
+        name: query.data?.data?.message[i]?.stud_id?.name,
+        id: query.data?.data?.message[i]?.stud_id?.id,
+        email: query.data?.data?.message[i]?.stud_id?.email,
+        phone: query.data?.data?.message[i]?.stud_id?.phone,
+        reason: query.data?.data?.message[i]?.reason,
       });
     }
   }
@@ -154,9 +157,18 @@ export default function Readmission() {
           scroll={{ x: 1300 }}
           expandable={{
             expandedRowRender: (record) => (
-              <div>
-                <h3 className="font-semibold">Reason of Withdrawal</h3>
-                <p>{record.reason}</p>
+              <div className="flex justify-between">
+                <div>
+                  <h3 className="font-semibold">Reason of Readmission</h3>
+                  <p>{record.reason}</p>
+                </div>
+                <button
+                  onClick={() => getReadmissionRequestFile(record._id)}
+                  className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+                >
+                  <DownloadOutlined />
+                  Download Attached Document
+                </button>
               </div>
             ),
           }}

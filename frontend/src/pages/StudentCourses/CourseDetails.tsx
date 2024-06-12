@@ -10,17 +10,17 @@ export default function CourseDetails({records}:{records:CourseFields}) {
       {
         key: "1",
         label: "Grades",
-        children: <GradesTable />,
+        children: <GradesTable course={records._id || ""} />,
       },
       {
         key: "2",
         label: "Attendance",
         children: <Attendance course={records._id || ""} />,
-      }
+      },
     ];
     console.log(records)
   return (
-    <div className="">
+    <div className="max max-h-80 overflow-y-scroll">
       <Tabs defaultActiveKey="1" items={items} size="large" />
     </div>
   );

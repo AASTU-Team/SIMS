@@ -7,13 +7,15 @@ import { ChangePasswordForm } from "../../type/user";
 import type { FormProps } from "antd";
 import { ChangePassword } from "../../api/userApi";
 import { useMutation } from "@tanstack/react-query";
-
+import { DownloadOutlined } from "@ant-design/icons";
+import { downloadLogFile } from "../../api/student";
 
 export default function Profile() {
   const [form] = Form.useForm();
   const [changePass, setChangePass] = useState(false);
   const user = useSelector((state: RootState) => state.user);
   // console.log(user)
+  const admin = user.roles.includes("roomMan")
 
   const passwordMutation = useMutation({
     mutationKey: ["password"],
@@ -64,9 +66,19 @@ export default function Profile() {
               <h3 className="font-medium text-black dark:text-white">
                 Personal Information
               </h3>
-              <Button danger onClick={() => setChangePass(!changePass)}>
-                Change Password
-              </Button>
+              <div className="flex gap-2">
+                <Button danger onClick={() => setChangePass(!changePass)}>
+                  Change Password
+                </Button>
+                {admin && 
+                <Button
+                  type="primary"
+                  onClick={() => downloadLogFile()}
+                  icon={<DownloadOutlined />}
+                >
+                  Download Log
+                </Button>}
+              </div>
             </div>
             <div className="p-7">
               <form action="#">

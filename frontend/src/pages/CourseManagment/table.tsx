@@ -22,9 +22,8 @@ const CourseTable: React.FC = () => {
       dataIndex: "name",
       key: "name",
       fixed: "left",
-      sorter: true,
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
-
     {
       title: "Code",
       dataIndex: "code",
@@ -62,10 +61,34 @@ const CourseTable: React.FC = () => {
       width: 150,
     },
     {
+      title: "Tutor Hour",
+      dataIndex: "tut",
+      key: "tut",
+      width: 150,
+    },
+    {
+      title: "HS Hour",
+      dataIndex: "hs",
+      key: "hs",
+      width: 100,
+    },
+    {
+      title: "Category",
+      dataIndex: "type",
+      key: "type",
+      width: 100,
+    },
+    {
+      title: "Option",
+      dataIndex: "option",
+      key: "option",
+      width: 100,
+    },
+    {
       title: "Action",
       key: "operation",
       fixed: "right",
-      width: 180,
+      width: 100,
       render: (text, record) => (
         <Space size="middle" className="px-4 font-semibold">
           <a
@@ -75,7 +98,6 @@ const CourseTable: React.FC = () => {
           >
             Edit
           </a>
-          <a className=" hover:text-red">Delete</a>
         </Space>
       ),
     },
@@ -95,6 +117,7 @@ const CourseTable: React.FC = () => {
           dataSource={query?.data?.data?.data || []} // Fix: Access the 'data' property of the resolved data
           scroll={{ x: 1300 }}
           rowKey={(record) => record._id || ""}
+          pagination={{ pageSize: 10 }}
           expandable={{
             expandedRowRender: (record: CourseFields) => {
               return (
@@ -115,10 +138,10 @@ const CourseTable: React.FC = () => {
                     <div>
                       <h3 className="font-semibold">Prerequisites</h3>
                       <ul>
-                          <li key="no_preq" className="flex gap-1">
-                            <span key="no_preq">&#8226;</span>
-                            No Prerequisites
-                          </li>
+                        <li key="no_preq" className="flex gap-1">
+                          <span key="no_preq">&#8226;</span>
+                          No Prerequisites
+                        </li>
                       </ul>
                     </div>
                   )}

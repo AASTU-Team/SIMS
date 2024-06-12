@@ -90,10 +90,10 @@ export const createDepartment = async (data: DepartmentFields) => {
   return await client.post("/create", data);
 }
 
-export const updateDepartment = async (id: string, data: DepartmentFields) => {
+export const updateDepartment = async ( data: DepartmentFields) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);
-  return await client.patch(`/${id}`, data);
+  return await client.patch(`/${data._id}`, data);
 }
 
 export const deleteDepartment = async (id: string) => {

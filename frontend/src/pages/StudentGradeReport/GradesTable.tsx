@@ -1,84 +1,55 @@
 import React from "react";
-import { Table } from "antd";
+import { Button, Table } from "antd";
 import type { TableColumnsType } from "antd";
 // import { useQuery } from "@tanstack/react-query";
 // import Loader from "../../components/Loader";
 import CourseTable from "./CoursesTable";
+import { useQuery } from "@tanstack/react-query";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import { getStudentCoursesSemesters } from "../../api/student";
+import Loader from "../../components/Loader";
+import { CourseFields } from "../../type/course";
+import  MyDocument  from "../../components/Report";
+import { pdf } from "@react-pdf/renderer";
 
-const data = [
-  {
-    key: "1",
-    year: "2021",
-    semester: "1",
-    academic_year: "2021",
-    program: "Computer Science",
-    gpa: "3.5",
-  },
-  {
-    key: "2",
-    year: "2021",
-    semester: "2",
-    academic_year: "2021",
-    program: "Computer Science",
-    gpa: "3.5",
-  },
-  {
-    key: "3",
-    year: "2021",
-    semester: "3",
-    academic_year: "2021",
-    program: "Computer Science",
-    gpa: "3.5",
-  },
-  {
-    key: "4",
-    year: "2021",
-    semester: "4",
-    academic_year: "2021",
-    program: "Computer Science",
-    gpa: "3.5",
-  },
-  {
-    key: "5",
-    year: "2021",
-    semester: "5",
-    academic_year: "2021",
-    program: "Computer Science",
-    gpa: "3.5",
-  },
-  {
-    key: "6",
-    year: "2021",
-    semester: "6",
-    academic_year: "2021",
-    program: "Computer Science",
-    gpa: "3.5",
-  },
-  {
-    key: "7",
-    year: "2021",
-    semester: "7",
-    academic_year: "2021",
-    program: "Computer Science",
-    gpa: "3.5",
-  },
-  {
-    key: "8",
-    year: "2021",
-    semester: "8",
-    academic_year: "2021",
-    program: "Computer Science",
-    gpa: "3.5",
-  },
-];
-
+interface StudentSemesterStatus {
+  semester: number;
+  year: number;
+  gpa: number;
+  courses: CourseFields[];
+}
 
 const GradesTable: React.FC = () => {
-  // const query = useQuery({
-  //   queryKey: ["semester"],
-  //   queryFn: getSemester,
-  // });
-  // console.log(query?.data?.data);
+  const user = useSelector((state: RootState) => state.user);
+
+  const query = useQuery({
+    queryKey: ["studentSemesterStatus"],
+    queryFn: () => getStudentCoursesSemesters(user._id),
+  });
+  console.log(query);
+  const downloadPDF = async () => {
+    try {
+      // Render the PDF to a blob
+      const blob = await pdf(<MyDocument data={[1, 2, 3]} />).toBlob();
+
+      // Create a temporary anchor element
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "document.pdf";
+
+      // Append the anchor element to the DOM
+      document.body.appendChild(link);
+
+      // Trigger the download
+      link.click();
+
+      // Clean up the temporary anchor element
+      document.body.removeChild(link);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+    }
+  };
 
   const columns: TableColumnsType = [
     {
@@ -94,29 +65,24 @@ const GradesTable: React.FC = () => {
       width: 150,
     },
     {
-      title: "Academic Year",
-      width: 150,
-      dataIndex: "academic_year",
-      key: "academic_year",
-      fixed: "left",
-      sorter: true,
-    },
-    {
-      title: "Program",
-      dataIndex: "program",
-      key: "program",
+      title: "GPA",
+      dataIndex: "GPA",
+      key: "GPA",
       width: 150,
     },
-    {
-      title: "GPS",
-      dataIndex: "gpa",
-      key: "gpa",
-      width: 150,
-    },
+    // {
+    //   title: "Action",
+    //   key: "operation",
+    //   fixed: "right",
+    //   width: 100,
+    //   render: (text, record) => (
+    //     <Button onClick={() => downloadPDF()}>Generate Report</Button>
+    //   ),
+    // },
   ];
   return (
     <div className="shadow-lg py-4 ">
-      {/* {query.isPending ? (
+      {query.isPending ? (
         <div className="h-auto">
           <Loader />
         </div>
@@ -125,29 +91,31 @@ const GradesTable: React.FC = () => {
       ) : (
         <Table
           columns={columns}
-          dataSource={query?.data?.data?.data || []} // Fix: Access the 'data' property of the resolved data
+          dataSource={
+            Array.isArray(query?.data?.data?.message)
+              ? query?.data?.data?.message
+              : []
+          } // Fix: Access the 'data' property of the resolved data
           scroll={{ x: 1300 }}
+          rowKey={(record: StudentSemesterStatus) =>
+            `${record.semester}${record.year}${record.gpa}`
+          }
           expandable={{
-            expandedRowRender: () => (
+            expandedRowRender: (record: StudentSemesterStatus) => (
               <div className="p-2 bg-white">
-                <CourseTable />
+                <CourseTable
+                  records={record.courses.map((value) => ({
+                    grade: value.grade,
+                    name: value.courseID.name,
+                    code: value.courseID.code,
+                    credit: value.courseID.credits,
+                  }))}
+                />
               </div>
             ),
           }}
         />
-      )} */}
-      <Table
-        columns={columns}
-        dataSource={data} // Fix: Access the 'data' property of the resolved data
-        scroll={{ x: 1300 }}
-        expandable={{
-          expandedRowRender: () => (
-            <div className="p-2 bg-white">
-              <CourseTable />
-            </div>
-          ),
-        }}
-      />
+      )}
     </div>
   );
 };

@@ -1,5 +1,5 @@
 import { ApexOptions } from "apexcharts";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ReactApexChart from "react-apexcharts";
 
 interface ChartThreeState {
@@ -49,18 +49,24 @@ const options: ApexOptions = {
   ],
 };
 
-const ChartThree: React.FC = () => {
+interface ChartThreeProps {
+  enrolled: number;
+  completed: number;
+  incomplete: number;
+  failed: number;
+}
+
+const ChartThree: React.FC<ChartThreeProps> = ({ enrolled, completed, incomplete, failed }) => {
   const [state, setState] = useState<ChartThreeState>({
-    series: [65, 34, 56, 12],
+    series: [enrolled, completed, incomplete, failed]
   });
 
-  const handleReset = () => {
-    setState((prevState) => ({
-      ...prevState,
-      series: [65, 34, 12, 56],
-    }));
-  };
-  handleReset;
+
+    useEffect(() => {
+      setState({
+        series: [enrolled, completed, incomplete, failed],
+      });
+    }, [enrolled, completed, incomplete, failed]);
 
   return (
     <div className="col-span-12 rounded-sm border border-stroke bg-white px-5 pb-5 pt-7.5 shadow-default dark:border-strokedark dark:bg-boxdark sm:px-7.5 xl:col-span-4">
@@ -88,7 +94,7 @@ const ChartThree: React.FC = () => {
             <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-primary"></span>
             <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
               <span> Completed </span>
-              <span> 65% </span>
+              <span> {completed} </span>
             </p>
           </div>
         </div>
@@ -97,7 +103,7 @@ const ChartThree: React.FC = () => {
             <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#6577F3]"></span>
             <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
               <span>Uncompleted </span>
-              <span> 34% </span>
+              <span> {incomplete}</span>
             </p>
           </div>
         </div>
@@ -106,7 +112,7 @@ const ChartThree: React.FC = () => {
             <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#8FD0EF]"></span>
             <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
               <span> Enrolled </span>
-              <span> 45% </span>
+              <span> {enrolled} </span>
             </p>
           </div>
         </div>
@@ -115,7 +121,7 @@ const ChartThree: React.FC = () => {
             <span className="mr-2 block h-3 w-full max-w-3 rounded-full bg-[#0FADCF]"></span>
             <p className="flex w-full justify-between text-sm font-medium text-black dark:text-white">
               <span> Failed </span>
-              <span> 12% </span>
+              <span> {failed} </span>
             </p>
           </div>
         </div>

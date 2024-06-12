@@ -1,41 +1,22 @@
 import StudentTable from "./table";
 import { useState } from "react";
 import { UserAddOutlined, UploadOutlined, InboxOutlined,DownloadOutlined } from "@ant-design/icons";
-import { Button, Modal, Form, Upload, message } from "antd";
+import { Button, Modal, Form, Upload, message, notification } from "antd";
 import type { FormProps } from "antd";
 import { useNavigate } from "react-router-dom";
-import { downloadTemplate,exportStudent } from "../../api/student";
+import { downloadTemplate,exportStudent, sendStudentCsv } from "../../api/student";
 import type { UploadProps } from "antd";
+import {  DeleteOutlined } from "@ant-design/icons";
+import { useQueryClient } from "@tanstack/react-query";
 
 
 export default function StudentManagement() {
   const { Dragger } = Upload;
   const [open, setOpen] = useState(false);
   const router = useNavigate()
-  const [fileList, setFileList] = useState<File[]>([]);
-  const [uploading, setUploading] = useState(false);
-  const handleUpload = () => {
-    const formData = new FormData();
-    fileList.forEach((file) => {
-      formData.append("file", file);
-    });
-    setUploading(true);
-    fetch("http://localhost:3000/user/register/studentCsv", {
-      method: "POST",
-      body: formData,
-    })
-      .then((res) => res.json())
-      .then(() => {
-        setFileList([]);
-        message.success("upload successfully.");
-      })
-      .catch(() => {
-        message.error("upload failed.");
-      })
-      .finally(() => {
-        setUploading(false);
-      });
-  };
+  const [file, setFile] = useState<File | null>(null);
+  const queryClient = useQueryClient();
+  
 
   const onFinish: FormProps["onFinish"] = (values) => {
     console.log("Success:", values);
@@ -48,33 +29,25 @@ export default function StudentManagement() {
   };
 
   const props: UploadProps = {
-    name: "file",
-    multiple: false,
-    // onRemove: (file) => {
-    //   const index = fileList.indexOf(file);
-    //   const newFileList = fileList.slice();
-    //   newFileList.splice(index, 1);
-    //   setFileList(newFileList);
-    // },
-    // beforeUpload: (file) => {
-    //   setFileList([...fileList, file]);
-    //   return false;
-    // },
-    // fileList,
-    onChange(info) {
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
+    beforeUpload: (file) => {
+     const isCSV = file.type === "text/csv";
+     const isSizeValid = file.size / 1024 / 1024 < 10; // Check if file size is less than 10MB
+     if (!isCSV) {
+      message.error(`${file.name} is not a CSV file`);
+     }
+     if (!isSizeValid) {
+      message.error(`${file.name} is larger than 10MB`);
+     }
+     return (isCSV && isSizeValid) || Upload.LIST_IGNORE;
     },
-    onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
+    customRequest: ({ file }) => {
+     console.log(file);
+     if (file) {
+      const fileObj = file as File;
+      setFile(fileObj); // Set the file to the file state
+     }
     },
+    showUploadList: false,
   };
 
   return (
@@ -118,15 +91,23 @@ export default function StudentManagement() {
           </Button>,
           <Button
             type="primary"
-            onClick={handleUpload}
-            disabled={fileList.length === 0}
+            onClick={()=>{
+              sendStudentCsv(file)
+              notification.success({
+                message: "Success",
+                description: "Students registered successfully",
+              })
+              queryClient.invalidateQueries({queryKey:["students"]})
+              setFile(null)
+              setOpen(false)
+            }}
+            disabled={file===null}
             className="bg-primary hover:bg-primary hover:text-white hover:bg-opacity-90"
-            loading={uploading}
             style={{
               marginTop: 16,
             }}
           >
-            {uploading ? "Uploading" : "Register"}
+             Register
           </Button>,
           // <Button
           //   key="submit"
@@ -145,7 +126,17 @@ export default function StudentManagement() {
           onFinishFailed={onFinishFailed}
         >
           <Form.Item name="user_list">
-            <Dragger {...props}>
+            {
+              file?
+              (<div className="flex gap-5 font-medium text-[15px]">
+                Attached Document:
+                <span className="text-blue-900"> {file?.name}</span>
+                <DeleteOutlined
+                  className="text-red"
+                  onClick={() => setFile(null)}
+                />
+              </div>):
+            (<Dragger {...props}>
               <p className="ant-upload-drag-icon">
                 <InboxOutlined />
               </p>
@@ -156,7 +147,9 @@ export default function StudentManagement() {
                 Support for a single csv file upload. Strictly follow the
                 template provided.
               </p>
-            </Dragger>
+            </Dragger>)
+
+            }
           </Form.Item>
         </Form>
         {/* </div> */}

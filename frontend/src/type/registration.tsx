@@ -53,3 +53,21 @@ export interface RegistrationFields {
   courses?: { courseID: CourseFields }[];
   _id: string;
 }
+
+export interface StudentApproval{
+  name?:string;
+  student_id?:string;
+  grade?:string;
+  attendance?:string;
+  grade_id?:string;
+  
+}
+
+export interface GradeApproval {
+  instructor_name?:string;
+  course_name?:string;
+  code?:string;
+  request_date?:string;
+  students?:StudentApproval[];
+  key?:string;
+}

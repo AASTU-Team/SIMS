@@ -6,25 +6,54 @@ import {
 } from "@ant-design/icons";
 import ChartOne from "../../components/LineChart";
 import ChartThree from "../../components/PieChart";
+import { useQuery } from "@tanstack/react-query";
+import { getStudentCoursesSemesters, getStudentCourseStatus } from "../../api/student";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import { useEffect, useState } from "react";
 
 export default function StudentDashboard() {
+  const user = useSelector((state: RootState) => state.user);
+
+  const countQuery = useQuery({
+        queryKey: ["countCourseStatus"],
+        queryFn:()=> getStudentCourseStatus(user._id),
+      });
+  console.log("Count Query",countQuery)
+
+  const semesterQuery = useQuery({
+      queryKey: ["studentSemesterStatus"],
+      queryFn: () => getStudentCoursesSemesters(user._id),
+    });
+  console.log("Semester Query",semesterQuery)
+  const [enrolled, setEnrolled] = useState<number>(countQuery.data?.data?.enrolled?.length || 0);
+  const [completed, setCompleted] = useState<number>(countQuery.data?.data?.completed?.length || 0);
+  const [incomplete, setIncomplete] = useState<number>(countQuery.data?.data?.left?.length || 0);
+  const [failed, setFailed] = useState<number>(countQuery.data?.data?.fail?.length || 0);
+ 
+  useEffect(() => {
+    if (countQuery.data) {
+      setEnrolled(countQuery.data.data.enrolled.length || 0);
+      setCompleted(countQuery.data.data.completed.length || 0);
+      setIncomplete(countQuery.data.data.left.length || 0);
+      setFailed(countQuery.data.data.fail.length || 0);
+    }
+  }, [countQuery.data]);
+
   const data = [
     {
       title: "Enrolled Courses",
-      total: "6",
-      rate: "0.5%",
+      total: enrolled.toString(),
       children: <FileSyncOutlined />,
     },
     {
       title: "Completed Courses",
-      total: "6",
-      rate: "0.5%",
+      total: completed.toString(),
       children: <FileDoneOutlined />,
     },
     {
       title: "Incomplete Courses",
-      total: "6",
-      rate: "0.5%",
+      total: incomplete.toString(),
       children: <FileExcelOutlined />,
     },
   ];
@@ -39,8 +68,8 @@ export default function StudentDashboard() {
         ))}
       </div>
       <div className="mt-4 grid grid-cols-12 gap-4 md:mt-6 md:gap-6 2xl:mt-7.5 2xl:gap-7.5">
-        <ChartOne />
-        <ChartThree />
+        {/* <ChartOne /> */}
+        <ChartThree enrolled={enrolled} completed={completed} failed={failed} incomplete={incomplete} />
       </div>
     </div>
   );

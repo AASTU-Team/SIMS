@@ -357,3 +357,27 @@ export const getSectionStudent = async (id: string, course_id: string) => {
   setHeaderToken(access_token);
   return await client.post(`/assignment/teacher/`, { id, course_id });
 };
+
+export const getRegistrationHistory = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/user/student/registrationStatus/${id}`);
+};
+
+export const getAddDropHistory = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/user/student/addDrop?skip=0&limit=20&stud_id=${id}`);
+};
+
+export const getAssignmentHistory = async () => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get("/assignment/history");
+};
+
+export const getAssignmentInstructorData = async (id: string) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.get(`/assignment/instructorData/${id}`);
+};

@@ -79,13 +79,7 @@ const DropdownUser = () => {
           <img
             width={40}
             height={40}
-            src={
-              user?.role == "Student"
-                ? "/images/users/user01.jpg"
-                : user?.role == "Staff"
-                ? "/images/users/user02.jpg"
-                : "/images/users/user03.png"
-            }
+            src={"/images/users/user04.jpg"}
             alt="User"
             className="rounded-full"
           />

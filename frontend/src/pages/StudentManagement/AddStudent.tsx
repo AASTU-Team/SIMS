@@ -1,14 +1,17 @@
 import type { FormProps } from "antd";
-import {UploadOutlined, UserAddOutlined } from "@ant-design/icons";
-import { Button, Form, Input, Select, Upload, DatePicker, notification, message } from "antd";
+import { UserAddOutlined } from "@ant-design/icons";
+import {  Form, Input, Select, Upload, DatePicker, notification, message } from "antd";
 import { StudentFields } from "../../type/student";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { registerStudent } from "../../api/student";
 import { getDepartment } from "../../api/departmentApi";
 import { DepartmentFields } from "../../type/department";
 import type { UploadProps } from "antd";
+import { useState } from "react";
+import { sendImageForRegistration } from "../../api/grade";
 
 export default function AddStudent() {
+  const [file, setFile] = useState<File | null>(null);
   const departmentQuery=useQuery({
     queryKey: ["department"],
     queryFn: getDepartment
@@ -29,8 +32,9 @@ export default function AddStudent() {
     console.log(values);
     values.phone = values.contact;
     values.grad_date = values.admission_date;
-    values.status = "Inactive";
+    values.status = "Active";
     AddStudentMutation.mutate(values);
+    // sendImageForRegistration(values.id, file)
   };
 
   const onFinishFailed: FormProps<StudentFields>["onFinishFailed"] = (
@@ -44,19 +48,27 @@ export default function AddStudent() {
     option?: { label: string; value: string }
   ) => (option?.label ?? "").toLowerCase().includes(input.toLowerCase());
 
-  const props: UploadProps = {
-    name: "file",
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
-  };
+const props: UploadProps = {
+  beforeUpload: (file) => {
+    const isImage = file.type.startsWith("image/");
+    const isSizeValid = file.size / 1024 / 1024 < 10; // Check if file size is less than 10MB
+    if (!isImage) {
+      message.error(`${file.name} is not an image file`);
+    }
+    if (!isSizeValid) {
+      message.error(`${file.name} is larger than 10MB`);
+    }
+    return (isImage && isSizeValid) || Upload.LIST_IGNORE;
+  },
+  customRequest: ({ file }) => {
+    console.log(file);
+    if (file) {
+      const fileObj = file as File;
+      setFile(fileObj); // Set the file to the file state
+    }
+  },
+  showUploadList: false,
+};
 
   return (
     <div className="max-w-screen-2xl p-4 md:p-6 2xl:p-10">
@@ -98,6 +110,11 @@ export default function AddStudent() {
                     required: true,
                     message: "Please input the full name!",
                   },
+                  {
+                    max: 50,
+                    message: "Name should be less than 50 characters",
+
+                  }
                 ]}
               >
                 <div>
@@ -133,7 +150,7 @@ export default function AddStudent() {
               </Form.Item>
               <Form.Item<StudentFields>
                 name="id"
-                rules={[{ required: true, message: "Please input the ID!" }]}
+                rules={[{ required: true, message: "Please input the ID!" },{max: 10, message: "ID should be less than 10 characters"}]}
               >
                 <div>
                   <label
@@ -196,6 +213,7 @@ export default function AddStudent() {
                     required: true,
                     message: "Please input the Date of Birth!",
                   },
+
                 ]}
               >
                 <div>
@@ -221,6 +239,11 @@ export default function AddStudent() {
                     required: true,
                     message: "Please input the phone number!",
                   },
+                  {
+                    max: 10,
+                    message: "Phone number should be less than 10 characters",
+                  },
+
                 ]}
               >
                 <div>
@@ -246,6 +269,10 @@ export default function AddStudent() {
                     required: true,
                     message: "Please input the student's address!",
                   },
+                  {
+                    max: 100,
+                    message: "Address should be less than 100 characters",
+                  }
                 ]}
               >
                 <div>
@@ -258,6 +285,7 @@ export default function AddStudent() {
                   <Input
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                     placeholder="Enter the address"
+
                   />
                 </div>
               </Form.Item>
@@ -365,6 +393,10 @@ export default function AddStudent() {
                     required: true,
                     message: "Please input the full name!",
                   },
+                  {
+                    max: 100,
+                    message: "Name should be less than 100 characters",
+                  }
                 ]}
               >
                 <div>
@@ -388,6 +420,10 @@ export default function AddStudent() {
                     required: true,
                     message: "Please input the phone number!",
                   },
+                  {
+                    max: 10,
+                    message: "Phone number should be less than 10 characters",
+                  }
                 ]}
               >
                 <div>
@@ -568,7 +604,7 @@ export default function AddStudent() {
                 </div>
               </Form.Item>
             </div>
-            <div className="mb-5.5 flex flex-col items-center gap-5.5 sm:flex-row">
+            {/* <div className="mb-5.5 flex flex-col items-center gap-5.5 sm:flex-row">
               <Form.Item>
                 <div>
                   <label
@@ -579,13 +615,19 @@ export default function AddStudent() {
                   </label>
                   <div className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary">
                     <Upload {...props}>
-                      <Button icon={<UploadOutlined />}>Click to Upload</Button>
-                    </Upload>
+                    <Button
+                      className="py-2 flex justify-center align-middle items-center"
+                      icon={<UploadOutlined />}
+                    >
+                  Profile Picture
+                  
+                </Button>
+                </Upload>
                   </div>
                 </div>
               </Form.Item>
-            </div>
-            <div className="flex justify-end items-center gap-3 ">
+            </div> */}
+            {/* <div className="flex justify-end items-center gap-3 ">
               <button
                 onClick={() => form.resetFields()}
                 disabled={AddStudentMutation.isPending}
@@ -603,7 +645,7 @@ export default function AddStudent() {
                 <UserAddOutlined />
                 Register User
               </button>
-            </div>
+            </div> */}
           </Form>
         </div>
       </div>

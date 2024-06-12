@@ -40,7 +40,7 @@ const CurriculumTable: React.FC = () => {
       title: "Name",
       dataIndex: "name",
       key: "name",
-      sorter: true,
+      sorter: (a, b) => a.name.localeCompare(b.name),
     },
     {
       title: "Department",
@@ -84,7 +84,6 @@ const CurriculumTable: React.FC = () => {
           >
             Edit
           </a>
-          <a className=" hover:text-red">Delete</a>
         </Space>
       ),
     },
@@ -103,27 +102,33 @@ const CurriculumTable: React.FC = () => {
           columns={columns}
           dataSource={query?.data?.data?.data || []}
           rowKey={(record) => record._id || ""}
-          
+          pagination={{ pageSize: 10 }}
           expandable={{
-            expandedRowRender: (record:{_id:string,courses:CourseFields[],description:string}) => {return (
-              <div className="p-2 bg-white flex gap-20 overflow-y-scroll">
-                <div>
-                  <h3 className="font-semibold">Courses</h3>
-                  <ul>
-                    {record?.courses?.map((course) => (
-                      <li key={course._id} className='flex gap-1'>
-                        <span>&#8226;</span> 
-                        {course.name}
-                      </li>
-                    ))}
-                  </ul>
+            expandedRowRender: (record: {
+              _id: string;
+              courses: CourseFields[];
+              description: string;
+            }) => {
+              return (
+                <div className="p-2 bg-white flex gap-20 overflow-y-scroll">
+                  <div>
+                    <h3 className="font-semibold">Courses</h3>
+                    <ul>
+                      {record?.courses?.map((course) => (
+                        <li key={course._id} className="flex gap-1">
+                          <span>&#8226;</span>
+                          {course.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h3 className="font-semibold">Description</h3>
+                    <p>{record.description}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold">Description</h3>
-                  <p>{record.description}</p>
-                </div>
-              </div>
-            );},
+              );
+            },
           }}
         />
       )}

@@ -169,7 +169,7 @@ Studentrouter.get("/student/coursesStatus/:student_id", getStudentCourseStatus);
 Studentrouter.get("/student/coursesSemesters/:student_id", getStudentSemesters);
 Studentrouter.post("/student/register", studentRegistration);
 Studentrouter.get(
-  "/student/registrationCourses/:student_id",
+  "/student/registrationCourses/:student_id",checkRegistrationStatus,
   getstudentRegistrationCourses
 );
 Studentrouter.get("/student/registrationStatus/:student_id", getStudentRegistrationHistory);

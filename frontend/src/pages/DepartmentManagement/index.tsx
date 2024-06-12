@@ -31,13 +31,13 @@ export default function DepartmentManagement() {
             <UserAddOutlined />
             Add Department
           </button>
-          <button
+          {/* <button
             onClick={() => setOpen(true)}
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
           >
             <UploadOutlined />
             Add Multiple Department
-          </button>
+          </button> */}
           <button onClick={()=>exportDepartment()} className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90">
             <DownloadOutlined />
             Export List

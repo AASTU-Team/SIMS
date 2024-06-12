@@ -9,4 +9,5 @@ export type CurriculumFields = {
   courses?: CourseFields[];
   type?: string;
   description?: string;
+  _id?: string;
 };

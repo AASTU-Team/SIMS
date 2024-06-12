@@ -1,36 +1,21 @@
 import { Table } from "antd";
 import type { TableColumnsType } from "antd";
-import { SlipDetails } from "../../type/registration";
 import RegistrationSlip from "./RegistrationSlip";
+import { useQuery } from "@tanstack/react-query";
+import { getAddDropHistory } from "../../api/registration";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import Loader from "../../components/Loader";
 
 export default function AddDropHistory() {
-  const columns: TableColumnsType<SlipDetails> = [
-    {
-      title: "Stream",
-      width: 100,
-      dataIndex: "stream",
-      key: "stream",
-      fixed: "left",
-      sorter: true,
-    },
-    {
-      title: "Admission Classification",
-      dataIndex: "classification",
-      key: "code",
-      width: 100,
-    },
-    {
-      title: "Program",
-      dataIndex: "program",
-      key: "program",
-      width: 100,
-    },
-    {
-      title: "Academic Year",
-      dataIndex: "ac_year",
-      key: "ac_year",
-      width: 70,
-    },
+  const user = useSelector((state: RootState) => state.user);
+
+  const query = useQuery({
+      queryKey: ["addDropHistory"],
+      queryFn: () => getAddDropHistory(user._id),
+    });
+  console.log(query)
+  const columns: TableColumnsType = [
     {
       title: "Year",
       dataIndex: "year",
@@ -39,35 +24,54 @@ export default function AddDropHistory() {
     },
     {
       title: "Semester",
-      dataIndex: "sem",
-      key: "sem",
+      dataIndex: "semester",
+      key: "semester",
       width: 70,
     },
-  ];
-  const data = [
     {
-      stream: "Software Engineering",
-      classification: "Regular",
-      program: "Masters",
-      year: "1",
-      sem: "I",
-      ac_year: "2023/2024",
+      title: "Date of Add/Drop",
+      dataIndex: "registration_date",
+      key: "registration_date",
+      render: (date: string) => {
+        const formattedDate = new Date(date).toISOString().split("T")[0];
+        return <span>{formattedDate}</span>;
+      },
+      width: 150,
     },
   ];
+  // const data = [
+  //   {
+  //     stream: "Software Engineering",
+  //     classification: "Regular",
+  //     program: "Masters",
+  //     year: "1",
+  //     sem: "I",
+  //     ac_year: "2023/2024",
+  //   },
+  // ];
   return (
     <div className="pt-1 flex flex-col gap-5">
-      <Table
-        columns={columns}
-        dataSource={data}
-        scroll={{ x: 1300 }}
-        expandable={{
-          expandedRowRender: (record) => (
-            <div className="p-5 bg-white">
-              <RegistrationSlip details={record} />
-            </div>
-          ),
-        }}
-      />
+      {query.isPending ? (
+        <div className="my-auto">
+          <Loader />
+        </div>
+      ) : query.isError ? (
+        <>{`${query.error}`}</>
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={query?.data?.data?.data}
+          scroll={{ x: 1300 }}
+          // expandable={{
+          //   expandedRowRender: (record:{courses:CourseFields}) => (
+          //     <div className="p-5 bg-white">
+          //       <RegistrationSlip details={record.courses} />
+          //     </div>
+          //   ),
+          // }}
+        />
+      )}
+      {/* <Table columns={columns} dataSource={data} scroll={{ x: 1300 }} /> */}
     </div>
   );
 }

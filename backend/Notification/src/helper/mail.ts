@@ -13,19 +13,14 @@ require("dotenv").config();
 const email = "contactminatech@gmail.com"
 const password = "cnwdnrateznivdgr"
 
-const transporter = nodemailer.createTransport({
-  service: "gmail",
-  host: "smtp.gmail.com",
+ const transporter = nodemailer.createTransport({
+  host: "smtp.ethereal.email",
   port: 587,
-  tls: {
-    rejectUnauthorized: false,
-  },
-  secure: false, // Use `true` for port 465, `false` for all other ports
   auth: {
-    user: email,
-    pass: password,
+    user: "zachary.goldner@ethereal.email",
+    pass: "7hgsvTvpMPsZHUEQq5",
   },
-});
+}); 
 
 const sendEmail = (data: any) => {
   console.log(data);

@@ -65,6 +65,42 @@ export default function AttendanceManagement() {
     mutationKey: ["getAttendanceQuery"],
     mutationFn: (value: string) => getAttendance(value, user._id),
   });
+    const editAttendanceMutation = useMutation({
+      mutationKey: ["editAttendanceRecord"],
+      mutationFn: ({
+        attendance_id,
+        status,
+        date,
+        _id,
+      }: {
+        attendance_id: string;
+        status: string;
+        date: string;
+        _id: string;
+      }) => updateAttendance(attendance_id, status, date, _id),
+      onError: () => {
+        notification.error({ message: "Record not updated" });
+      },
+      onSuccess: () => {
+        notification.success({ message: "Record Updated Successfully" });
+        setActiveRecord(false)
+        query.refetch();
+      },
+    });
+     const createAttendanceMutation = useMutation({
+       mutationKey: ["createAttendanceRecord"],
+       mutationFn: (date: string) =>
+         createAttendanceRecord(selectedCourse, user._id, date, attendance),
+       onError: () => {
+         notification.error({ message: "Record not saved" });
+       },
+       onSuccess: () => {
+         notification.success({ message: "Record Saved Successfully" });
+         setAttendance([]);
+         query.refetch();
+         attendanceQuery.mutate(selectedCourse);
+       },
+     });
   useEffect(() => {
     if (attendanceQuery.isSuccess && attendanceQuery.data?.data) {
       const uniqueDates: { label: string; value: string }[] = [];
@@ -84,13 +120,27 @@ export default function AttendanceManagement() {
 
           const bareDate = attendanceQuery.data.data[i].attendances[j].date;
 
-          if (!uniqueDates.some((d) => d.value === formattedDate)) {
+          if (!uniqueDates.some((d) => d.label === formattedDate)) {
             uniqueDates.push({ label: formattedDate, value: bareDate });
           }
         }
       }
+      const percentage: TableColumnsType = [
+        {
+          title: "Attendance %",
+          width: 150,
+          dataIndex: "percentage",
+          key: "percentage",
+          fixed: "left",
+          sorter: true,
+          render: (text, record) => {
+            const percent = attendanceQuery.data.data.find((student: { student_id: string }) => student.student_id === record._id)?.Present
+            return percent ? `${percent.toFixed(2)}%` : "0%";
+          }
+        },
+      ];
 
-      // console.log("Unique Dates",uniqueDates);
+      console.log("Unique Dates",uniqueDates);
       const col: TableColumnsType = uniqueDates.map(({ label, value }) => {
         return {
           title: label,
@@ -139,47 +189,24 @@ export default function AttendanceManagement() {
         };
       });
 
-      setRecords(col);
+      setRecords([...percentage,...col]);
     }
-  }, [attendanceQuery.isSuccess]);
+  }, [attendanceQuery.isSuccess, attendanceQuery.data?.data,selectedCourse]);
+
+  useEffect(() => {
+    if (selectedCourse) {
+      studentQuery.mutate(selectedCourse);
+      attendanceQuery.mutate(selectedCourse);
+      setSelectedSection(sections[0]?.id || "");
+
+    }
+  }, [selectedCourse]);
 
   console.log("Student Query", studentQuery);
 
-  const createAttendanceMutation = useMutation({
-    mutationKey: ["createAttendanceRecord"],
-    mutationFn: (date: string) =>
-      createAttendanceRecord(selectedCourse, user._id, date, attendance),
-    onError: () => {
-      notification.error({ message: "Record not saved" });
-    },
-    onSuccess: () => {
-      notification.success({ message: "Record Saved Successfully" });
-      setAttendance([]);
-      query.refetch();
-    },
-  });
+ 
 
-  const editAttendanceMutation = useMutation({
-    mutationKey: ["editAttendanceRecord"],
-    mutationFn: ({
-      attendance_id,
-      status,
-      date,
-      _id,
-    }: {
-      attendance_id: string;
-      status: string;
-      date: string;
-      _id: string;
-    }) => updateAttendance(attendance_id, status, date, _id),
-    onError: () => {
-      notification.error({ message: "Record not updated" });
-    },
-    onSuccess: () => {
-      notification.success({ message: "Record Updated Successfully" });
-      query.refetch();
-    },
-  });
+
 
   const columns = [
     {
@@ -309,6 +336,7 @@ export default function AttendanceManagement() {
 
     data.push(...uniqueData);
     if (!selectedCourse && data.length > 0) {
+      // console.log("Data", data);
       setSelectedCourse(data[0]?._id || "");
       studentQuery.mutate(data[0]?._id || "");
       attendanceQuery.mutate(data[0]?._id || "");
@@ -379,7 +407,7 @@ export default function AttendanceManagement() {
     //     })
     // );
   }
-
+  // console.log("section",selectedSection,sections)
   return (
     <div className="max-w-screen-3xl p-4 md:p-6 2xl:p-10">
       <div className="flex justify-between">
@@ -521,7 +549,9 @@ export default function AttendanceManagement() {
           <Button
             key="submit"
             type="primary"
-            onClick={() => form.submit()}
+            onClick={() =>{ 
+              setActiveRecord(false)
+              form.submit()}}
             className="bg-primary"
           >
             Create

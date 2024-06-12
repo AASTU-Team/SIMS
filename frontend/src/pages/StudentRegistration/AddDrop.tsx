@@ -155,8 +155,8 @@ export default function AddDrop() {
     },
     {
       title: "Credits",
-      dataIndex: "credits",
-      key: "credits",
+      dataIndex: "credit",
+      key: "credit",
       width: 70,
     },
     {
@@ -227,15 +227,9 @@ export default function AddDrop() {
       width: 70,
     },
     {
-      title: "Option",
-      dataIndex: "option",
-      key: "option",
-      width: 70,
-    },
-    {
       title: "Credits",
-      dataIndex: "credits",
-      key: "credits",
+      dataIndex: "credit",
+      key: "credit",
       width: 70,
     },
     {
@@ -319,7 +313,11 @@ export default function AddDrop() {
         </div>
         <Table
           columns={addDrop}
-          dataSource={addDropCourses}
+          dataSource={
+            Array.isArray(addDropCourses)
+              ? addDropCourses
+              : []
+          }
           scroll={{ x: 1300 }}
         />
       </div>

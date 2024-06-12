@@ -48,21 +48,9 @@ export default function RegistrationSlip({data}:{data:CourseFields[]}) {
         width: 70,
       },
       {
-        title: "Category",
-        dataIndex: "type",
-        key: "type",
-        width: 70,
-      },
-      {
-        title: "Option",
-        dataIndex: "option",
-        key: "option",
-        width: 70,
-      },
-      {
         title: "Credits",
-        dataIndex: "credits",
-        key: "credits",
+        dataIndex: "credit",
+        key: "credit",
         width: 70,
       },
     ]; 

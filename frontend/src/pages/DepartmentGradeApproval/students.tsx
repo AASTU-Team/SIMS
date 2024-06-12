@@ -5,40 +5,75 @@ import {
   Modal,
   Form,
   Input,
+  notification,
 } from "antd";
 import type { FormProps, TableColumnsType } from "antd";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
+import { StudentApproval } from "../../type/registration";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { approveGradeByDepartment, bulkApproveGradesByDepartment, rejectGradeByDepartment } from "../../api/grade";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
 
-export default function StudentsList() {
+export default function StudentsList({records}:{records:StudentApproval[]}) {
   const [open,setOpen] = useState(false)
   const [form] = useForm();
-  const data = [
-    {
-      key: "1",
-      name: "John Brown",
-      id: "2019-01-01",
-      grade: "A",
-      attendance: "90%",
-    },
-  ];
+  const user = useSelector((state: RootState) => state.user);
+  const queryClient = useQueryClient()
+  const [rejectId,setRejectId] = useState("")
+
+  // const data = [
+  //   {
+  //     key: "1",
+  //     name: "John Brown",
+  //     id: "2019-01-01",
+  //     grade: "A",
+  //     attendance: "90%",
+  //   },
+  // ];
 //   const query = useQuery({
 //     queryKey: ["studentRegisteredRegistrar"],
 //     queryFn: () => getRegistrationRegistrar(),
 //   });
 
-//   const ApproveAllRequestMutation = useMutation({
-//     mutationKey: ["approveAllRequestRegistrar"],
-//     mutationFn: () => confirmAllRegistrationRegistrar(),
-//     onError: () => {
-//       notification.error({ message: "Registration Not Successful" });
-//     },
-//     onSuccess: () => {
-//       notification.success({ message: "Registration Successful" });
-//       query.refetch();
-//       form.resetFields();
-//     },
-//   });
+  const ApproveAllRequestMutation = useMutation({
+    mutationKey: ["approveAllGradeRequest"],
+    mutationFn: (approvalIds:string[]) =>
+      bulkApproveGradesByDepartment(approvalIds, user._id),
+    onError: () => {
+      notification.error({ message: "Request Not Approved" });
+    },
+    onSuccess: () => {
+      notification.success({ message: "Request Approved" });
+      queryClient.refetchQueries({ queryKey: ["getDepartmentGradeRequest"] });
+      
+    },
+  });
+
+  const ApproveRequestMutation = useMutation({
+      mutationKey: ["approveOneGradeRequest"],
+      mutationFn: (value:string) => approveGradeByDepartment(value,user._id),
+      onError: () => {
+        notification.error({ message: "Request Not Approved" });
+      },
+      onSuccess: () => {
+        notification.success({ message: "Request Approved" });
+        queryClient.refetchQueries({ queryKey: ["getDepartmentGradeRequest"] });
+      },
+    });
+  const RejectRequestMutation = useMutation({
+        mutationKey: ["rejectGradeRequest"],
+        mutationFn: ({gradeId,reason}:{gradeId:string,reason:string}) => rejectGradeByDepartment(gradeId,user._id,reason),
+        onError: () => {
+          notification.error({ message: "Request Not Rejected" });
+        },
+        onSuccess: () => {
+          notification.success({ message: "Request Rejected" });
+         queryClient.refetchQueries({ queryKey: ["getDepartmentGradeRequest"] });
+          form.resetFields();
+        },
+      });
 
   const columns: TableColumnsType = [
     {
@@ -52,8 +87,8 @@ export default function StudentsList() {
     {
       title: "ID",
       width: 150,
-      dataIndex: "id",
-      key: "id",
+      dataIndex: "student_id",
+      key: "student_id",
       sorter: true,
     },
     {
@@ -73,12 +108,12 @@ export default function StudentsList() {
       key: "operation",
       fixed: "right",
       width: 200,
-      render: () => (
+      render: (text,record) => (
         <div className="font-semibold flex gap-3">
           <Popconfirm
             title="Approve Request"
             description="Are you sure to approve this request?"
-            onConfirm={() => console.log("approved")}
+            onConfirm={() =>ApproveRequestMutation.mutate(record.grade_id as string)}
             okText="Yes"
             cancelText="No"
           >
@@ -89,6 +124,7 @@ export default function StudentsList() {
             danger
             onClick={() => {
               setOpen(true);
+              setRejectId(record.grade_id as string);
             }}
           >
             Reject
@@ -98,21 +134,30 @@ export default function StudentsList() {
     },
   ];
 
+  const approveAll= () => {
+    const approvalIds = records.map((record) => record.grade_id).filter((id) => id !== undefined) as string[];
+    ApproveAllRequestMutation.mutate(approvalIds);
+  }
   const onFinishFailed: FormProps["onFinishFailed"] = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
 
     const onFinish: FormProps["onFinish"] = (value) => {
-      console.log("Success:", value);
+      // console.log(value)
+      // console.log(rejectId)
+      RejectRequestMutation.mutate({gradeId:rejectId,reason:value.rejection_reason})
+      setRejectId("")
+      setOpen(false)
+      
     };
 
   return (
     <div className="pt-2">
-      <div className="flex justify-start">
+      {/* <div className="flex justify-start mb-2">
         <Popconfirm
           title="Approve All Request"
           description="Are you sure to approve all the request?"
-          onConfirm={() => console.log("approve all")}
+          onConfirm={() => approveAll()}
           okText="Confirm"
           cancelText="No"
         >
@@ -120,30 +165,11 @@ export default function StudentsList() {
             Approve All Requests
           </button>
         </Popconfirm>
-      </div>
-      {/* {query.isPending ? (
-        <div className="">
-          <Loader />
-        </div>
-      ) : query.isError ? (
-        <>{`${query.error}`}</>
-      ) : (
-        <Table
-          columns={columns}
-          dataSource={data || []}
-          scroll={{ x: 1300 }}
-          expandable={{
-            expandedRowRender: (record: RegistrationFields) => (
-              <div className="p-1 bg-white">
-                <RegistrationSlip details={record.courses} />
-              </div>
-            ),
-          }}
-        />
-      )} */}
+      </div> */}
+      
       <Table
         columns={columns}
-        dataSource={ data}
+        dataSource={records}
         scroll={{ x: 1300 }}
         
       />

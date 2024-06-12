@@ -313,10 +313,6 @@ export default function AddStaff() {
                           label: "Course Management",
                         },
                         {
-                          value: "roomMan",
-                          label: "Room Management",
-                        },
-                        {
                           value: "curriculumMan",
                           label: "Curriculum Management",
                         },
@@ -351,6 +347,10 @@ export default function AddStaff() {
                         {
                           value: "studentReg",
                           label: "Registrar Office",
+                        },
+                        {
+                          value: "roomMan",
+                          label: "Logger Download",
                         },
                       ]}
                     />

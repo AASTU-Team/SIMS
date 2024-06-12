@@ -15,6 +15,7 @@ export default function EnrolledCoursesTable() {
     queryKey: ["myEnrolledCourse"],
     queryFn: () => getEnrolledCourse(user._id),
   });
+  console.log(query)
     const columns: TableColumnsType = [
       {
         title: "Course Name",
@@ -43,33 +44,9 @@ export default function EnrolledCoursesTable() {
         width: 70,
       },
       {
-        title: "Tutor Hour",
-        dataIndex: "tut",
-        key: "tut",
-        width: 70,
-      },
-      {
-        title: "HS Hour",
-        dataIndex: "hs",
-        key: "hs",
-        width: 70,
-      },
-      {
-        title: "Category",
-        dataIndex: "type",
-        key: "type",
-        width: 70,
-      },
-      {
-        title: "Option",
-        dataIndex: "option",
-        key: "option",
-        width: 70,
-      },
-      {
         title: "Credits",
         dataIndex: "credits",
-        key: "credits",
+        key: "credit",
         width: 70,
       },
     ]; 
@@ -81,16 +58,18 @@ export default function EnrolledCoursesTable() {
         </div>
       ) : query.isError ? (
         <>{`${query.error}`}</>
+      ) : query?.data?.data?.message === "Course Not found" ? (
+        <div>{`No Course Found`}</div>
       ) : (
         <Table
           columns={columns}
-          dataSource={query.data?.data?.message || []}
+          dataSource={Array.isArray(query.data?.data?.message) ? query.data?.data?.message : []}
           scroll={{ x: 1300 }}
           rowKey={(record) => record._id || ""}
           expandable={{
-            expandedRowRender: (record:CourseFields) => (
+            expandedRowRender: (record: CourseFields) => (
               <div className="p-2 bg-white">
-                <CourseDetails records={record}/>
+                <CourseDetails records={record} />
               </div>
             ),
           }}

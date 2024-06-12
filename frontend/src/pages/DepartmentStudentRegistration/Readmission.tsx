@@ -16,6 +16,9 @@ import { RegistrationFields } from "../../type/registration";
 import { useState } from "react";
 import { useForm } from "antd/es/form/Form";
 import { acceptReadmissionRequestsDep, getDepartmentReadmission, rejectReadmissionRequestsDep } from "../../api/registration";
+import { getReadmissionRequestFile } from "../../api/student";
+import { DownloadOutlined } from "@ant-design/icons";
+
 
 export default function Readmission() {
   const user = useSelector((state: RootState) => state.user);
@@ -157,9 +160,18 @@ export default function Readmission() {
           scroll={{ x: 1300 }}
           expandable={{
             expandedRowRender: (record) => (
-              <div>
-                <h3 className="font-semibold">Reason of Withdrawal</h3>
-                <p>{record.reason}</p>
+              <div className="flex justify-between">
+                <div>
+                  <h3 className="font-semibold">Reason of Readmission</h3>
+                  <p>{record.reason}</p>
+                </div>
+                <button
+                  onClick={() => getReadmissionRequestFile(record._id)}
+                  className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-gray hover:bg-opacity-90"
+                >
+                  <DownloadOutlined />
+                  Download Attached Document
+                </button>
               </div>
             ),
           }}

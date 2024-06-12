@@ -27,13 +27,6 @@ export const studentSideBarData = [
     link: "/myGrades",
     role: "",
   },
-  {
-    index: 4,
-    label: "Schedule",
-    icon: "calendar",
-    link: "/mySchedule",
-    role: "",
-  },
 ];
 
 export const staffSideBarData = [
@@ -123,24 +116,10 @@ export const staffSideBarData = [
   },
   {
     index: 12,
-    label: "Room Management",
-    icon: "room",
-    link: "/room",
-    role: "roomMan",
-  },
-  {
-    index: 13,
     label: "Semester Management",
     icon: "semester",
     link: "/semester",
     role: "semesterMan",
-  },
-  {
-    index: 14,
-    label: "Calendar",
-    icon: "calendar",
-    link: "/calendar",
-    role: "",
   },
 ];
 

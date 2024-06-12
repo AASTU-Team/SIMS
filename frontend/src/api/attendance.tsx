@@ -115,8 +115,8 @@ export const updateAttendance = async (
 };
 
 export const getStudentAttendance = async (
+  student_id: string,
   course_id: string,
-  student_id: string
 ) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);

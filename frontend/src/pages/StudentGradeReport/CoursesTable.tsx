@@ -6,12 +6,13 @@ import { CourseFields } from "../../type/course";
 // import { getCourse } from "../../api/course";
 // import Loader from "../../components/Loader";
 
-const CourseTable: React.FC = () => {
+const CourseTable: React.FC<CourseFields[]> = (records) => {
   // const query = useQuery({
   //   queryKey: ["course"],
   //   queryFn: getCourse,
   // });
   // console.log(query)
+  // console.log(records,Array.isArray(records) )
   const columns: TableColumnsType<CourseFields> = [
     {
       title: "Course Name",
@@ -28,15 +29,15 @@ const CourseTable: React.FC = () => {
       width: 150,
     },
     {
-      title: "Type",
-      dataIndex: "type",
-      key: "type",
+      title: "Credit",
+      dataIndex: "credit",
+      key: "credit",
       width: 150,
     },
     {
-      title: "GPA",
-      dataIndex: "gpa",
-      key: "gpa",
+      title: "Grade",
+      dataIndex: "grade",
+      key: "grade",
       width: 150,
     }
   ];
@@ -58,7 +59,7 @@ const CourseTable: React.FC = () => {
       )} */}
       <Table
         columns={columns}
-        dataSource={[]} // Fix: Access the 'data' property of the resolved data
+        dataSource={Array.isArray(records?.records)? records.records: []} // Fix: Access the 'data' property of the resolved data
         scroll={{ x: 1300 }}
       />
     </div>

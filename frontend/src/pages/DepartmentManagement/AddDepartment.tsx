@@ -83,7 +83,7 @@ export default function AddDepartment() {
                   />
                 </div>
               </Form.Item>
-              <Form.Item<DepartmentFields>
+              {/* <Form.Item<DepartmentFields>
                 name="code"
                 rules={[
                   {
@@ -104,7 +104,7 @@ export default function AddDepartment() {
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
                   />
                 </div>
-              </Form.Item>
+              </Form.Item> */}
               <Form.Item<DepartmentFields>
                 name="dep_head"
                 rules={[

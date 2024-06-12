@@ -78,6 +78,12 @@ export const getStaff = async () => {
   return await client.get("/staff/all");
 };
 
+export const editStaff = async (data: StaffFields) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch(`/staff/update?id=${data._id}`, data);
+};
+
 export const registerStaff = async (data: StaffFields) => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);

@@ -1,11 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
+import { getNotificationById } from "../../api/notification";
+import { useSelector } from "react-redux";
+import { RootState } from "../../state/store";
+import Loader from "../Loader";
 
 const DropdownNotification = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [notifying, setNotifying] = useState(true);
-
+  const user = useSelector((state: RootState) => state.user);
+  const query = useQuery({
+          queryKey: ["notification"],
+          queryFn: ()=>getNotificationById(user.email),
+        });
+  console.log(query)
   const trigger = useRef<any>(null);
   const dropdown = useRef<HTMLDivElement | null>(null);
 
@@ -33,6 +43,16 @@ const DropdownNotification = () => {
     document.addEventListener("keydown", keyHandler);
     return () => document.removeEventListener("keydown", keyHandler);
   });
+  let notifications =  [];
+  if(query.isSuccess && query.data?.notification && query.data?.notification?.notifications){
+  notifications =
+    query?.data?.notification?.notifications?.map(
+      (value: { notification_id: { message: string; type: string } }) => ({
+        title: value.notification_id.type === "Urgent",
+        message: value.notification_id.message,
+        date: new Date().toLocaleString(),
+      })
+    ) || [];}
 
   return (
     <li className="relative">
@@ -81,69 +101,27 @@ const DropdownNotification = () => {
         </div>
 
         <ul className="flex h-auto flex-col overflow-y-auto">
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-              to="#"
-            >
-              <p className="text-sm">
-                <span className="text-black dark:text-white">
-                  Edit your information in a swipe
-                </span>{" "}
-                Sint occaecat cupidatat non proident, sunt in culpa qui officia
-                deserunt mollit anim.
-              </p>
-
-              <p className="text-xs">12 May, 2025</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-              to="#"
-            >
-              <p className="text-sm">
-                <span className="text-black dark:text-white">
-                  It is a long established fact
-                </span>{" "}
-                that a reader will be distracted by the readable.
-              </p>
-
-              <p className="text-xs">24 Feb, 2025</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-              to="#"
-            >
-              <p className="text-sm">
-                <span className="text-black dark:text-white">
-                  There are many variations
-                </span>{" "}
-                of passages of Lorem Ipsum available, but the majority have
-                suffered
-              </p>
-
-              <p className="text-xs">04 Jan, 2025</p>
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
-              to="#"
-            >
-              <p className="text-sm">
-                <span className="text-black dark:text-white">
-                  There are many variations
-                </span>{" "}
-                of passages of Lorem Ipsum available, but the majority have
-                suffered
-              </p>
-
-              <p className="text-xs">01 Dec, 2024</p>
-            </Link>
-          </li>
+          {query.isSuccess ?
+            (notifications.map((notify:{message:string,title:string,date:string}) => {
+              return (
+                <li>
+                  <Link
+                    className="flex flex-col gap-2.5 border-t border-stroke px-4.5 py-3 hover:bg-gray-2 dark:border-strokedark dark:hover:bg-meta-4"
+                    to="#"
+                  >
+                    <p className="text-sm">
+                      <span className="text-black dark:text-white">
+                        {notify.title}
+                      </span>{" "}
+                      {notify.message}
+                    </p>
+          
+                    <p className="text-xs">{notify.date}</p>
+                  </Link>
+                </li>
+              )})
+            ):(<Loader/>)}
+          
         </ul>
       </div>
     </li>

@@ -85,6 +85,12 @@ export const addCurriculum = async (data: CurriculumFields) => {
   return await client.post("/create", data);
 }
 
+export const editCurriculum = async (data: CurriculumFields) => {
+  const access_token = getCookie("access_token") || "";
+  setHeaderToken(access_token);
+  return await client.patch(`/${data._id}`, data);
+};
+
 export const exportCurriculum = async () => {
   const access_token = getCookie("access_token") || "";
   setHeaderToken(access_token);

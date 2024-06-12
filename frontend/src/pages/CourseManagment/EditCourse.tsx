@@ -1,5 +1,5 @@
 import type { FormProps } from "antd";
-import {Form, Input, notification, Select} from "antd";
+import { Form, Input, notification, Select } from "antd";
 import { CourseFields, Assessments } from "../../type/course";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
@@ -7,45 +7,48 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { getDepartment } from "../../api/departmentApi";
 import { editCourse, getCourse } from "../../api/course";
 import { DepartmentFields } from "../../type/department";
-import {DeleteOutlined} from "@ant-design/icons";
+import { DeleteOutlined } from "@ant-design/icons";
 
 export default function EditCourse() {
   const [form] = Form.useForm();
-  const {state}: {state: CourseFields} = useLocation();
-  console.log(state)
+  const { state }: { state: CourseFields } = useLocation();
+  console.log(state);
   useEffect(() => {
     if (state) {
       form.setFieldsValue(state);
     }
   }, [form, state]);
-  
-  const [assessments, setAssessments] = useState<Assessments[]>([]);
+
+  const [assessments, setAssessments] = useState<Assessments[]>(
+    state?.assessments || []
+  );
   const departmentQuery = useQuery({
-      queryKey: ["department"],
-      queryFn: getDepartment,
-    });
+    queryKey: ["department"],
+    queryFn: getDepartment,
+  });
   const courseQuery = useQuery({
-      queryKey: ["course"],
-      queryFn: getCourse,
-    });
+    queryKey: ["course"],
+    queryFn: getCourse,
+  });
 
   const EditCourseMuations = useMutation({
-       mutationKey: ["editCourse"],
-       mutationFn: (values: CourseFields) => editCourse(values),
-       onError: () => {
-         notification.error({ message: "Course Not Created" });
-       },
-       onSuccess: () => {
-         notification.success({ message: "Course Created Successfully" });
-         form.resetFields();
-         setAssessments([]);
-         courseQuery.refetch();
-       },
-     });
-  
+    mutationKey: ["editCourse"],
+    mutationFn: (values: CourseFields) => editCourse(values),
+    onError: () => {
+      notification.error({ message: "Course Not Updated" });
+    },
+    onSuccess: () => {
+      notification.success({ message: "Course updated Successfully" });
+      form.resetFields();
+      setAssessments([]);
+      courseQuery.refetch();
+    },
+  });
+
   const onFinish: FormProps<CourseFields>["onFinish"] = (values) => {
     console.log("Success:", values);
     values.assessments = assessments;
+    values._id = state._id;
     EditCourseMuations.mutate(values);
   };
 
@@ -55,18 +58,18 @@ export default function EditCourse() {
     console.log("Failed:", errorInfo);
   };
 
-  const onAddAssessment = ()=>{
+  const onAddAssessment = () => {
     const l = assessments.length.toString();
-    const newAsses={id:l}
-    setAssessments([... assessments, newAsses])
-  }
-   
-  const onDeleteAssessment = (id:string) =>{
-    setAssessments(assessments.filter((assessment)=>assessment.id !== id))
-    setAssessmentValue()
-  }
+    const newAsses = { id: l };
+    setAssessments([...assessments, newAsses]);
+  };
 
-  const onAssessmentNameChange = (name:string,id:string) => {
+  const onDeleteAssessment = (id: string) => {
+    setAssessments(assessments.filter((assessment) => assessment.id !== id));
+    setAssessmentValue();
+  };
+
+  const onAssessmentNameChange = (name: string, id: string) => {
     const newAssessments = assessments.map((assessment) => {
       if (assessment.id === id) {
         return { ...assessment, name };
@@ -74,24 +77,27 @@ export default function EditCourse() {
       return assessment;
     });
     setAssessments(newAssessments);
-  }
+  };
   const onAssessmentValueChange = (value: number, id: string) => {
-      const newAssessments = assessments.map((assessment) => {
-        if (assessment.id === id) {
-          return { ...assessment, value };
-        }
-        return assessment;
-      });
-      setAssessments(newAssessments);
-      setAssessmentValue()
-    };
-  
+    const newAssessments = assessments.map((assessment) => {
+      if (assessment.id === id) {
+        return { ...assessment, value };
+      }
+      return assessment;
+    });
+    setAssessments(newAssessments);
+    setAssessmentValue();
+  };
+
   const setAssessmentValue = () => {
-    const sum = assessments.reduce((total, assessment) => total + (assessment.value || 0), 0);
-    console.log("Sum",sum)
+    const sum = assessments.reduce(
+      (total, assessment) => total + (assessment.value || 0),
+      0
+    );
+    console.log("Sum", sum);
     form.setFieldValue("assessment", sum);
-    console.log(form.getFieldValue("assessment"))
-  }
+    console.log(form.getFieldValue("assessment"));
+  };
   const filterOption = (
     input: string,
     option?: { label: string; value: string }
@@ -101,7 +107,7 @@ export default function EditCourse() {
       <div className="rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark">
         <div className="flex justify-between border-b border-stroke px-7 py-4 dark:border-strokedark">
           <h3 className="font-medium text-lg text-black dark:text-white">
-            Add Course
+            Edit Course
           </h3>
 
           <button
@@ -109,7 +115,7 @@ export default function EditCourse() {
             disabled={EditCourseMuations.isPending}
             className="flex justify-center items-center gap-2 rounded-lg bg-primary px-4 py-2 font-medium text-lg text-gray hover:bg-opacity-90"
           >
-            Add Course
+            Edit Course
           </button>
         </div>
         <div className="p-7">
@@ -141,6 +147,7 @@ export default function EditCourse() {
                   <Input
                     placeholder="Enter the course name"
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    defaultValue={state?.name}
                   />
                 </div>
               </Form.Item>
@@ -163,6 +170,7 @@ export default function EditCourse() {
                   <Input
                     placeholder="Enter the course code"
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    defaultValue={state?.code}
                   />
                 </div>
               </Form.Item>
@@ -185,6 +193,7 @@ export default function EditCourse() {
                   <Input
                     placeholder="Enter the credits"
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    defaultValue={state?.credits}
                   />
                 </div>
               </Form.Item>
@@ -220,6 +229,9 @@ export default function EditCourse() {
                       onChange={(value) => {
                         form.setFieldValue("prerequisites", value);
                       }}
+                      defaultValue={state?.prerequisites?.map(
+                        (value) => value._id
+                      )}
                       disabled={courseQuery.isLoading}
                       options={
                         courseQuery.isFetched
@@ -266,6 +278,7 @@ export default function EditCourse() {
                       onChange={(value) => {
                         form.setFieldValue("department_id", value);
                       }}
+                      defaultValue={state?.department_id?._id}
                       disabled={departmentQuery.isLoading}
                       options={
                         departmentQuery.isFetched
@@ -308,6 +321,7 @@ export default function EditCourse() {
                       onChange={(value) => {
                         form.setFieldValue("type", value);
                       }}
+                      defaultValue={state?.type}
                       options={[
                         {
                           value: "major",
@@ -350,6 +364,7 @@ export default function EditCourse() {
                       placeholder="Select course option"
                       optionFilterProp="children"
                       filterOption={filterOption}
+                      defaultValue={state?.option}
                       onChange={(value) => {
                         form.setFieldValue("option", value);
                       }}
@@ -386,6 +401,7 @@ export default function EditCourse() {
                   <Input
                     placeholder="Enter the lecture hours"
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    defaultValue={state?.lec}
                   />
                 </div>
               </Form.Item>
@@ -408,6 +424,7 @@ export default function EditCourse() {
                   <Input
                     placeholder="Enter the lab hours"
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    defaultValue={state?.lab}
                   />
                 </div>
               </Form.Item>
@@ -454,6 +471,7 @@ export default function EditCourse() {
                   <Input
                     placeholder="Enter the hs hours"
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    defaultValue={state?.hs}
                   />
                 </div>
               </Form.Item>
@@ -476,6 +494,7 @@ export default function EditCourse() {
                   <Input.TextArea
                     placeholder="Enter the description"
                     className=" rounded-lg w-100 border border-stroke bg-transparent py-4 pl-6 pr-10 text-black outline-none focus:border-primary focus-visible:shadow-none dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+                    defaultValue={state?.description}
                   />
                 </div>
               </Form.Item>
